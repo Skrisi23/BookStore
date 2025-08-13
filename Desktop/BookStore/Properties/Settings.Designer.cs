@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BiblioSync.Properties
+namespace BookStore.Properties
 {
 
 

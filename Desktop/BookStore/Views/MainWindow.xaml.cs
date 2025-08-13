@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BiblioSync
+namespace BookStore
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
