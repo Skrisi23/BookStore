@@ -10,22 +10,17 @@ namespace BookStore.Data
     internal class DbConnectionFactory
     {
         private readonly string _connectionString;
-        private MySqlConnection _conn;
         
         public DbConnectionFactory(string connectionString)
         {
-            _connectionString = connectionString;
-            _conn = new MySqlConnection(connectionString);
+            _connectionString = connectionString;      
         }
 
-        public void OpenConnection()
+        public MySqlConnection CreateConnection()
         {
-            _conn.Open();
+            return new MySqlConnection(_connectionString);
         }
 
-        public void CloseConnection()
-        {
-            _conn.Close();
-        }
+        
     }
 }

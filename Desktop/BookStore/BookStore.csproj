@@ -96,6 +96,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\DbConnectionFactory.cs" />
+    <Compile Include="Data\Repositories\BookRepository.cs" />
     <Compile Include="Data\Repositories\IBookRepository.cs" />
     <Compile Include="Data\Repositories\IRentalRepository.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -104,6 +105,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Book.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -131,7 +133,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="Services\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Views\" />
