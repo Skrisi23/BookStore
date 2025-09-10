@@ -3,12 +3,24 @@
   "WorkspaceRootPath": "D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|d:\\dev\\school\\krisaproject\\desktop\\bookstore\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\data\\repositories\\irentalrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|solutionrelative:data\\repositories\\irentalrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|d:\\dev\\school\\krisaproject\\desktop\\bookstore\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|d:\\dev\\school\\krisaproject\\desktop\\bookstore\\data\\dbconnectionfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|solutionrelative:data\\dbconnectionfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\data\\repositories\\ibookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BAE9F8EA-29B2-4F7B-B534-A1AE88858D2C}|BookStore.csproj|solutionrelative:data\\repositories\\ibookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 226,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -26,7 +38,45 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DbConnectionFactory.cs",
+              "DocumentMoniker": "D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\Data\\DbConnectionFactory.cs",
+              "RelativeDocumentMoniker": "Data\\DbConnectionFactory.cs",
+              "ToolTip": "D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\Data\\DbConnectionFactory.cs",
+              "RelativeToolTip": "Data\\DbConnectionFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-13T21:42:30.661Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "IRentalRepository.cs",
+              "DocumentMoniker": "D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\Data\\Repositories\\IRentalRepository.cs",
+              "RelativeDocumentMoniker": "Data\\Repositories\\IRentalRepository.cs",
+              "ToolTip": "D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\Data\\Repositories\\IRentalRepository.cs",
+              "RelativeToolTip": "Data\\Repositories\\IRentalRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-13T21:41:13.252Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IBookRepository.cs",
+              "DocumentMoniker": "D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\Data\\Repositories\\IBookRepository.cs",
+              "RelativeDocumentMoniker": "Data\\Repositories\\IBookRepository.cs",
+              "ToolTip": "D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\Data\\Repositories\\IBookRepository.cs",
+              "RelativeToolTip": "Data\\Repositories\\IBookRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-13T21:39:15.342Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "D:\\Dev\\School\\KrisaProject\\Desktop\\BookStore\\MainWindow.xaml",
               "RelativeDocumentMoniker": "MainWindow.xaml",
