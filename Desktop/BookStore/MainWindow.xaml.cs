@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BookStore.Data;
+using BookStore.Data.Repositories;
+
 
 namespace BookStore
 {
@@ -20,9 +23,18 @@ namespace BookStore
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly DbConnectionFactory connectionFactory;
+        private readonly BookRepository bookRepository;
+
+        
         public MainWindow()
         {
-            I
+            InitializeComponent();
+        }
+
+        private void booksBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bookRepository.ShowBooks(books);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace BookStore.Data
         {
             _connectionString = File.ReadAllText(_configPath).Trim();      
         }
-        
+       
         public MySqlConnection CreateConnection()
         {
             return new MySqlConnection(_connectionString);
