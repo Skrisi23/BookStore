@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\Controllers\" />
     <Folder Include="Application\DTOs\" />
     <Folder Include="Domain\Models\" />
     <Folder Include="Tests\" />
