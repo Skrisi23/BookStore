@@ -2,65 +2,55 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Backend.Api.Controllers
 {
     [ApiController]
-    [Route("Api/[controller]")]
-
-    public class BooksController : Controller
+    [Route("api/[controller]")] // => api/Copies ha az osztály neve CopiesController
+    public class CopiesController : ControllerBase
     {
-
         private readonly BookStoreContext _context;
 
-        public BooksController(BookStoreContext context)
+        public CopiesController(BookStoreContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-
         public IActionResult GetAll()
         {
-            return Ok(_context.books.ToList());
+            return Ok(_context.copies.ToList());
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(ulong id)
         {
-            var user = _context.books.Find(id);
-            return Ok(user);
+            var copy = _context.copies.Find(id);
+            return Ok(copy);
         }
-
 
         [HttpPost]
-        public IActionResult Create(book book)
+        public IActionResult Create(copy copy)
         {
-            _context.books.Add(book);
+            _context.copies.Add(copy);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(GetById), new {id = book.id }, book);
+            return CreatedAtAction(nameof(GetById), new { id = copy.id }, copy);
         }
-        
 
         [HttpPut("{id}")]
-        public IActionResult Update(ulong id, book book)
+        public IActionResult Update(ulong id, copy copy)
         {
-            _context.Entry(book).State = EntityState.Modified;
+            _context.Entry(copy).State = EntityState.Modified;
             _context.SaveChanges();
             return NoContent();
         }
-
-
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteById(ulong id)
+        public IActionResult Delete(ulong id)
         {
-            var book = _context.books.Find(id);
-            _context.Remove(book);
+            var copy = _context.copies.Find(id);
+            _context.copies.Remove(copy);
             _context.SaveChanges();
             return NoContent();
         }
-
-
     }
 }
