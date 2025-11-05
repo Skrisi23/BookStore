@@ -46,7 +46,7 @@ function App() {
             {renderPage()}
           </main>
           <Footer />
-        </div>
+    </div>
       </CartProvider>
     </AuthProvider>
   );
