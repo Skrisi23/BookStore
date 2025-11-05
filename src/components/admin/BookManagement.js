@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { mockBooks } from '../../data/mockData';
 
 function BookManagement() {
   const [books, setBooks] = useState([]);
-  const [editingBook, setEditingBook] = useState(null);
 
   useEffect(() => {
     const savedBooks = localStorage.getItem('adminBooks');

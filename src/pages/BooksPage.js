@@ -13,7 +13,6 @@ function BooksPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    
     setTimeout(() => {
       setBooks(mockBooks);
       setFilteredBooks(mockBooks);
@@ -24,12 +23,10 @@ function BooksPage() {
   useEffect(() => {
     let filtered = books;
 
-    
     if (selectedCategory !== 'Minden') {
       filtered = filtered.filter(book => book.category === selectedCategory);
     }
 
-    
     if (searchTerm) {
       filtered = filtered.filter(book =>
         book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -43,7 +40,6 @@ function BooksPage() {
   return (
     <div className="container-fluid mt-4">
       <div className="row">
-        {/* Bal oldali kategória szűrő */}
         <div className="col-md-2">
           <CategoryFilter
             categories={categories}
@@ -52,7 +48,6 @@ function BooksPage() {
           />
         </div>
 
-        {/* Jobb oldali könyvek */}
         <div className="col-md-10">
           <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
           
@@ -70,4 +65,4 @@ function BooksPage() {
   );
 }
 
-export default BooksPage;
+export default BooksPage;  
