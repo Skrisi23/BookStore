@@ -1,4 +1,4 @@
-// src/context/AuthContext.js
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { mockUsers } from '../data/mockData';
 
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    // Ellenőrizd localStorage-ban van-e bejelentkezve
+    
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       setCurrentUser(JSON.parse(savedUser));
