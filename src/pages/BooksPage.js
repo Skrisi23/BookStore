@@ -1,46 +1,71 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import BookList from '../components/books/BookList';
-import AddBookForm from '../components/AddBookForm';
-import EditBookModal from '../components/EditBookModal';
+import CategoryFilter from '../components/books/CategoryFilter';
+import SearchBar from '../components/common/SearchBar';
+import { mockBooks, categories } from '../data/mockData';
 
-function BooksPage({ books, authors, onAddBook, onUpdateBook, onDeleteBook, onRefresh }) {
-  const [editingBook, setEditingBook] = useState(null);
+function BooksPage() {
+  const [books, setBooks] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('Minden');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Biztosan törölni szeretnéd ezt a könyvet?')) {
-      await onDeleteBook(id);
-      onRefresh();
+  useEffect(() => {
+    
+    setTimeout(() => {
+      setBooks(mockBooks);
+      setFilteredBooks(mockBooks);
+      setLoading(false);
+    }, 500);
+  }, []);
+
+  useEffect(() => {
+    let filtered = books;
+
+    
+    if (selectedCategory !== 'Minden') {
+      filtered = filtered.filter(book => book.category === selectedCategory);
     }
-  };
 
-  const handleUpdate = async (id, data) => {
-    await onUpdateBook(id, data);
-    onRefresh();
-    setEditingBook(null);
-  };
+    
+    if (searchTerm) {
+      filtered = filtered.filter(book =>
+        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
-  const handleAdd = async (data) => {
-    await onAddBook(data);
-    onRefresh();
-  };
+    setFilteredBooks(filtered);
+  }, [selectedCategory, searchTerm, books]);
 
   return (
-    <div>
-      <h2 className="mb-4">Könyvek kezelése</h2>
-      <AddBookForm authors={authors} onAdd={handleAdd} />
-      <BookList 
-        books={books}
-        onEdit={setEditingBook}
-        onDelete={handleDelete}
-      />
-      {editingBook && (
-        <EditBookModal
-          book={editingBook}
-          authors={authors}
-          onUpdate={handleUpdate}
-          onClose={() => setEditingBook(null)}
-        />
-      )}
+    <div className="container-fluid mt-4">
+      <div className="row">
+        {/* Bal oldali kategória szűrő */}
+        <div className="col-md-2">
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+        </div>
+
+        {/* Jobb oldali könyvek */}
+        <div className="col-md-10">
+          <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+          
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h4>
+              {selectedCategory === 'Minden' ? 'Összes könyv' : selectedCategory}
+              <span className="badge bg-secondary ms-2">{filteredBooks.length}</span>
+            </h4>
+          </div>
+
+          <BookList books={filteredBooks} loading={loading} />
+        </div>
+      </div>
     </div>
   );
 }
