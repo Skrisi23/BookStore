@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BookList from '../components/BookList';
+import BookList from '../components/books/BookList';
 import AddBookForm from '../components/AddBookForm';
 import EditBookModal from '../components/EditBookModal';
 
