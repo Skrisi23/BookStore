@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // => api/Copies ha az osztály neve CopiesController
+    [Route("api/[controller]")]
     public class CopiesController : ControllerBase
     {
         private readonly BookStoreContext _context;

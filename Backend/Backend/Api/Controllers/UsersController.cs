@@ -1,54 +1,66 @@
-﻿using Backend.Domain.Model;
+﻿using AutoMapper;
+using Backend.Application.DTOs;
+using Backend.Application.Mappers;
+using Backend.Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 namespace Backend.Api.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
-
-    public class AuthorController : ControllerBase
+    public class UsersController : ControllerBase
     {
-        private readonly BookStoreContext _context;
 
-        public AuthorController(BookStoreContext context)
+        private readonly BookStoreContext _context;
+        private readonly IMapper _mapper;
+
+
+        public UsersController(BookStoreContext context, IMapper imapper)
         {
             _context = context;
+            _mapper = imapper;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_context.authors.ToList());
+            var user = _context.users.ToList();
+            var useDto = _mapper.Map<List<UserGetDto>>(user);
+
+            return Ok(useDto);
         }
+
         [HttpGet("{id}")]
-        public IActionResult GetById(ulong id) 
+        public IActionResult GetById(ulong id)
         {
-            var author = _context.authors.Find(id);
-            return Ok(author);
+            var user = _context.users.Find(id);
+            return Ok(user);
         }
+
         [HttpPost]
-        public IActionResult Create(author author) 
-        { 
-            _context.authors.Add(author);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(GetById), new {id = author.id}, author);
-        }
-        [HttpPut("{id}")]
-        public IActionResult Update(ulong id, author author)
+        public IActionResult Create(users user)
         {
-            _context.Entry(author).State = EntityState.Modified;
+            _context.users.Add(user);
+            _context.SaveChanges();
+            return CreatedAtAction(nameof(GetById), new { id = user.id }, user);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(ulong id, users user)
+        {
+            _context.Entry(user).State = EntityState.Modified;
             _context.SaveChanges();
             return NoContent();
         }
+
         [HttpDelete("{id}")]
         public IActionResult Delete(ulong id)
         {
-            var author = _context.authors.Find(id);
-            _context.authors.Remove(author);
+            var user = _context.users.Find(id);
+            _context.users.Remove(user);
             _context.SaveChanges();
             return NoContent();
-
         }
     }
 }

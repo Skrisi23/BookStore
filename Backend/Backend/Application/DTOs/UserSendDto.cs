@@ -2,7 +2,7 @@
 
 namespace Backend.Application.DTOs
 {
-    public class UserDto
+    public class UserSendDto
     {
 
         public string nev { get; set; } = null!;
