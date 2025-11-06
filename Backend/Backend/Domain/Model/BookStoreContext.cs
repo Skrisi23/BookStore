@@ -19,7 +19,7 @@ public partial class BookStoreContext : DbContext
 
     public virtual DbSet<rental> rentals { get; set; }
 
-    public virtual DbSet<user> users { get; set; }
+    public virtual DbSet<users> users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -65,7 +65,7 @@ public partial class BookStoreContext : DbContext
                 .HasConstraintName("fk_rentals_user");
         });
 
-        modelBuilder.Entity<user>(entity =>
+        modelBuilder.Entity<users>(entity =>
         {
             entity.HasKey(e => e.id).HasName("PRIMARY");
 

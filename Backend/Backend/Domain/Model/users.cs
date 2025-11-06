@@ -9,7 +9,7 @@ namespace Backend.Domain.Model;
 [Index("email", Name = "email", IsUnique = true)]
 [MySqlCharSet("utf8mb4")]
 [MySqlCollation("utf8mb4_hungarian_ci")]
-public partial class user
+public partial class users
 {
     [Key]
     [Column(TypeName = "int(11)")]

@@ -32,5 +32,5 @@ public partial class rental
 
     [ForeignKey("user_id")]
     [InverseProperty("rentals")]
-    public virtual user user { get; set; } = null!;
+    public virtual users user { get; set; } = null!;
 }
