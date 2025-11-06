@@ -26,6 +26,8 @@ var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BookStoreContext>(options =>
     options.UseMySql(conn, ServerVersion.AutoDetect(conn)));
 
+builder.Services.AddAutoMapper(typeof(Backend.Application.Mappers.AutoMapperProfile).Assembly);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

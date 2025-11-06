@@ -18,6 +18,6 @@ namespace Backend.Application.DTOs
 
         public virtual copy copy { get; set; } = null!;
 
-        public virtual user user { get; set; } = null!;
+        public virtual users user { get; set; } = null!;
     }
 }

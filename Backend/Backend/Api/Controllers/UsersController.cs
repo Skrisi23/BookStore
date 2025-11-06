@@ -35,6 +35,7 @@ namespace Backend.Api.Controllers
         public IActionResult GetById(ulong id)
         {
             var user = _context.users.Find(id);
+            var useDto = _mapper.Map<List<UserGetDto>>(user);
             return Ok(user);
         }
 

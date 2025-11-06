@@ -2,7 +2,7 @@
 
 namespace Backend.Application.DTOs
 {
-    public class UserDto
+    public class UserGetDto
     {
         public int id { get; set; }
 
