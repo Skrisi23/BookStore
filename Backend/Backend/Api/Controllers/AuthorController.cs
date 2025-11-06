@@ -42,7 +42,7 @@ namespace Backend.Api.Controllers
             return NoContent();
         }
         [HttpDelete("{id}")]
-        public IActionResult Delete(ulong id)
+        public IActionResult Delete(int id)
         {
             var author = _context.authors.Find(id);
             _context.authors.Remove(author);
