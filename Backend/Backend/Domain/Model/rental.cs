@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace Backend.Domain.Model;
 
@@ -28,9 +29,11 @@ public partial class rental
 
     [ForeignKey("copy_id")]
     [InverseProperty("rentals")]
+    [JsonIgnore]
     public virtual copy copy { get; set; } = null!;
 
     [ForeignKey("user_id")]
     [InverseProperty("rentals")]
+    [JsonIgnore]
     public virtual users user { get; set; } = null!;
 }
