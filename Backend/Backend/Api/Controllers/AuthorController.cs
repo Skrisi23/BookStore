@@ -22,7 +22,7 @@ namespace Backend.Api.Controllers
             return Ok(_context.authors.ToList());
         }
         [HttpGet("{id}")]
-        public IActionResult GetById(ulong id) 
+        public IActionResult GetById(int id) 
         {
             var author = _context.authors.Find(id);
             return Ok(author);
@@ -35,7 +35,7 @@ namespace Backend.Api.Controllers
             return CreatedAtAction(nameof(GetById), new {id = author.id}, author);
         }
         [HttpPut("{id}")]
-        public IActionResult Update(ulong id, author author)
+        public IActionResult Update(int id, author author)
         {
             _context.Entry(author).State = EntityState.Modified;
             _context.SaveChanges();
