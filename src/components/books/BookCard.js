@@ -7,7 +7,7 @@ function mapApiBookToUi(apiBook = {}, authorName = null) {
   return {
     id: apiBook.id,
     title: apiBook.cim || apiBook.title || 'Név nélküli könyv',
-    coverImage: apiBook.boritokep || apiBook.coverImage || '',
+    coverImage: apiBook.boritokep || apiBook.coverImage || 'https://via.placeholder.com/300x300?text=Book',
     author: authorName || apiBook.szerzo || apiBook.author || `#${apiBook.author_id || ''}`,
     category: apiBook.kategoria || apiBook.category || '',
     
@@ -44,7 +44,7 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
     if (!bookId) return; 
 
     const ac = new AbortController();
-    const base = apiBaseUrl || process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    const base = apiBaseUrl || process.env.REACT_APP_API_URL || '';
 
     async function load() {
       try {
@@ -52,13 +52,13 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
         setError(null);
 
         
-        const res = await fetch(`${base}/Api/Books/${bookId}`, { signal: ac.signal });
+        const res = await fetch(`${base}/api/Books/${bookId}`, { signal: ac.signal });
         if (!res.ok) {
           
          
           if (res.status === 404) {
             
-            const allRes = await fetch(`${base}/Api/Books`, { signal: ac.signal });
+            const allRes = await fetch(`${base}/api/Books`, { signal: ac.signal });
             if (!allRes.ok) throw new Error(`Könyvek lekérése sikertelen (${allRes.status})`);
             const allBooks = await allRes.json();
             const apiBook = (Array.isArray(allBooks) ? allBooks.find(b => b.id === Number(bookId)) : null);
@@ -168,7 +168,7 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
     <div className="col-md-3 mb-4">
       <div className="card h-100 shadow-sm">
         <img
-          src={book.coverImage}
+          src={book.coverImage || 'https://via.placeholder.com/300x300?text=Book'}
           className="card-img-top"
           alt={book.title}
           style={{ height: '300px', objectFit: 'cover' }}

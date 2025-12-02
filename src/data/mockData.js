@@ -11,78 +11,7 @@ export const categories = [
   "Klasszikus"
 ];
 
-export const mockBooks = [
-  {
-    id: 1,
-    title: "A Gyűrűk Ura",
-    author: "J.R.R. Tolkien",
-    category: "Fantasy",
-    year: 1954,
-    isbn: "978-0-618-00222-1",
-    price: 4500,
-    available: true,
-    availableForRent: true,
-    rentalPrice: 500,
-    coverImage: "https://via.placeholder.com/200x300?text=LOTR",
-    description: "Egy epikus fantasy kaland a Középföldén..."
-  },
-  {
-    id: 2,
-    title: "Harry Potter és a Bölcsek Köve",
-    author: "J.K. Rowling",
-    category: "Fantasy",
-    year: 1997,
-    isbn: "978-0-439-70818-8",
-    price: 3200,
-    available: true,
-    availableForRent: true,
-    rentalPrice: 400,
-    coverImage: "https://via.placeholder.com/200x300?text=HP",
-    description: "Harry Potter felfedezi, hogy varázsló..."
-  },
-  {
-    id: 3,
-    title: "1984",
-    author: "George Orwell",
-    category: "Klasszikus",
-    year: 1949,
-    isbn: "978-0-452-28423-4",
-    price: 2800,
-    available: true,
-    availableForRent: true,
-    rentalPrice: 350,
-    coverImage: "https://via.placeholder.com/200x300?text=1984",
-    description: "Egy disztópikus víziója a jövőnek..."
-  },
-  {
-    id: 4,
-    title: "Dűne",
-    author: "Frank Herbert",
-    category: "Sci-Fi",
-    year: 1965,
-    isbn: "978-0-441-17271-9",
-    price: 5200,
-    available: true,
-    availableForRent: true,
-    rentalPrice: 600,
-    coverImage: "https://via.placeholder.com/200x300?text=Dune",
-    description: "Sci-fi eposz a sivatagi bolygón..."
-  },
-  {
-    id: 5,
-    title: "A Da Vinci-kód",
-    author: "Dan Brown",
-    category: "Thriller",
-    year: 2003,
-    isbn: "978-0-307-47467-1",
-    price: 3500,
-    available: false,
-    availableForRent: false,
-    rentalPrice: 450,
-    coverImage: "https://via.placeholder.com/200x300?text=DaVinci",
-    description: "Rejtélyek és kódok a történelemben..."
-  }
-];
+
 
 export const mockAuthors = [
   { id: 1, name: "J.R.R. Tolkien", birthYear: 1892, country: "Egyesült Királyság" },

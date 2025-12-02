@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { mockUsers } from '../data/mockData';
+import { getUsers } from '../api';
 
 const AuthContext = createContext();
 
@@ -23,19 +23,34 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (username, password) => {
-    const user = mockUsers.find(
-      u => u.username === username && u.password === password
-    );
-    
-    if (user) {
-      const userWithoutPassword = { ...user };
-      delete userWithoutPassword.password;
-      setCurrentUser(userWithoutPassword);
-      localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
-      return { success: true, user: userWithoutPassword };
+  const login = async (username, password) => {
+    try {
+      // Ha van dedikált login endpoint, azt használd:
+      // const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/Users/login`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ username, password })
+      // });
+      // if (!res.ok) return { success: false, message: 'Hibás felhasználónév vagy jelszó' };
+      // const userData = await res.json();
+
+      // Átmeneti megoldás: lekérjük a felhasználókat, és kliens oldalon ellenőrzünk,
+      // amíg nincs kész a login endpoint.
+      const users = await getUsers();
+      const user = Array.isArray(users) ? users.find(u => u.username === username) : null;
+      if (!user) return { success: false, message: 'Hibás felhasználónév vagy jelszó' };
+
+      // FIGYELEM: Jelszó ellenőrzést backendnek kell végeznie!
+      // Itt csak demonstráció, hogy ne mock adatra támaszkodjunk.
+
+      const userWithoutSensitive = { ...user };
+      delete userWithoutSensitive.password;
+      setCurrentUser(userWithoutSensitive);
+      localStorage.setItem('currentUser', JSON.stringify(userWithoutSensitive));
+      return { success: true, user: userWithoutSensitive };
+    } catch (e) {
+      return { success: false, message: 'Bejelentkezés sikertelen' };
     }
-    return { success: false, message: 'Hibás felhasználónév vagy jelszó' };
   };
 
   const logout = () => {

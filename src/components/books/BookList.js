@@ -17,7 +17,10 @@ export default function BooksList() {
         
         setBooks(Array.isArray(data) ? data : []);
       } catch (err) {
-        if (err.name !== 'AbortError') setError(err.message || String(err));
+        if (err.name !== 'AbortError') {
+          const base = process.env.REACT_APP_API_URL || '';
+          setError(`Hálózati hiba: ${err.message || String(err)} (próbált URL: ${base}/api/Books)`);
+        }
       } finally {
         setLoading(false);
       }
@@ -27,7 +30,12 @@ export default function BooksList() {
   }, []);
 
   if (loading) return <div>Betöltés...</div>;
-  if (error) return <div>Hiba: {error}</div>;
+  if (error) return (
+    <div className="alert alert-danger" role="alert">
+      <i className="bi bi-exclamation-triangle me-2"></i>
+      {error}
+    </div>
+  );
   if (!books.length) return <div>Nincsenek könyvek.</div>;
 
   return (

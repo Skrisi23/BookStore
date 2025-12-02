@@ -1,41 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import BookList from '../components/books/BookList';
 import CategoryFilter from '../components/books/CategoryFilter';
 import SearchBar from '../components/common/SearchBar';
-import { mockBooks, categories } from '../data/mockData';
+import { categories } from '../data/mockData';
 
 function BooksPage() {
-  const [books, setBooks] = useState([]);
-  const [filteredBooks, setFilteredBooks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Minden');
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setBooks(mockBooks);
-      setFilteredBooks(mockBooks);
-      setLoading(false);
-    }, 500);
-  }, []);
-
-  useEffect(() => {
-    let filtered = books;
-
-    if (selectedCategory !== 'Minden') {
-      filtered = filtered.filter(book => book.category === selectedCategory);
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(book =>
-        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredBooks(filtered);
-  }, [selectedCategory, searchTerm, books]);
+  
+  // Megjegyzés: A tényleges szűrés/keresés bekötése a backendhez
+  // külön lépés lesz. Jelenleg a <BookList /> maga tölti be az adatokat
+  // az API-ból (fetch), így itt csak az UI elemek maradnak.
 
   return (
     <div className="container-fluid mt-4">
@@ -52,13 +28,10 @@ function BooksPage() {
           <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
           
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h4>
-              {selectedCategory === 'Minden' ? 'Összes könyv' : selectedCategory}
-              <span className="badge bg-secondary ms-2">{filteredBooks.length}</span>
-            </h4>
+            <h4>{selectedCategory === 'Minden' ? 'Összes könyv' : selectedCategory}</h4>
           </div>
 
-          <BookList books={filteredBooks} loading={loading} />
+          <BookList />
         </div>
       </div>
     </div>

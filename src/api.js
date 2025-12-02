@@ -1,17 +1,24 @@
-const defaultBaseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+// Use relative paths by default; CRA dev server can proxy to backend
+const defaultBaseUrl = process.env.REACT_APP_API_URL || "";
 
 const ENDPOINTS = {
   authors: `${defaultBaseUrl}/api/Author`,
   authorById: (id) => `${defaultBaseUrl}/api/Author/${id}`,
-  books: `${defaultBaseUrl}/Api/Books`, // ha a backend /api/Books, módosítsd ide
-  bookById: (id) => `${defaultBaseUrl}/Api/Books/${id}`,
+  books: `${defaultBaseUrl}/api/Books`,
+  bookById: (id) => `${defaultBaseUrl}/api/Books/${id}`,
   copies: `${defaultBaseUrl}/api/Copies`,
   rentals: `${defaultBaseUrl}/api/Rentals`,
   users: `${defaultBaseUrl}/api/Users`,
 };
 
 async function fetchJson(url, options = {}) {
-  const res = await fetch(url, options);
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      'Accept': 'application/json',
+      ...(options.headers || {})
+    }
+  });
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Fetch error ${res.status}: ${text}`);

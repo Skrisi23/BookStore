@@ -1,15 +1,28 @@
 
 import React, { useState, useEffect } from 'react';
-import { mockBooks } from '../data/mockData';
+import { getBooks } from '../api';
+
 import BookCard from '../components/books/BookCard';
 
 function HomePage({ onNavigate }) {
   const [featuredBooks, setFeaturedBooks] = useState([]);
 
   useEffect(() => {
-    
-    const shuffled = [...mockBooks].sort(() => 0.5 - Math.random());
-    setFeaturedBooks(shuffled.slice(0, 4));
+    const ac = new AbortController();
+    async function load() {
+      try {
+        const data = await getBooks(ac.signal);
+        const list = Array.isArray(data) ? data : [];
+        // Véletlenszerű 4 könyv kiválasztása
+        const shuffled = [...list].sort(() => Math.random() - 0.5);
+        setFeaturedBooks(shuffled.slice(0, 4));
+      } catch (e) {
+        // Ha hiba van, hagyjuk üresen a kiemelt listát
+        setFeaturedBooks([]);
+      }
+    }
+    load();
+    return () => ac.abort();
   }, []);
 
   return (

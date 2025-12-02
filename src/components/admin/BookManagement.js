@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { mockBooks } from '../../data/mockData';
+import { getBooks } from '../../api';
+
 
 function BookManagement() {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    const savedBooks = localStorage.getItem('adminBooks');
-    setBooks(savedBooks ? JSON.parse(savedBooks) : mockBooks);
+    const ac = new AbortController();
+    async function load() {
+      try {
+        const data = await getBooks(ac.signal);
+        setBooks(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('Könyvek betöltése sikertelen:', e);
+        setBooks([]);
+      }
+    }
+    load();
+    return () => ac.abort();
   }, []);
 
   const handleDelete = (bookId) => {
     if (window.confirm('Biztosan törölni szeretnéd ezt a könyvet?')) {
       const updatedBooks = books.filter(book => book.id !== bookId);
       setBooks(updatedBooks);
-      localStorage.setItem('adminBooks', JSON.stringify(updatedBooks));
+      // TODO: Itt backend DELETE hívás kellene; jelenleg csak UI frissítés
     }
   };
 
@@ -24,7 +35,7 @@ function BookManagement() {
         : book
     );
     setBooks(updatedBooks);
-    localStorage.setItem('adminBooks', JSON.stringify(updatedBooks));
+    // TODO: Itt backend PATCH/PUT hívás kellene; jelenleg csak UI frissítés
   };
 
   return (

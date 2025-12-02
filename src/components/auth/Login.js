@@ -8,16 +8,20 @@ function Login({ onSuccess, onSwitchToRegister }) {
   const [error, setError] = useState('');
   const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    const result = login(username, password);
-    if (result.success) {
-      alert(`Üdv, ${result.user.name}!`);
-      onSuccess();
-    } else {
-      setError(result.message);
+    try {
+      const result = await login(username, password);
+      if (result && result.success) {
+        alert(`Üdv, ${result.user?.name || username}!`);
+        onSuccess();
+      } else {
+        setError((result && result.message) || 'Bejelentkezés sikertelen');
+      }
+    } catch (err) {
+      setError('Bejelentkezés közben hiba történt');
     }
   };
 
