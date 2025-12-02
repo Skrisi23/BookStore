@@ -2,7 +2,9 @@ const defaultBaseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 const ENDPOINTS = {
   authors: `${defaultBaseUrl}/api/Author`,
-  books: `${defaultBaseUrl}/api/Books`, 
+  authorById: (id) => `${defaultBaseUrl}/api/Author/${id}`,
+  books: `${defaultBaseUrl}/Api/Books`, // ha a backend /api/Books, módosítsd ide
+  bookById: (id) => `${defaultBaseUrl}/Api/Books/${id}`,
   copies: `${defaultBaseUrl}/api/Copies`,
   rentals: `${defaultBaseUrl}/api/Rentals`,
   users: `${defaultBaseUrl}/api/Users`,
@@ -20,8 +22,14 @@ async function fetchJson(url, options = {}) {
 export async function getAuthors(signal) {
   return fetchJson(ENDPOINTS.authors, { signal });
 }
+export async function getAuthorById(id, signal) {
+  return fetchJson(ENDPOINTS.authorById(id), { signal });
+}
 export async function getBooks(signal) {
   return fetchJson(ENDPOINTS.books, { signal });
+}
+export async function getBookById(id, signal) {
+  return fetchJson(ENDPOINTS.bookById(id), { signal });
 }
 export async function getCopies(signal) {
   return fetchJson(ENDPOINTS.copies, { signal });
