@@ -1,33 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BookCard from './BookCard';
+import { getBooks } from '../../api';
 
-function BookList({ books, loading }) {
-  if (loading) {
-    return (
-      <div className="text-center py-5">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Betöltés...</span>
-        </div>
-      </div>
-    );
-  }
 
-  if (books.length === 0) {
-    return (
-      <div className="alert alert-info text-center">
-        <i className="bi bi-info-circle me-2"></i>
-        Nincs megjeleníthető könyv a kiválasztott kategóriában.
-      </div>
-    );
-  }
+export default function BooksList() {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const ac = new AbortController();
+    async function load() {
+      try {
+        setLoading(true);
+        const data = await getBooks(ac.signal);
+        
+        setBooks(Array.isArray(data) ? data : []);
+      } catch (err) {
+        if (err.name !== 'AbortError') setError(err.message || String(err));
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+    return () => ac.abort();
+  }, []);
+
+  if (loading) return <div>Betöltés...</div>;
+  if (error) return <div>Hiba: {error}</div>;
+  if (!books.length) return <div>Nincsenek könyvek.</div>;
 
   return (
     <div className="row">
-      {books.map(book => (
-        <BookCard key={book.id} book={book} />
+      {books.map((b) => (
+        
+        <BookCard key={b.id} book={b} />
+        
       ))}
     </div>
   );
 }
-
-export default BookList;
