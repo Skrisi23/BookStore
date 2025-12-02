@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 /* src/index.css */
-=======
->>>>>>> b8278f917f35818945ed33cd372e775aee89f301
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -15,7 +12,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-<<<<<<< HEAD
 
 * {
   box-sizing: border-box;
@@ -24,5 +20,3 @@ code {
 html {
   scroll-behavior: smooth;
 }
-=======
->>>>>>> b8278f917f35818945ed33cd372e775aee89f301
