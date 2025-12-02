@@ -26,7 +26,7 @@ namespace Backend.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(ulong id)
+        public IActionResult GetById(int id)
         {
             var user = _context.books.Find(id);
             return Ok(user);
@@ -43,7 +43,7 @@ namespace Backend.Api.Controllers
         
 
         [HttpPut("{id}")]
-        public IActionResult Update(ulong id, book book)
+        public IActionResult Update(int id, book book)
         {
             _context.Entry(book).State = EntityState.Modified;
             _context.SaveChanges();
@@ -53,7 +53,7 @@ namespace Backend.Api.Controllers
 
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteById(ulong id)
+        public IActionResult DeleteById(int id)
         {
             var book = _context.books.Find(id);
             _context.Remove(book);
