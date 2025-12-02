@@ -22,7 +22,7 @@ namespace Backend.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(ulong id)
+        public IActionResult GetById(int id)
         {
             var copy = _context.copies.Find(id);
             return Ok(copy);
@@ -37,7 +37,7 @@ namespace Backend.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(ulong id, copy copy)
+        public IActionResult Update(int id, copy copy)
         {
             _context.Entry(copy).State = EntityState.Modified;
             _context.SaveChanges();
@@ -45,7 +45,7 @@ namespace Backend.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(ulong id)
+        public IActionResult Delete(int id)
         {
             var copy = _context.copies.Find(id);
             _context.copies.Remove(copy);
