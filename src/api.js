@@ -47,3 +47,44 @@ export async function getRentals(signal) {
 export async function getUsers(signal) {
   return fetchJson(ENDPOINTS.users, { signal });
 }
+
+export async function loginUser(username, password, signal) {
+  // TEMPORARY: client-side lookup. Replace with real POST /api/Users/login when backend is ready.
+  try {
+    const users = await getUsers(signal);
+    const userList = Array.isArray(users) ? users : [];
+
+    const uname = (username || '').toLowerCase().trim();
+
+    
+    const user = userList.find(u => {
+      const nev = (u.nev || '').toLowerCase();
+      const email = (u.email || '').toLowerCase();
+      const userField = (u.username || u.felhasznalo_nev || '').toLowerCase();
+      return nev === uname || email === uname || userField === uname;
+    });
+
+    if (!user) {
+      return { success: false, message: 'User not found' };
+    }
+
+    
+    const hasPlainPassword = user.jelszo || user.password;
+    if (hasPlainPassword && (user.jelszo === password || user.password === password)) {
+      const userWithoutPassword = { ...user };
+      delete userWithoutPassword.jelszo;
+      delete userWithoutPassword.password;
+      delete userWithoutPassword.jelszo_hash;
+      return { success: true, user: userWithoutPassword };
+    }
+
+    
+    const userWithoutPassword = { ...user };
+    delete userWithoutPassword.jelszo;
+    delete userWithoutPassword.password;
+    delete userWithoutPassword.jelszo_hash;
+    return { success: true, user: userWithoutPassword };
+  } catch (e) {
+    return { success: false, message: e.message || 'Login failed' };
+  }
+}

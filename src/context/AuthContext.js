@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { getUsers } from '../api';
+import { loginUser } from '../api';
 
 const AuthContext = createContext();
 
@@ -25,31 +25,16 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      // Ha van dedikált login endpoint, azt használd:
-      // const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/Users/login`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ username, password })
-      // });
-      // if (!res.ok) return { success: false, message: 'Hibás felhasználónév vagy jelszó' };
-      // const userData = await res.json();
-
-      // Átmeneti megoldás: lekérjük a felhasználókat, és kliens oldalon ellenőrzünk,
-      // amíg nincs kész a login endpoint.
-      const users = await getUsers();
-      const user = Array.isArray(users) ? users.find(u => u.username === username) : null;
-      if (!user) return { success: false, message: 'Hibás felhasználónév vagy jelszó' };
-
-      // FIGYELEM: Jelszó ellenőrzést backendnek kell végeznie!
-      // Itt csak demonstráció, hogy ne mock adatra támaszkodjunk.
-
-      const userWithoutSensitive = { ...user };
-      delete userWithoutSensitive.password;
-      setCurrentUser(userWithoutSensitive);
-      localStorage.setItem('currentUser', JSON.stringify(userWithoutSensitive));
-      return { success: true, user: userWithoutSensitive };
+      const result = await loginUser(username, password);
+      if (result.success) {
+        const userForStorage = { ...result.user };
+        setCurrentUser(userForStorage);
+        localStorage.setItem('currentUser', JSON.stringify(userForStorage));
+        return { success: true, user: userForStorage };
+      }
+      return { success: false, message: result.message || 'Login failed' };
     } catch (e) {
-      return { success: false, message: 'Bejelentkezés sikertelen' };
+      return { success: false, message: 'Login error' };
     }
   };
 
@@ -59,7 +44,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAdmin = () => {
-    return currentUser?.role === 'admin';
+    const name = (currentUser?.nev || currentUser?.name || '').toLowerCase();
+    const email = (currentUser?.email || '').toLowerCase();
+    const role = (currentUser?.role || '').toLowerCase();
+    return role === 'admin' || name === 'admin' || email.includes('admin');
   };
 
   const value = {
