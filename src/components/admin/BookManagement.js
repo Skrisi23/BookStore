@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getBooks } from '../../api';
+import { getBooks, getAuthors } from '../../api';
 
 
 function BookManagement() {
@@ -9,16 +9,29 @@ function BookManagement() {
     const ac = new AbortController();
     async function load() {
       try {
-        const data = await getBooks(ac.signal);
-        // API mezőnevek normalizálása UI-hoz
-        const normalized = Array.isArray(data) ? data.map(book => ({
-          id: book.id,
-          title: book.cim || book.title || 'Név nélküli',
-          author: book.szerzo || book.author || 'Ismeretlen',
-          category: book.kategoria || book.category || '',
-          price: book.ar || book.price || 0,
-          available: typeof book.elerheto !== 'undefined' ? book.elerheto : (book.available ?? true)
-        })) : [];
+        // Párhuzamosan lekérjük a könyveket és a szerzőket
+        const [booksData, authorsData] = await Promise.all([
+          getBooks(ac.signal),
+          getAuthors(ac.signal).catch(() => [])
+        ]);
+
+        const authors = Array.isArray(authorsData) ? authorsData : [];
+
+        // API mezőnevek normalizálása és szerző összekapcsolása
+        const normalized = Array.isArray(booksData) ? booksData.map(book => {
+          const authorId = book.author_id || book.szerzo_id;
+          const author = authors.find(a => a.id === authorId);
+          const authorName = author?.nev || author?.name || book.szerzo || book.author || 'Ismeretlen';
+
+          return {
+            id: book.id,
+            title: book.cim || book.title || 'Név nélküli',
+            author: authorName,
+            category: book.kategoria || book.category || '',
+            price: book.ar || book.price || 0,
+            available: typeof book.elerheto !== 'undefined' ? book.elerheto : (book.available ?? true)
+          };
+        }) : [];
         setBooks(normalized);
       } catch (e) {
         console.error('Könyvek betöltése sikertelen:', e);
