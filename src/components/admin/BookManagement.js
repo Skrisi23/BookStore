@@ -10,7 +10,16 @@ function BookManagement() {
     async function load() {
       try {
         const data = await getBooks(ac.signal);
-        setBooks(Array.isArray(data) ? data : []);
+        // API mezőnevek normalizálása UI-hoz
+        const normalized = Array.isArray(data) ? data.map(book => ({
+          id: book.id,
+          title: book.cim || book.title || 'Név nélküli',
+          author: book.szerzo || book.author || 'Ismeretlen',
+          category: book.kategoria || book.category || '',
+          price: book.ar || book.price || 0,
+          available: typeof book.elerheto !== 'undefined' ? book.elerheto : (book.available ?? true)
+        })) : [];
+        setBooks(normalized);
       } catch (e) {
         console.error('Könyvek betöltése sikertelen:', e);
         setBooks([]);

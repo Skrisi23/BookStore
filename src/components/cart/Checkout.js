@@ -36,7 +36,7 @@ function Checkout({ onSuccess, onCancel }) {
       status: 'processing'
     };
 
-    // Mentsd localStorage-ba (backend híján)
+    
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
