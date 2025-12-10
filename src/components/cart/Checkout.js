@@ -1,4 +1,4 @@
-// src/components/cart/Checkout.js
+
 import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';

@@ -1,4 +1,4 @@
-// src/data/mockData.js
+
 
 export const categories = [
   "Minden",

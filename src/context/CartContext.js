@@ -25,7 +25,7 @@ export const CartProvider = ({ children }) => {
   }, [cartItems]);
 
   const addToCart = (book, type = 'purchase') => {
-    // type: 'purchase' vagy 'rental'
+    
     const existingItem = cartItems.find(
       item => item.id === book.id && item.type === type
     );

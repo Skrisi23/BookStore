@@ -1,4 +1,4 @@
-// src/components/cart/CartItem.js
+
 import React from 'react';
 import { useCart } from '../../context/CartContext';
 
