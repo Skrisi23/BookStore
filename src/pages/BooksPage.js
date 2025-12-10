@@ -8,10 +8,6 @@ import { categories } from '../data/mockData';
 function BooksPage() {
   const [selectedCategory, setSelectedCategory] = useState('Minden');
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // Megjegyzés: A tényleges szűrés/keresés bekötése a backendhez
-  // külön lépés lesz. Jelenleg a <BookList /> maga tölti be az adatokat
-  // az API-ból (fetch), így itt csak az UI elemek maradnak.
 
   return (
     <div className="container-fluid mt-4">
@@ -31,7 +27,7 @@ function BooksPage() {
             <h4>{selectedCategory === 'Minden' ? 'Összes könyv' : selectedCategory}</h4>
           </div>
 
-          <BookList />
+          <BookList searchTerm={searchTerm} selectedCategory={selectedCategory} />
         </div>
       </div>
     </div>

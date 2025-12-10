@@ -13,12 +13,12 @@ function RentalManagement() {
       try {
         setLoading(true);
         
-        // Párhuzamosan lekérjük az összes szükséges adatot
+        
         const [rentalsData, booksData, usersData, copiesData] = await Promise.all([
           getRentals(ac.signal),
           getBooks(ac.signal),
           getUsers(ac.signal),
-          getCopies(ac.signal).catch(() => []) // Copies opcionális
+          getCopies(ac.signal).catch(() => []) 
         ]);
 
         const books = Array.isArray(booksData) ? booksData : [];
