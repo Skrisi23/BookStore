@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace Backend.Domain.Model;
 
@@ -18,5 +19,6 @@ public partial class author
     public string nev { get; set; } = null!;
 
     [InverseProperty("author")]
+    [JsonIgnore]
     public virtual ICollection<book> books { get; set; } = new List<book>();
 }

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace Backend.Domain.Model;
 
@@ -27,8 +28,10 @@ public partial class copy
 
     [ForeignKey("book_id")]
     [InverseProperty("copies")]
+    [JsonIgnore]
     public virtual book book { get; set; } = null!;
 
     [InverseProperty("copy")]
+    [JsonIgnore]
     public virtual ICollection<rental> rentals { get; set; } = new List<rental>();
 }
