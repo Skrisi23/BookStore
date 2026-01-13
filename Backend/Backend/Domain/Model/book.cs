@@ -26,6 +26,15 @@ public partial class book
     [Column(TypeName = "text")]
     public string? tartalom { get; set; }
 
+    [StringLength(255)]
+    public string? boritokep { get; set; }
+
+    [Column(TypeName = "decimal(10,2)")]
+    public decimal ar { get; set; }
+
+    [StringLength(100)]
+    public string kategoria { get; set; } = "Egyéb";
+
     [ForeignKey("author_id")]
     [InverseProperty("books")]
     public virtual author author { get; set; } = null!;
