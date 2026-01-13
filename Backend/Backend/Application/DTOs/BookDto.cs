@@ -1,7 +1,5 @@
 ﻿namespace Backend.Application.DTOs;
 
-namespace Backend.Application.DTOs
-{
 public class BookDto
 {
     public int Id { get; set; }

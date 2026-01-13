@@ -22,16 +22,13 @@ public partial class book
     [Column(TypeName = "int(11)")]
     public int author_id { get; set; }
 
-    
     [StringLength(255)]
     public string? boritokep { get; set; }
+
     public DateOnly? kiadasi_datum { get; set; }
 
     [Column(TypeName = "text")]
     public string? tartalom { get; set; }
-
-    [StringLength(255)]
-    public string? boritokep { get; set; }
 
     [Column(TypeName = "decimal(10,2)")]
     public decimal ar { get; set; }
