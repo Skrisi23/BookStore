@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import BookCard from './BookCard';
+import LoadingSpinner from '../common/LoadingSpinner';
 import { getBooks, getAuthors } from '../../api';
 
 
@@ -39,6 +40,7 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
         });
 
         setBooks(normalized);
+        setFilteredBooks(normalized); // Azonnal beállítjuk a teljes listát
       } catch (err) {
         if (err.name !== 'AbortError') {
           const base = process.env.REACT_APP_API_URL || '';
@@ -75,14 +77,25 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
     setFilteredBooks(filtered);
   }, [books, searchTerm, selectedCategory]);
 
-  if (loading) return <div>Betöltés...</div>;
+  if (loading) return <LoadingSpinner fullPage text="Könyvek betöltése..." />;
   if (error) return (
     <div className="alert alert-danger" role="alert">
       <i className="bi bi-exclamation-triangle me-2"></i>
       {error}
     </div>
   );
-  if (!filteredBooks.length) return <div>Nincsenek könyvek a megadott szűréshez.</div>;
+  
+  // Ha még nincs adat betöltve, mutassuk a spinnert
+  if (!books.length && !error) {
+    return <LoadingSpinner fullPage text="Könyvek betöltése..." />;
+  }
+  
+  if (!filteredBooks.length) return (
+    <div className="alert alert-info text-center py-5">
+      <i className="bi bi-search me-2"></i>
+      Nincsenek könyvek a megadott szűréshez.
+    </div>
+  );
 
   return (
     <div className="row">

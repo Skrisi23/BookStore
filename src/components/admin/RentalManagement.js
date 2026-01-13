@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getRentals, getBooks, getUsers, getCopies } from '../../api';
 import { useToast } from '../../context/ToastContext';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 function RentalManagement() {
   const [rentals, setRentals] = useState([]);
@@ -109,12 +110,8 @@ function RentalManagement() {
           Kölcsönzések kezelése
         </h4>
 
-        {loading && (
-          <div className="text-center py-4">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Betöltés...</span>
-            </div>
-          </div>
+        {(loading || rentals.length === 0) && !error && (
+          <LoadingSpinner fullPage text="Kölcsönzések betöltése..." />
         )}
 
         {error && (
@@ -124,7 +121,7 @@ function RentalManagement() {
           </div>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && rentals.length > 0 && (
           <div className="table-responsive">
             <table className="table table-hover">
               <thead>

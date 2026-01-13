@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 
 function mapApiBookToUi(apiBook = {}, authorName = null) {
@@ -133,12 +134,19 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
     return (
       <div className="col-md-3 mb-4">
         <div className="card h-100 shadow-sm">
-          <div style={{ height: 300, background: '#f0f0f0' }} />
+          <div style={{ height: 300, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Betöltés...</span>
+            </div>
+          </div>
           <div className="card-body d-flex flex-column">
             <h6 className="card-title placeholder-glow"><span className="placeholder col-6"></span></h6>
             <p className="card-text text-muted small mb-2 placeholder-glow"><span className="placeholder col-4"></span></p>
             <div className="mt-auto">
-              <button className="btn btn-secondary btn-sm w-100 mb-2" disabled>Betöltés...</button>
+              <button className="btn btn-secondary btn-sm w-100 mb-2" disabled>
+                <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Betöltés...
+              </button>
             </div>
           </div>
         </div>

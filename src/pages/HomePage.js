@@ -1,16 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { getBooks } from '../api';
-
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import BookCard from '../components/books/BookCard';
 
 function HomePage({ onNavigate }) {
   const [featuredBooks, setFeaturedBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const ac = new AbortController();
     async function load() {
       try {
+        setLoading(true);
         const data = await getBooks(ac.signal);
         const list = Array.isArray(data) ? data : [];
         // Véletlenszerű 4 könyv kiválasztása
@@ -19,6 +21,8 @@ function HomePage({ onNavigate }) {
       } catch (e) {
         // Ha hiba van, hagyjuk üresen a kiemelt listát
         setFeaturedBooks([]);
+      } finally {
+        setLoading(false);
       }
     }
     load();
@@ -113,11 +117,15 @@ function HomePage({ onNavigate }) {
             <i className="bi bi-arrow-right ms-2"></i>
           </button>
         </div>
-        <div className="row">
-          {featuredBooks.map(book => (
-            <BookCard key={book.id} book={book} />
-          ))}
-        </div>
+        {loading || featuredBooks.length === 0 ? (
+          <LoadingSpinner fullPage text="Kiemelt könyvek betöltése..." />
+        ) : (
+          <div className="row">
+            {featuredBooks.map(book => (
+              <BookCard key={book.id} book={book} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Call to action */}

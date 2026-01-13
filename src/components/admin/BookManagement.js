@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { getBooks, getAuthors } from '../../api';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 
 function BookManagement() {
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const ac = new AbortController();
     async function load() {
       try {
+        setLoading(true);
         // Párhuzamosan lekérjük a könyveket és a szerzőket
         const [booksData, authorsData] = await Promise.all([
           getBooks(ac.signal),
@@ -36,6 +39,8 @@ function BookManagement() {
       } catch (e) {
         console.error('Könyvek betöltése sikertelen:', e);
         setBooks([]);
+      } finally {
+        setLoading(false);
       }
     }
     load();
@@ -59,6 +64,10 @@ function BookManagement() {
     setBooks(updatedBooks);
     // TODO: Itt backend PATCH/PUT hívás kellene; jelenleg csak UI frissítés
   };
+
+  if (loading || books.length === 0) {
+    return <LoadingSpinner fullPage text="Könyvek betöltése..." />;
+  }
 
   return (
     <div className="card">

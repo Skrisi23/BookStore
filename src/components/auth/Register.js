@@ -11,6 +11,7 @@ function Register({ onSuccess, onSwitchToLogin }) {
     email: ''
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { success } = useToast();
 
   const handleChange = (e) => {
@@ -23,20 +24,26 @@ function Register({ onSuccess, onSwitchToLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
+      setLoading(false);
       setError('A jelszavak nem egyeznek!');
       return;
     }
 
     if (formData.password.length < 6) {
       setError('A jelszónak legalább 6 karakter hosszúnak kell lennie!');
+      setLoading(false);
       return;
     }
 
     // Itt normális esetben API hívás lenne
-    success('Regisztráció sikeres! Most bejelentkezhetsz.');
-    onSwitchToLogin();
+    setTimeout(() => {
+      success('Regisztráció sikeres! Most bejelentkezhetsz.');
+      setLoading(false);
+      onSwitchToLogin();
+    }, 500);
   };
 
   return (
@@ -115,8 +122,15 @@ function Register({ onSuccess, onSwitchToLogin }) {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-100 mb-3">
-            Regisztráció
+          <button type="submit" className="btn btn-primary w-100 mb-3" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Regisztráció...
+              </>
+            ) : (
+              'Regisztráció'
+            )}
           </button>
 
           <div className="text-center">

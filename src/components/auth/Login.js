@@ -7,12 +7,14 @@ function Login({ onSuccess, onSwitchToRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const { success } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const result = await login(username, password);
@@ -24,6 +26,8 @@ function Login({ onSuccess, onSwitchToRegister }) {
       }
     } catch (err) {
       setError('Bejelentkezés közben hiba történt');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,8 +69,15 @@ function Login({ onSuccess, onSwitchToRegister }) {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-100 mb-3">
-            Bejelentkezés
+          <button type="submit" className="btn btn-primary w-100 mb-3" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Bejelentkezés...
+              </>
+            ) : (
+              'Bejelentkezés'
+            )}
           </button>
 
           <div className="text-center">
