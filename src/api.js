@@ -6,6 +6,10 @@ const ENDPOINTS = {
   authorById: (id) => `${defaultBaseUrl}/api/Author/${id}`,
   books: `${defaultBaseUrl}/api/Books`,
   bookById: (id) => `${defaultBaseUrl}/api/Books/${id}`,
+  bookCategories: `${defaultBaseUrl}/api/Books/categories`,
+  booksByCategory: (category) => `${defaultBaseUrl}/api/Books/by-category/${encodeURIComponent(category)}`,
+  booksByPrice: `${defaultBaseUrl}/api/Books/by-price`,
+  bookPriceStats: `${defaultBaseUrl}/api/Books/price-stats`,
   copies: `${defaultBaseUrl}/api/Copies`,
   rentals: `${defaultBaseUrl}/api/Rentals`,
   users: `${defaultBaseUrl}/api/Users`,
@@ -46,6 +50,44 @@ export async function getRentals(signal) {
 }
 export async function getUsers(signal) {
   return fetchJson(ENDPOINTS.users, { signal });
+}
+
+// Új kategória és ár alapú lekérdezések
+export async function getCategories(signal) {
+  try {
+    return await fetchJson(ENDPOINTS.bookCategories, { signal });
+  } catch (e) {
+    console.error('Kategóriák lekérése sikertelen:', e);
+    return [];
+  }
+}
+
+export async function getBooksByCategory(category, signal) {
+  try {
+    return await fetchJson(ENDPOINTS.booksByCategory(category), { signal });
+  } catch (e) {
+    console.error(`Könyvek lekérése kategória alapján (${category}) sikertelen:`, e);
+    return [];
+  }
+}
+
+export async function getBooksByPrice(minAr, maxAr, signal) {
+  try {
+    const url = `${ENDPOINTS.booksByPrice}?minAr=${minAr}&maxAr=${maxAr}`;
+    return await fetchJson(url, { signal });
+  } catch (e) {
+    console.error(`Könyvek lekérése ár alapján (${minAr}-${maxAr}) sikertelen:`, e);
+    return [];
+  }
+}
+
+export async function getBookPriceStats(signal) {
+  try {
+    return await fetchJson(ENDPOINTS.bookPriceStats, { signal });
+  } catch (e) {
+    console.error('Ár statisztikák lekérése sikertelen:', e);
+    return { min: 0, max: 10000, avg: 5000 };
+  }
 }
 
 export async function loginUser(username, password, signal) {

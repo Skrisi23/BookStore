@@ -35,7 +35,9 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
             // Normalizált mezők a szűréshez és megjelenítéshez
             title: book.cim || book.title || '',
             author: authorName,
-            category: book.kategoria || book.category || ''
+            category: book.kategoria || book.category || '',
+            price: book.ar || book.price || 0,
+            rentalPrice: book.kolcsonzesi_ar || book.rentalPrice || Math.round((book.ar || book.price || 0) * 0.05)
           };
         });
 
