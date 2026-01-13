@@ -169,12 +169,26 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
   return (
     <div className="col-md-3 mb-4">
       <div className="card h-100 shadow-sm">
-        <img
-          src={book.coverImage || 'https://via.placeholder.com/300x300?text=Book'}
-          className="card-img-top"
-          alt={book.title}
-          style={{ height: '300px', objectFit: 'cover' }}
-        />
+        <div style={{ 
+          height: '300px', 
+          overflow: 'hidden', 
+          backgroundColor: '#f8f9fa',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <img
+            src={book.coverImage || 'https://via.placeholder.com/300x300?text=Book'}
+            className="card-img-top"
+            alt={book.title}
+            style={{ 
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              padding: '10px'
+            }}
+          />
+        </div>
         <div className="card-body d-flex flex-column">
           <h6 className="card-title">{book.title}</h6>
           <p className="card-text text-muted small mb-2">
