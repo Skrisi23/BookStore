@@ -3,14 +3,16 @@ import React, { useState } from 'react';
 import Cart from '../components/cart/Cart';
 import Checkout from '../components/cart/Checkout';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 function CartPage({ onNavigate }) {
   const [showCheckout, setShowCheckout] = useState(false);
   const { isAuthenticated } = useAuth();
+  const { warning } = useToast();
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
-      alert('Kérjük jelentkezz be a rendelés leadásához!');
+      warning('Kérjük jelentkezz be a rendelés leadásához!');
       onNavigate('login');
       return;
     }

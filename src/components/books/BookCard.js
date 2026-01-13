@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 
 function mapApiBookToUi(apiBook = {}, authorName = null) {
@@ -28,6 +29,7 @@ function mapApiBookToUi(apiBook = {}, authorName = null) {
 function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
+  const { warning, success } = useToast();
 
   const [book, setBook] = useState(() => {
     
@@ -115,15 +117,15 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
 
   const handleAddToCart = (type) => {
     if (!isAuthenticated) {
-      alert('Kérjük jelentkezz be a művelethez!');
+      warning('Kérjük jelentkezz be a művelethez!');
       return;
     }
     if (!book) {
-      alert('A könyv adatai még töltődnek.');
+      warning('A könyv adatai még töltődnek.');
       return;
     }
     addToCart(book, type);
-    alert(`${book.title} hozzáadva a kosárhoz (${type === 'purchase' ? 'vásárlás' : 'kölcsönzés'})`);
+    success(`${book.title} hozzáadva a kosárhoz (${type === 'purchase' ? 'vásárlás' : 'kölcsönzés'})`);
   };
 
   

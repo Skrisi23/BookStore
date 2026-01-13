@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 function Checkout({ onSuccess, onCancel }) {
   const { cartItems, getTotalPrice, clearCart } = useCart();
   const { currentUser } = useAuth();
+  const { success } = useToast();
   const [formData, setFormData] = useState({
     name: currentUser?.name || '',
     email: currentUser?.email || '',
@@ -42,7 +44,7 @@ function Checkout({ onSuccess, onCancel }) {
     localStorage.setItem('orders', JSON.stringify(orders));
 
     clearCart();
-    alert('Sikeres rendelés! Köszönjük a vásárlást!');
+    success('Sikeres rendelés! Köszönjük a vásárlást!');
     onSuccess();
   };
 

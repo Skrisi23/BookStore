@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 function Login({ onSuccess, onSwitchToRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
+  const { success } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +17,7 @@ function Login({ onSuccess, onSwitchToRegister }) {
     try {
       const result = await login(username, password);
       if (result && result.success) {
-        alert(`Üdv, ${result.user?.name || username}!`);
+        success(`Üdv, ${result.user?.name || username}!`);
         onSuccess();
       } else {
         setError((result && result.message) || 'Bejelentkezés sikertelen');

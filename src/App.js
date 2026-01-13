@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
+import ToastContainer from './components/common/ToastContainer';
 import HomePage from './pages/HomePage';
 import BooksPage from './pages/BooksPage';
 import AboutPage from './pages/AboutPage';
@@ -40,13 +42,16 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <div className="App d-flex flex-column min-vh-100">
-          <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-          <main className="flex-grow-1">
-            {renderPage()}
-          </main>
-          <Footer />
-    </div>
+        <ToastProvider>
+          <div className="App d-flex flex-column min-vh-100">
+            <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+            <main className="flex-grow-1">
+              {renderPage()}
+            </main>
+            <Footer />
+            <ToastContainer />
+          </div>
+        </ToastProvider>
       </CartProvider>
     </AuthProvider>
   );

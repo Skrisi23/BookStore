@@ -1,11 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { getRentals, getBooks, getUsers, getCopies } from '../../api';
+import { useToast } from '../../context/ToastContext';
 
 function RentalManagement() {
   const [rentals, setRentals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { success } = useToast();
 
   useEffect(() => {
     const ac = new AbortController();
@@ -81,7 +83,7 @@ function RentalManagement() {
         : rental
     );
     setRentals(updatedRentals);
-    alert('Könyv visszavéve!');
+    success('Könyv visszavéve!');
   };
 
   const getStatusBadge = (rental) => {

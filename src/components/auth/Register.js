@@ -1,5 +1,6 @@
 // src/components/auth/Register.js
 import React, { useState } from 'react';
+import { useToast } from '../../context/ToastContext';
 
 function Register({ onSuccess, onSwitchToLogin }) {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ function Register({ onSuccess, onSwitchToLogin }) {
     email: ''
   });
   const [error, setError] = useState('');
+  const { success } = useToast();
 
   const handleChange = (e) => {
     setFormData({
@@ -33,7 +35,7 @@ function Register({ onSuccess, onSwitchToLogin }) {
     }
 
     // Itt normális esetben API hívás lenne
-    alert('Regisztráció sikeres! Most bejelentkezhetsz.');
+    success('Regisztráció sikeres! Most bejelentkezhetsz.');
     onSwitchToLogin();
   };
 
