@@ -1,20 +1,26 @@
-﻿using Backend.Domain.Model;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace Backend.Application.DTOs;
 
 namespace Backend.Application.DTOs
 {
-    public class BookDto
-    {
-        public int id { get; set; }
+public class BookDto
+{
+    public int Id { get; set; }
+    public string Cim { get; set; } = null!;
+    public string? Boritokep { get; set; }
+    public DateOnly? KiadasiDatum { get; set; }
+    public string? Tartalom { get; set; }
+    public decimal Ar { get; set; }
+    public string Kategoria { get; set; } = null!;
+    public string AuthorNev { get; set; } = null!;
+}
 
-        public string cim { get; set; } = null!;
+public class BooksByPriceRangeRequest
+{
+    public decimal MinAr { get; set; }
+    public decimal MaxAr { get; set; }
+}
 
-        public int author_id { get; set; }
-
-        public DateOnly? kiadasi_datum { get; set; }
-
-        public string? tartalom { get; set; }
-
-    }
+public class BooksByCategoryRequest
+{
+    public string Kategoria { get; set; } = null!;
 }
