@@ -66,13 +66,14 @@ function Navbar({ currentPage, setCurrentPage }) {
           <ul className="navbar-nav ms-auto align-items-center">
             <li className="nav-item">
               <a
-                className="nav-link position-relative"
+                className="nav-link position-relative d-inline-flex align-items-center"
                 href="#cart"
                 onClick={(e) => { e.preventDefault(); setCurrentPage('cart'); }}
+                style={{ paddingRight: '0.75rem' }}
               >
                 <i className="bi bi-cart3 fs-5"></i>
                 {getItemCount() > 0 && (
-                  <span className="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
+                  <span className="position-absolute badge rounded-pill bg-danger" style={{ top: '-5px', right: '-5px', fontSize: '0.7rem' }}>
                     {getItemCount()}
                   </span>
                 )}
