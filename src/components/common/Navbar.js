@@ -63,7 +63,7 @@ function Navbar({ currentPage, setCurrentPage }) {
               </li>
             )}
           </ul>
-          <ul className="navbar-nav">
+          <ul className="navbar-nav ms-auto align-items-center">
             <li className="nav-item">
               <a
                 className="nav-link position-relative"
@@ -72,7 +72,7 @@ function Navbar({ currentPage, setCurrentPage }) {
               >
                 <i className="bi bi-cart3 fs-5"></i>
                 {getItemCount() > 0 && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  <span className="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
                     {getItemCount()}
                   </span>
                 )}
