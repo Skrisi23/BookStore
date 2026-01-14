@@ -10,7 +10,7 @@ function mapApiBookToUi(apiBook = {}, authorName = null) {
     id: apiBook.id,
     title: apiBook.cim || apiBook.title || 'Név nélküli könyv',
     coverImage: apiBook.boritokep || apiBook.coverImage || 'https://via.placeholder.com/300x300?text=Book',
-    author: authorName || apiBook.szerzo || apiBook.author || `#${apiBook.author_id || ''}`,
+    author: authorName || apiBook.authorNev || apiBook.szerzo || apiBook.author || 'Ismeretlen szerző',
     category: apiBook.kategoria || apiBook.category || '',
     
     price: typeof apiBook.ar !== 'undefined' ? Number(apiBook.ar) : (apiBook.price ? Number(apiBook.price) : 0),

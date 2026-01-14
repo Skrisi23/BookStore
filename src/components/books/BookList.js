@@ -24,17 +24,13 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
         const authors = Array.isArray(authorsData) ? authorsData : [];
         const booksList = Array.isArray(booksData) ? booksData : [];
 
-        // Könyveket normalizáljuk és szerző nevekkel gazdagítjuk
+        // Könyveket normalizáljuk
         const normalized = booksList.map(book => {
-          const authorId = book.author_id || book.szerzo_id;
-          const author = authors.find(a => a.id === authorId);
-          const authorName = author?.nev || author?.name || book.szerzo || book.author || '';
-
           return {
             ...book,
             // Normalizált mezők a szűréshez és megjelenítéshez
             title: book.cim || book.title || '',
-            author: authorName,
+            author: book.authorNev || book.szerzo || book.author || 'Ismeretlen',
             category: book.kategoria || book.category || '',
             price: book.ar || book.price || 0,
             rentalPrice: book.kolcsonzesi_ar || book.rentalPrice || Math.round((book.ar || book.price || 0) * 0.05)

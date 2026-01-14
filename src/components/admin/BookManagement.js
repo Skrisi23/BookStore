@@ -20,16 +20,12 @@ function BookManagement() {
 
         const authors = Array.isArray(authorsData) ? authorsData : [];
 
-        // API mezőnevek normalizálása és szerző összekapcsolása
+        // API mezőnevek normalizálása
         const normalized = Array.isArray(booksData) ? booksData.map(book => {
-          const authorId = book.author_id || book.szerzo_id;
-          const author = authors.find(a => a.id === authorId);
-          const authorName = author?.nev || author?.name || book.szerzo || book.author || 'Ismeretlen';
-
           return {
             id: book.id,
             title: book.cim || book.title || 'Név nélküli',
-            author: authorName,
+            author: book.authorNev || book.szerzo || book.author || 'Ismeretlen',
             category: book.kategoria || book.category || '',
             price: book.ar || book.price || 0,
             available: typeof book.elerheto !== 'undefined' ? book.elerheto : (book.available ?? true)
