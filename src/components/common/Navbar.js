@@ -89,7 +89,7 @@ function Navbar({ currentPage, setCurrentPage }) {
                   data-bs-toggle="dropdown"
                 >
                   <i className="bi bi-person-circle me-1"></i>
-                  {currentUser.name}
+                  {currentUser.nev || currentUser.name || 'Felhasználó'}
                 </a>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
