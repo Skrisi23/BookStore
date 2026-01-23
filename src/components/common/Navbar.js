@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 
 function Navbar({ currentPage, setCurrentPage }) {
   const { currentUser, logout, isAdmin } = useAuth();
   const { getItemCount } = useCart();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Bezárja a dropdown-ot ha máshova kattintunk
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (dropdownOpen) setDropdownOpen(false);
+    };
+
+    if (dropdownOpen) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -86,24 +102,42 @@ function Navbar({ currentPage, setCurrentPage }) {
                   href="#user"
                   id="userDropdown"
                   role="button"
-                  data-bs-toggle="dropdown"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setDropdownOpen(!dropdownOpen);
+                  }}
+                  style={{ cursor: 'pointer' }}
                 >
                   <i className="bi bi-person-circle me-1"></i>
                   {currentUser.nev || currentUser.name || 'Felhasználó'}
                 </a>
-                <ul className="dropdown-menu dropdown-menu-end">
+                <ul 
+                  className={`dropdown-menu dropdown-menu-end ${dropdownOpen ? 'show' : ''}`}
+                  style={{ 
+                    right: '0',
+                    left: 'auto',
+                    minWidth: '180px'
+                  }}
+                >
                   <li>
-                    <a className="dropdown-item" href="#profile">
+                    <a className="dropdown-item" href="#profile" style={{ cursor: 'pointer' }}>
                       Profilom
                     </a>
                   </li>
                   <li><hr className="dropdown-divider" /></li>
                   <li>
-                    <a className="dropdown-item" href="#logout" onClick={(e) => {
-                      e.preventDefault();
-                      logout();
-                      setCurrentPage('home');
-                    }}>
+                    <a 
+                      className="dropdown-item" 
+                      href="#logout" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setDropdownOpen(false);
+                        logout();
+                        setCurrentPage('home');
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    >
                       Kijelentkezés
                     </a>
                   </li>
