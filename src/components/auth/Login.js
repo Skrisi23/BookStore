@@ -8,6 +8,7 @@ function Login({ onSuccess, onSwitchToRegister }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const { success } = useToast();
 
@@ -19,10 +20,10 @@ function Login({ onSuccess, onSwitchToRegister }) {
     try {
       const result = await login(username, password);
       if (result && result.success) {
-        success(`Üdv, ${result.user?.name || username}!`);
+        success(`Üdv, ${result.user?.nev || username}!`);
         onSuccess();
       } else {
-        setError((result && result.message) || 'Bejelentkezés sikertelen');
+        setError(result?.message || 'Bejelentkezés sikertelen');
       }
     } catch (err) {
       setError('Bejelentkezés közben hiba történt');
@@ -48,10 +49,11 @@ function Login({ onSuccess, onSwitchToRegister }) {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">Felhasználónév</label>
+            <label className="form-label">Email cím</label>
             <input
-              type="text"
+              type="email"
               className="form-control"
+              placeholder="pelda@email.com"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -60,13 +62,37 @@ function Login({ onSuccess, onSwitchToRegister }) {
 
           <div className="mb-3">
             <label className="form-label">Jelszó</label>
-            <input
-              type="password"
-              className="form-control"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="position-relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control"
+                placeholder="••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                style={{ paddingRight: '40px' }}
+              />
+              <button
+                type="button"
+                className="btn btn-link position-absolute"
+                style={{ 
+                  right: '5px', 
+                  top: '50%', 
+                  transform: 'translateY(-50%)',
+                  padding: '0',
+                  border: 'none',
+                  background: 'none',
+                  color: '#6c757d',
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  zIndex: 10
+                }}
+                onClick={() => setShowPassword(!showPassword)}
+                title={showPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+              >
+                <i className={showPassword ? "bi bi-eye-slash" : "bi bi-eye"}></i>
+              </button>
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary w-100 mb-3" disabled={loading}>
@@ -96,9 +122,7 @@ function Login({ onSuccess, onSwitchToRegister }) {
         <hr />
 
         <div className="alert alert-info small mb-0">
-          <strong>Teszt bejelentkezések:</strong><br />
-          Admin: <code>admin / admin123</code><br />
-          User: <code>user / user123</code>
+          <strong>Tipp:</strong> Használj email címet a bejelentkezéshez
         </div>
       </div>
     </div>

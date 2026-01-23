@@ -13,6 +13,7 @@ const ENDPOINTS = {
   copies: `${defaultBaseUrl}/api/Copies`,
   rentals: `${defaultBaseUrl}/api/Rentals`,
   users: `${defaultBaseUrl}/api/Users`,
+  authLogin: `${defaultBaseUrl}/api/Auth/login`,
 };
 
 async function fetchJson(url, options = {}) {
@@ -90,43 +91,52 @@ export async function getBookPriceStats(signal) {
   }
 }
 
-export async function loginUser(username, password, signal) {
-  // TEMPORARY: client-side lookup. Replace with real POST /api/Users/login when backend is ready.
+export async function loginUser(emailOrUsername, password, signal) {
   try {
-    const users = await getUsers(signal);
-    const userList = Array.isArray(users) ? users : [];
-
-    const uname = (username || '').toLowerCase().trim();
-
-    
-    const user = userList.find(u => {
-      const nev = (u.nev || '').toLowerCase();
-      const email = (u.email || '').toLowerCase();
-      const userField = (u.username || u.felhasznalo_nev || '').toLowerCase();
-      return nev === uname || email === uname || userField === uname;
+    const response = await fetch(ENDPOINTS.authLogin, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        Email: emailOrUsername,
+        Jelszo: password
+      }),
+      signal
     });
 
-    if (!user) {
-      return { success: false, message: 'User not found' };
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Bejelentkezés sikertelen'
+      };
     }
 
-    
-    const hasPlainPassword = user.jelszo || user.password;
-    if (hasPlainPassword && (user.jelszo === password || user.password === password)) {
-      const userWithoutPassword = { ...user };
-      delete userWithoutPassword.jelszo;
-      delete userWithoutPassword.password;
-      delete userWithoutPassword.jelszo_hash;
-      return { success: true, user: userWithoutPassword };
+    // Backend LoginResponse: { Success, Message, User: { Id, Nev, Email, Letrehozva } }
+    if (data.success) {
+      return {
+        success: true,
+        user: {
+          id: data.user.id,
+          nev: data.user.nev,
+          email: data.user.email,
+          letrehozva: data.user.letrehozva
+        }
+      };
     }
 
-    
-    const userWithoutPassword = { ...user };
-    delete userWithoutPassword.jelszo;
-    delete userWithoutPassword.password;
-    delete userWithoutPassword.jelszo_hash;
-    return { success: true, user: userWithoutPassword };
+    return {
+      success: false,
+      message: data.message || 'Bejelentkezés sikertelen'
+    };
   } catch (e) {
-    return { success: false, message: e.message || 'Login failed' };
+    console.error('Login hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Bejelentkezés során hiba történt'
+    };
   }
 }
