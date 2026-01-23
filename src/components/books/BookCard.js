@@ -3,6 +3,7 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import LoadingSpinner from '../common/LoadingSpinner';
+import BookDetails from './BookDetails';
 
 
 function mapApiBookToUi(apiBook = {}, authorName = null) {
@@ -41,6 +42,7 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
   });
   const [loading, setLoading] = useState(!initialBook && !!bookId);
   const [error, setError] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     if (initialBook) return; 
@@ -176,15 +178,18 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
 
   return (
     <div className="col-md-3 mb-4">
-      <div className="card h-100 shadow-sm">
-        <div style={{ 
-          height: '300px', 
-          overflow: 'hidden', 
-          backgroundColor: '#f8f9fa',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
+      <div className="card h-100 shadow-sm" style={{ cursor: 'pointer' }}>
+        <div 
+          style={{ 
+            height: '300px', 
+            overflow: 'hidden', 
+            backgroundColor: '#f8f9fa',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onClick={() => setShowDetails(true)}
+        >
           <img
             src={book.coverImage || 'https://via.placeholder.com/300x300?text=Book'}
             className="card-img-top"
@@ -193,12 +198,17 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
               width: '100%',
               height: '100%',
               objectFit: 'contain',
-              padding: '10px'
+              padding: '10px',
+              transition: 'transform 0.2s'
             }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
           />
         </div>
         <div className="card-body d-flex flex-column">
-          <h6 className="card-title">{book.title}</h6>
+          <h6 className="card-title" onClick={() => setShowDetails(true)} style={{ cursor: 'pointer' }}>
+            {book.title}
+          </h6>
           <p className="card-text text-muted small mb-2">
             <i className="bi bi-person me-1"></i>
             {book.author}
@@ -237,6 +247,14 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
           </div>
         </div>
       </div>
+
+      {showDetails && (
+        <BookDetails 
+          bookId={book.id} 
+          book={book}
+          onClose={() => setShowDetails(false)} 
+        />
+      )}
     </div>
   );
 }
