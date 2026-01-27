@@ -20,13 +20,13 @@ function Login({ onSuccess, onSwitchToRegister }) {
     try {
       const result = await login(username, password);
       if (result && result.success) {
-        success(`Üdv, ${result.user?.nev || username}!`);
+        success(`Üdvözöllek, ${result.user?.nev || username}!`);
         onSuccess();
       } else {
-        setError(result?.message || 'Bejelentkezés sikertelen');
+        setError(result?.message || 'Sikertelen bejelentkezés');
       }
     } catch (err) {
-      setError('Bejelentkezés közben hiba történt');
+      setError('Hiba történt a bejelentkezés során');
     } finally {
       setLoading(false);
     }

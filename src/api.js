@@ -26,7 +26,7 @@ async function fetchJson(url, options = {}) {
   });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Fetch error ${res.status}: ${text}`);
+    throw new Error(`Lekérési hiba ${res.status}: ${text}`);
   }
   return res.json();
 }
@@ -133,7 +133,7 @@ export async function loginUser(emailOrUsername, password, signal) {
       message: data.message || 'Bejelentkezés sikertelen'
     };
   } catch (e) {
-    console.error('Login hiba:', e);
+    console.error('Bejelentkezési hiba:', e);
     return {
       success: false,
       message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Bejelentkezés során hiba történt'

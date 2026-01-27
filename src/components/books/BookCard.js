@@ -64,10 +64,10 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
           if (res.status === 404) {
             
             const allRes = await fetch(`${base}/api/Books`, { signal: ac.signal });
-            if (!allRes.ok) throw new Error(`Könyvek lekérése sikertelen (${allRes.status})`);
+            if (!allRes.ok) throw new Error(`Sikertelen könyvlekérés (${allRes.status})`);
             const allBooks = await allRes.json();
             const apiBook = (Array.isArray(allBooks) ? allBooks.find(b => b.id === Number(bookId)) : null);
-            if (!apiBook) throw new Error('Könyv nem található');
+            if (!apiBook) throw new Error('A könyv nem található');
            
             let authorName = null;
             if (apiBook.author_id) {
@@ -80,13 +80,13 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
             setBook(mapApiBookToUi(apiBook, authorName));
             return;
           }
-          throw new Error(`Könyv lekérése sikertelen (${res.status})`);
+          throw new Error(`Sikertelen könyvlekérés (${res.status})`);
         }
 
         const data = await res.json();
         const apiBook = Array.isArray(data) ? data[0] || data.find(b => b.id === Number(bookId)) : data;
 
-        if (!apiBook) throw new Error('A backend nem adott vissza megfelelő könyv adatot');
+        if (!apiBook) throw new Error('A háttérrendszer nem adott vissza érvényes könyv adatot');
 
         
         let authorName = null;
@@ -108,7 +108,7 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
 
         setBook(mapApiBookToUi(apiBook, authorName));
       } catch (err) {
-        if (err.name !== 'AbortError') setError(err.message || 'Ismeretlen hiba');
+        if (err.name !== 'AbortError') setError(err.message || 'Ismeretlen hiba történt');
       } finally {
         setLoading(false);
       }

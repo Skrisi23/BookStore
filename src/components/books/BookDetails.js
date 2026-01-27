@@ -41,7 +41,7 @@ function BookDetails({ bookId, onClose, book: initialBook }) {
       } catch (err) {
         if (err.name === 'AbortError') return;
         console.error('Könyv részletek betöltése sikertelen:', err);
-        setError('A könyv részletek betöltése sikertelen. Kérjük, próbáld újra később.');
+        setError('A könyv részleteinek betöltése sikertelen volt. Kérjük, próbáld meg később.');
       } finally {
         setLoading(false);
       }

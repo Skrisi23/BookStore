@@ -7,7 +7,7 @@ const AuthContext = createContext();
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error('useAuth csak AuthProvider-en belül használható');
   }
   return context;
 };
@@ -32,9 +32,9 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('currentUser', JSON.stringify(userForStorage));
         return { success: true, user: userForStorage };
       }
-      return { success: false, message: result.message || 'Login failed' };
+      return { success: false, message: result.message || 'Bejelentkezés sikertelen' };
     } catch (e) {
-      return { success: false, message: 'Login error' };
+      return { success: false, message: 'Bejelentkezési hiba' };
     }
   };
 
