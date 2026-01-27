@@ -12,6 +12,7 @@ import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 import CartPage from './pages/CartPage';
 import AdminPage from './pages/AdminPage';
+import ProfilePage from './pages/ProfilePage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -34,6 +35,8 @@ function App() {
         return <CartPage onNavigate={setCurrentPage} />;
       case 'admin':
         return <AdminPage onNavigate={setCurrentPage} />;
+      case 'profile':
+        return <ProfilePage />;
       default:
         return <HomePage onNavigate={setCurrentPage} />;
     }

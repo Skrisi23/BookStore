@@ -121,14 +121,24 @@ function Navbar({ currentPage, setCurrentPage }) {
                   }}
                 >
                   <li>
-                    <a className="dropdown-item" href="#profile" style={{ cursor: 'pointer' }}>
+                    <a 
+                      className="dropdown-item" 
+                      href="#profile" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setDropdownOpen(false);
+                        setCurrentPage('profile');
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <i className="bi bi-person me-2"></i>
                       Profilom
                     </a>
                   </li>
                   <li><hr className="dropdown-divider" /></li>
                   <li>
                     <a 
-                      className="dropdown-item" 
+                      className="dropdown-item text-danger" 
                       href="#logout" 
                       onClick={(e) => {
                         e.preventDefault();
@@ -138,6 +148,7 @@ function Navbar({ currentPage, setCurrentPage }) {
                       }}
                       style={{ cursor: 'pointer' }}
                     >
+                      <i className="bi bi-box-arrow-right me-2"></i>
                       Kijelentkezés
                     </a>
                   </li>
