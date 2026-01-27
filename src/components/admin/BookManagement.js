@@ -31,10 +31,13 @@ function BookManagement() {
             available: typeof book.elerheto !== 'undefined' ? book.elerheto : (book.available ?? true)
           };
         }) : [];
+        
         setBooks(normalized);
       } catch (e) {
-        console.error('Könyvek betöltése sikertelen:', e);
-        setBooks([]);
+        if (e.name !== 'AbortError') {
+          console.error('Könyvek betöltése sikertelen:', e);
+          setBooks([]);
+        }
       } finally {
         setLoading(false);
       }

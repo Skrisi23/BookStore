@@ -15,6 +15,26 @@ function Dashboard() {
   });
   const [loading, setLoading] = useState(true);
 
+  // Mai bevétel számítása localStorage-ból (ideiglenesen)
+  // Később backend API hívással helyettesítendő: GET /api/Payments/today-revenue
+  const calculateTodayRevenue = () => {
+    try {
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const today = new Date().toDateString();
+      
+      const todayOrders = orders.filter(order => {
+        const orderDate = new Date(order.orderDate).toDateString();
+        return orderDate === today;
+      });
+
+      const revenue = todayOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+      return revenue;
+    } catch (e) {
+      console.error('Mai bevétel számítása sikertelen:', e);
+      return 0;
+    }
+  };
+
   useEffect(() => {
     const ac = new AbortController();
     async function loadStats() {
@@ -36,8 +56,8 @@ function Dashboard() {
           !r.visszahozva_datuma && !r.returnedDate
         ).length;
 
-        // TODO: Mai bevétel számítása - ehhez kellene egy payments/transactions tábla
-        const todayRevenue = 15000; // Placeholder
+        // Mai bevétel számítása (localStorage-ból ideiglenesen, később backend API-ból)
+        const todayRevenue = calculateTodayRevenue();
 
         setStats({
           totalBooks: books.length,
