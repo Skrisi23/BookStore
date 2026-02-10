@@ -1,4 +1,5 @@
 using Backend.Domain.Model;
+using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +40,9 @@ builder.Services.AddDbContext<BookStoreContext>(options =>
     options.UseMySql(conn, ServerVersion.AutoDetect(conn)));
 
 builder.Services.AddAutoMapper(typeof(Backend.Application.Mappers.AutoMapperProfile).Assembly);
+
+// Email service
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
