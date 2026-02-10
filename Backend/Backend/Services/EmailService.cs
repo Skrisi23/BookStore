@@ -19,7 +19,7 @@ namespace Backend.Services
             try
             {
                 var smtpHost = _configuration["Smtp:Host"];
-                var smtpPort = int.Parse(_configuration["Smtp:Port"]);
+                var smtpPort = int.Parse(_configuration["Smtp:Port"] ?? "2525");
                 var smtpUsername = _configuration["Smtp:Username"];
                 var smtpPassword = _configuration["Smtp:Password"];
                 var fromEmail = _configuration["Smtp:FromEmail"];
