@@ -1,5 +1,6 @@
 using Backend.Application.DTOs;
 using Backend.Domain.Model;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +11,12 @@ namespace Backend.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly BookStoreContext _context;
+    private readonly IEmailService _emailService;
 
-    public AuthController(BookStoreContext context)
+    public AuthController(BookStoreContext context, IEmailService emailService)
     {
         _context = context;
+        _emailService = emailService;
     }
 
     /// <summary>
@@ -139,10 +142,25 @@ public class AuthController : ControllerBase
         _context.users.Add(newUser);
         await _context.SaveChangesAsync();
 
+        // Email küldése verifikációs linkkel
+        try
+        {
+            await _emailService.SendVerificationEmailAsync(
+                newUser.email,
+                newUser.nev,
+                verificationToken
+            );
+        }
+        catch (Exception ex)
+        {
+            // Ha az email küldés sikertelen, logoljuk, de a regisztráció sikeres
+            Console.WriteLine($"Failed to send verification email: {ex.Message}");
+        }
+
         return Ok(new RegisterResponse
         {
             Success = true,
-            Message = "Sikeres regisztráció",
+            Message = "Sikeres regisztráció! Kérlek, ellenőrizd az emailedet a megerősítéshez.",
             User = new UserDto
             {
                 Id = newUser.id,
