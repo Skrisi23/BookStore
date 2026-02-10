@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { loginUser } from '../api';
+import { loginUser, registerUser } from '../api';
 
 const AuthContext = createContext();
 
@@ -38,6 +38,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (name, email, password) => {
+    try {
+      const result = await registerUser(name, email, password);
+      if (result.success) {
+        const userForStorage = { ...result.user };
+        setCurrentUser(userForStorage);
+        localStorage.setItem('currentUser', JSON.stringify(userForStorage));
+        return { success: true, user: userForStorage };
+      }
+      return { success: false, message: result.message || 'Regisztráció sikertelen' };
+    } catch (e) {
+      return { success: false, message: 'Regisztrációs hiba' };
+    }
+  };
+
   const logout = () => {
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
@@ -53,6 +68,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     currentUser,
     login,
+    register,
     logout,
     isAdmin,
     isAuthenticated: !!currentUser

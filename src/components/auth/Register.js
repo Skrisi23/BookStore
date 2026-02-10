@@ -1,5 +1,6 @@
 // src/components/auth/Register.js
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 
 function Register({ onSuccess, onSwitchToLogin }) {
@@ -14,6 +15,7 @@ function Register({ onSuccess, onSwitchToLogin }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { register } = useAuth();
   const { success } = useToast();
 
   const handleChange = (e) => {
@@ -23,7 +25,7 @@ function Register({ onSuccess, onSwitchToLogin }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -40,12 +42,19 @@ function Register({ onSuccess, onSwitchToLogin }) {
       return;
     }
 
-    // Itt normális esetben API hívás lenne
-    setTimeout(() => {
-      success('Regisztráció sikeres! Most bejelentkezhetsz.');
+    try {
+      const result = await register(formData.name, formData.email, formData.password);
+      if (result && result.success) {
+        success(`Sikeres regisztráció! Üdvözöllek, ${result.user?.nev || formData.name}!`);
+        onSuccess();
+      } else {
+        setError(result?.message || 'Sikertelen regisztráció');
+      }
+    } catch (err) {
+      setError('Hiba történt a regisztráció során');
+    } finally {
       setLoading(false);
-      onSwitchToLogin();
-    }, 500);
+    }
   };
 
   return (
@@ -83,18 +92,6 @@ function Register({ onSuccess, onSwitchToLogin }) {
               className="form-control"
               name="email"
               value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label">Felhasználónév</label>
-            <input
-              type="text"
-              className="form-control"
-              name="username"
-              value={formData.username}
               onChange={handleChange}
               required
             />

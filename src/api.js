@@ -14,6 +14,7 @@ const ENDPOINTS = {
   rentals: `${defaultBaseUrl}/api/Rentals`,
   users: `${defaultBaseUrl}/api/Users`,
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
+  authRegister: `${defaultBaseUrl}/api/Auth/register`,
 };
 
 async function fetchJson(url, options = {}) {
@@ -137,6 +138,57 @@ export async function loginUser(emailOrUsername, password, signal) {
     return {
       success: false,
       message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Bejelentkezés során hiba történt'
+    };
+  }
+}
+
+export async function registerUser(name, email, password, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.authRegister, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        Nev: name,
+        Email: email,
+        Jelszo: password
+      }),
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Regisztráció sikertelen'
+      };
+    }
+
+    // Backend RegisterResponse: { Success, Message, User: { Id, Nev, Email, Letrehozva } }
+    if (data.success) {
+      return {
+        success: true,
+        user: {
+          id: data.user.id,
+          nev: data.user.nev,
+          email: data.user.email,
+          letrehozva: data.user.letrehozva
+        }
+      };
+    }
+
+    return {
+      success: false,
+      message: data.message || 'Regisztráció sikertelen'
+    };
+  } catch (e) {
+    console.error('Regisztrációs hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Regisztráció során hiba történt'
     };
   }
 }
