@@ -13,6 +13,20 @@ public class LoginResponse
     public UserDto? User { get; set; }
 }
 
+public class RegisterRequest
+{
+    public string Nev { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public string Jelszo { get; set; } = null!;
+}
+
+public class RegisterResponse
+{
+    public bool Success { get; set; }
+    public string? Message { get; set; }
+    public UserDto? User { get; set; }
+}
+
 public class UserDto
 {
     public int Id { get; set; }
