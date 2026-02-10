@@ -26,6 +26,15 @@ public partial class users
     [Column(TypeName = "timestamp")]
     public DateTime? letrehozva { get; set; }
 
+    [Column(TypeName = "tinyint(1)")]
+    public int is_verified { get; set; } = 0;
+
+    [StringLength(255)]
+    public string? verification_token { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? token_expires { get; set; }
+
     [InverseProperty("user")]
     public virtual ICollection<rental> rentals { get; set; } = new List<rental>();
 }
