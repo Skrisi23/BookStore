@@ -27,7 +27,7 @@ public partial class users
     public DateTime? letrehozva { get; set; }
 
     [Column(TypeName = "tinyint(1)")]
-    public int is_verified { get; set; } = 0;
+    public bool is_verified { get; set; } = false;
 
     [StringLength(255)]
     public string? verification_token { get; set; }

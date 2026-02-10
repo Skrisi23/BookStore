@@ -65,6 +65,16 @@ public class AuthController : ControllerBase
             });
         }
 
+        // Email verifikáció ellenőrzése
+        if (!user.is_verified)
+        {
+            return Unauthorized(new LoginResponse
+            {
+                Success = false,
+                Message = "Kérlek, erősítsd meg az email címedet a bejelentkezéshez"
+            });
+        }
+
         return Ok(new LoginResponse
         {
             Success = true,
@@ -121,7 +131,7 @@ public class AuthController : ControllerBase
             email = request.Email,
             jelszo_hash = hashedPassword,
             letrehozva = DateTime.Now,
-            is_verified = 0,
+            is_verified = false,
             verification_token = verificationToken,
             token_expires = tokenExpires
         };
@@ -182,7 +192,7 @@ public class AuthController : ControllerBase
         }
 
         // User már verifikált?
-        if (user.is_verified == 1)
+        if (user.is_verified)
         {
             return Ok(new VerifyEmailResponse
             {
@@ -192,7 +202,7 @@ public class AuthController : ControllerBase
         }
 
         // Verifikálás
-        user.is_verified = 1;
+        user.is_verified = true;
         user.verification_token = null;
         user.token_expires = null;
 
