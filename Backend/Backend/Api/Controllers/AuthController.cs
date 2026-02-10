@@ -110,13 +110,20 @@ public class AuthController : ControllerBase
         // Jelszó hashelés BCrypt-tel
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Jelszo);
 
+        // Verifikációs token generálás (GUID)
+        string verificationToken = Guid.NewGuid().ToString();
+        DateTime tokenExpires = DateTime.Now.AddHours(24); // 24 óra érvényesség
+
         // Új user létrehozása
         var newUser = new users
         {
             nev = request.Nev,
             email = request.Email,
             jelszo_hash = hashedPassword,
-            letrehozva = DateTime.Now
+            letrehozva = DateTime.Now,
+            is_verified = 0,
+            verification_token = verificationToken,
+            token_expires = tokenExpires
         };
 
         _context.users.Add(newUser);
