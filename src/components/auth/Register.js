@@ -1,6 +1,6 @@
 // src/components/auth/Register.js
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { registerUser } from '../../api';
 import { useToast } from '../../context/ToastContext';
 
 function Register({ onSuccess, onSwitchToLogin }) {
@@ -15,8 +15,7 @@ function Register({ onSuccess, onSwitchToLogin }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { register } = useAuth();
-  const { success } = useToast();
+  const { success, info } = useToast();
 
   const handleChange = (e) => {
     setFormData({
@@ -43,10 +42,14 @@ function Register({ onSuccess, onSwitchToLogin }) {
     }
 
     try {
-      const result = await register(formData.name, formData.email, formData.password);
+      const result = await registerUser(formData.name, formData.email, formData.password);
       if (result && result.success) {
-        success(`Sikeres regisztráció! Üdvözöllek, ${result.user?.nev || formData.name}!`);
-        onSuccess();
+        success('Sikeres regisztráció!');
+        info('Kérlek, ellenőrizd az email fiókodat és erősítsd meg a címedet a bejelentkezéshez.');
+        // Átirányítás login oldalra
+        setTimeout(() => {
+          onSwitchToLogin();
+        }, 2000);
       } else {
         setError(result?.message || 'Sikertelen regisztráció');
       }
