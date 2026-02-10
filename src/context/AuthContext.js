@@ -42,10 +42,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await registerUser(name, email, password);
       if (result.success) {
-        const userForStorage = { ...result.user };
-        setCurrentUser(userForStorage);
-        localStorage.setItem('currentUser', JSON.stringify(userForStorage));
-        return { success: true, user: userForStorage };
+        // NEM jelentkeztetjük be automatikusan - email verifikáció szükséges!
+        return { success: true, user: result.user, message: result.message };
       }
       return { success: false, message: result.message || 'Regisztráció sikertelen' };
     } catch (e) {
