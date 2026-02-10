@@ -15,6 +15,7 @@ const ENDPOINTS = {
   users: `${defaultBaseUrl}/api/Users`,
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
   authRegister: `${defaultBaseUrl}/api/Auth/register`,
+  authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,
 };
 
 async function fetchJson(url, options = {}) {
@@ -189,6 +190,43 @@ export async function registerUser(name, email, password, signal) {
     return {
       success: false,
       message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Regisztráció során hiba történt'
+    };
+  }
+}
+
+export async function verifyEmail(token, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.authVerifyEmail, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        Token: token
+      }),
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Email verifikáció sikertelen'
+      };
+    }
+
+    // Backend VerifyEmailResponse: { Success, Message }
+    return {
+      success: data.success,
+      message: data.message || 'Email sikeresen verifikálva'
+    };
+  } catch (e) {
+    console.error('Email verifikációs hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Email verifikáció során hiba történt'
     };
   }
 }
