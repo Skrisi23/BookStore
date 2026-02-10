@@ -27,6 +27,17 @@ public class RegisterResponse
     public UserDto? User { get; set; }
 }
 
+public class VerifyEmailRequest
+{
+    public string Token { get; set; } = null!;
+}
+
+public class VerifyEmailResponse
+{
+    public bool Success { get; set; }
+    public string? Message { get; set; }
+}
+
 public class UserDto
 {
     public int Id { get; set; }

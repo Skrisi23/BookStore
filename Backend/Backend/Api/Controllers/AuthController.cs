@@ -142,4 +142,66 @@ public class AuthController : ControllerBase
             }
         });
     }
+
+    /// <summary>
+    /// Email cím verifikálása token alapján
+    /// </summary>
+    [HttpPost("verify-email")]
+    public async Task<ActionResult<VerifyEmailResponse>> VerifyEmail([FromBody] VerifyEmailRequest request)
+    {
+        if (string.IsNullOrEmpty(request.Token))
+        {
+            return BadRequest(new VerifyEmailResponse
+            {
+                Success = false,
+                Message = "Token megadása kötelező"
+            });
+        }
+
+        // Token keresése
+        var user = await _context.users
+            .FirstOrDefaultAsync(u => u.verification_token == request.Token);
+
+        if (user == null)
+        {
+            return BadRequest(new VerifyEmailResponse
+            {
+                Success = false,
+                Message = "Érvénytelen token"
+            });
+        }
+
+        // Token lejárat ellenőrzése
+        if (user.token_expires < DateTime.Now)
+        {
+            return BadRequest(new VerifyEmailResponse
+            {
+                Success = false,
+                Message = "A token lejárt"
+            });
+        }
+
+        // User már verifikált?
+        if (user.is_verified == 1)
+        {
+            return Ok(new VerifyEmailResponse
+            {
+                Success = true,
+                Message = "Az email cím már korábban verifikálva lett"
+            });
+        }
+
+        // Verifikálás
+        user.is_verified = 1;
+        user.verification_token = null;
+        user.token_expires = null;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new VerifyEmailResponse
+        {
+            Success = true,
+            Message = "Email cím sikeresen verifikálva"
+        });
+    }
 }
