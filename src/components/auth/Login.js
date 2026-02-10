@@ -41,9 +41,17 @@ function Login({ onSuccess, onSwitchToRegister }) {
         </h3>
 
         {error && (
-          <div className="alert alert-danger" role="alert">
-            <i className="bi bi-exclamation-triangle me-2"></i>
+          <div className={`alert ${error.includes('email') || error.includes('verifikál') ? 'alert-warning' : 'alert-danger'}`} role="alert">
+            <i className={`bi ${error.includes('email') || error.includes('verifikál') ? 'bi-envelope-exclamation' : 'bi-exclamation-triangle'} me-2`}></i>
             {error}
+            {(error.includes('email') || error.includes('verifikál')) && (
+              <div className="mt-2">
+                <small className="text-muted">
+                  <i className="bi bi-info-circle me-1"></i>
+                  Nem kaptad meg az emailt? Ellenőrizd a spam mappát!
+                </small>
+              </div>
+            )}
           </div>
         )}
 
@@ -122,7 +130,13 @@ function Login({ onSuccess, onSwitchToRegister }) {
         <hr />
 
         <div className="alert alert-info small mb-0">
-          <strong>Tipp:</strong> Használj email címet a bejelentkezéshez
+          <div className="mb-2">
+            <strong>Tipp:</strong> Használj email címet a bejelentkezéshez
+          </div>
+          <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+            <i className="bi bi-shield-check me-1"></i>
+            Új regisztrációnál először erősítsd meg az email címedet!
+          </div>
         </div>
       </div>
     </div>
