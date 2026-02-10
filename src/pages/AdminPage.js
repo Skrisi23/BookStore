@@ -1,9 +1,11 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Dashboard from '../components/admin/Dashboard';
 import { useAuth } from '../context/AuthContext';
 
-function AdminPage({ onNavigate }) {
+function AdminPage() {
+  const navigate = useNavigate();
   const { isAdmin } = useAuth();
 
   if (!isAdmin()) {
@@ -15,7 +17,7 @@ function AdminPage({ onNavigate }) {
           <p>Nincs jogosultságod az admin felület megtekintéséhez.</p>
           <button
             className="btn btn-primary"
-            onClick={() => onNavigate('home')}
+            onClick={() => navigate('/')}
           >
             Vissza a kezdőlapra
           </button>

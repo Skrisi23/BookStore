@@ -1,11 +1,13 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Cart from '../components/cart/Cart';
 import Checkout from '../components/cart/Checkout';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
-function CartPage({ onNavigate }) {
+function CartPage() {
+  const navigate = useNavigate();
   const [showCheckout, setShowCheckout] = useState(false);
   const { isAuthenticated } = useAuth();
   const { warning } = useToast();
@@ -13,7 +15,7 @@ function CartPage({ onNavigate }) {
   const handleCheckout = () => {
     if (!isAuthenticated) {
       warning('Kérjük jelentkezz be a rendelés leadásához!');
-      onNavigate('login');
+      navigate('/login');
       return;
     }
     setShowCheckout(true);
@@ -21,7 +23,7 @@ function CartPage({ onNavigate }) {
 
   const handleCheckoutSuccess = () => {
     setShowCheckout(false);
-    onNavigate('home');
+    navigate('/');
   };
 
   return (

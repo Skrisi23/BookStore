@@ -1,10 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getBooks } from '../api';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import BookCard from '../components/books/BookCard';
 
-function HomePage({ onNavigate }) {
+function HomePage() {
+  const navigate = useNavigate();
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,14 +46,14 @@ function HomePage({ onNavigate }) {
               </p>
               <button
                 className="btn btn-light btn-lg me-3"
-                onClick={() => onNavigate('books')}
+                onClick={() => navigate('/books')}
               >
                 <i className="bi bi-book me-2"></i>
                 Böngészés
               </button>
               <button
                 className="btn btn-outline-light btn-lg"
-                onClick={() => onNavigate('about')}
+                onClick={() => navigate('/about')}
               >
                 Tudj meg többet
               </button>
@@ -111,7 +113,7 @@ function HomePage({ onNavigate }) {
           </h2>
           <button
             className="btn btn-outline-primary"
-            onClick={() => onNavigate('books')}
+            onClick={() => navigate('/books')}
           >
             Összes megtekintése
             <i className="bi bi-arrow-right ms-2"></i>
@@ -137,7 +139,7 @@ function HomePage({ onNavigate }) {
           </p>
           <button
             className="btn btn-primary btn-lg"
-            onClick={() => onNavigate('books')}
+            onClick={() => navigate('/books')}
           >
             <i className="bi bi-book me-2"></i>
             Kezdj el böngészni

@@ -1,10 +1,16 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Login from '../components/auth/Login';
 import Register from '../components/auth/Register';
 
-function LoginPage({ onLoginSuccess }) {
+function LoginPage() {
+  const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
+
+  const handleLoginSuccess = () => {
+    navigate('/');
+  };
 
   return (
     <div className="container mt-5">
@@ -12,12 +18,12 @@ function LoginPage({ onLoginSuccess }) {
         <div className="col-md-5">
           {showRegister ? (
             <Register
-              onSuccess={onLoginSuccess}
+              onSuccess={handleLoginSuccess}
               onSwitchToLogin={() => setShowRegister(false)}
             />
           ) : (
             <Login
-              onSuccess={onLoginSuccess}
+              onSuccess={handleLoginSuccess}
               onSwitchToRegister={() => setShowRegister(true)}
             />
           )}

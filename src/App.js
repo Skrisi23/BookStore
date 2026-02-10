@@ -1,5 +1,6 @@
 // src/App.js
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
@@ -13,47 +14,37 @@ import LoginPage from './pages/LoginPage';
 import CartPage from './pages/CartPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
+import EmailVerification from './components/auth/EmailVerification';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './App.css';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
-
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return <HomePage onNavigate={setCurrentPage} />;
-      case 'books':
-        return <BooksPage />;
-      case 'about':
-        return <AboutPage />;
-      case 'login':
-        return <LoginPage onLoginSuccess={() => setCurrentPage('home')} />;
-      case 'cart':
-        return <CartPage onNavigate={setCurrentPage} />;
-      case 'admin':
-        return <AdminPage onNavigate={setCurrentPage} />;
-      case 'profile':
-        return <ProfilePage />;
-      default:
-        return <HomePage onNavigate={setCurrentPage} />;
-    }
-  };
-
   return (
     <AuthProvider>
       <CartProvider>
         <ToastProvider>
-          <div className="App d-flex flex-column min-vh-100">
-            <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-            <main className="flex-grow-1">
-              {renderPage()}
-            </main>
-            <Footer />
-            <ToastContainer />
-          </div>
+          <Router>
+            <div className="App d-flex flex-column min-vh-100">
+              <Navbar />
+              <main className="flex-grow-1">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/books" element={<BooksPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/admin" element={<AdminPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/verify" element={<EmailVerification />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </main>
+              <Footer />
+              <ToastContainer />
+            </div>
+          </Router>
         </ToastProvider>
       </CartProvider>
     </AuthProvider>
