@@ -21,6 +21,8 @@ public partial class BookStoreContext : DbContext
 
     public virtual DbSet<users> users { get; set; }
 
+    public virtual DbSet<payment> payments { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -70,6 +72,15 @@ public partial class BookStoreContext : DbContext
             entity.HasKey(e => e.id).HasName("PRIMARY");
 
             entity.Property(e => e.letrehozva).HasDefaultValueSql("current_timestamp()");
+        });
+
+        modelBuilder.Entity<payment>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+
+            entity.HasOne(d => d.user).WithMany(p => p.payments)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_payments_user");
         });
 
         OnModelCreatingPartial(modelBuilder);
