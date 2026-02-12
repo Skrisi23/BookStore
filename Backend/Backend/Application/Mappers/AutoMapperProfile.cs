@@ -19,6 +19,9 @@ namespace Backend.Application.Mappers
                 .ForMember(dest => dest.payment_date, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.id, opt => opt.Ignore());
 
+            // Rental mappings
+            CreateMap<rental, RentalDto>();
+
             // Cart mappings
             CreateMap<cart, CartDto>()
                 .ForMember(dest => dest.user_name, opt => opt.MapFrom(src => src.user.nev))

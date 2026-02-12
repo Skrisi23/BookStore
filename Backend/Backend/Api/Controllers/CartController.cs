@@ -247,5 +247,128 @@ namespace Backend.Api.Controllers
             var cartDtos = _mapper.Map<List<CartDto>>(carts);
             return Ok(cartDtos);
         }
+
+        /// <summary>
+        /// Checkout - Kosár fizetése és kölcsönzések létrehozása
+        /// </summary>
+        [HttpPost("checkout")]
+        public async Task<ActionResult<CheckoutResponseDto>> Checkout([FromBody] CheckoutDto checkoutDto)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // 1. Aktív kosár keresése
+                var cart = await _context.carts
+                    .Include(c => c.cart_items)
+                        .ThenInclude(ci => ci.copy)
+                            .ThenInclude(cp => cp.book)
+                    .FirstOrDefaultAsync(c => c.user_id == checkoutDto.user_id && c.status == "active");
+
+                if (cart == null)
+                {
+                    return NotFound(new { message = "Nincs aktív kosár" });
+                }
+
+                if (!cart.cart_items.Any())
+                {
+                    return BadRequest(new { message = "A kosár üres" });
+                }
+
+                // 2. Ellenőrizzük, hogy minden könyv még elérhető-e
+                var unavailableBooks = cart.cart_items
+                    .Where(ci => ci.copy.elerheto == false)
+                    .Select(ci => new { ci.copy.leltari_szam, ci.copy.book.cim })
+                    .ToList();
+
+                if (unavailableBooks.Any())
+                {
+                    return BadRequest(new
+                    {
+                        message = "Néhány könyv már nem elérhető",
+                        unavailable_books = unavailableBooks
+                    });
+                }
+
+                // 3. Összeg számítása
+                decimal totalAmount = cart.cart_items.Sum(ci => ci.price * ci.quantity);
+
+                // 4. Payment létrehozása
+                var payment = new payment
+                {
+                    user_id = checkoutDto.user_id,
+                    order_type = "rental",
+                    amount = totalAmount,
+                    payment_method = checkoutDto.payment_method,
+                    payment_date = DateTime.Now,
+                    status = "completed",
+                    transaction_id = checkoutDto.transaction_id,
+                    order_details = $"Kosár ID: {cart.id}, Könyvek száma: {cart.cart_items.Count}"
+                };
+
+                _context.payments.Add(payment);
+                await _context.SaveChangesAsync();
+
+                // 5. Rental-ok létrehozása minden cart_item-hez
+                var rentals = new List<rental>();
+                var kolcsonzesDatum = DateOnly.FromDateTime(DateTime.Now);
+                
+                foreach (var cartItem in cart.cart_items)
+                {
+                    var rental = new rental
+                    {
+                        user_id = checkoutDto.user_id,
+                        copy_id = cartItem.copy_id,
+                        payment_id = payment.id,
+                        kolcsonzes_datuma = kolcsonzesDatum,
+                        visszahozva_datuma = null
+                    };
+
+                    _context.rentals.Add(rental);
+                    rentals.Add(rental);
+
+                    // 6. Copy lefoglalása
+                    cartItem.copy.elerheto = false;
+                }
+
+                // 7. Kosár státuszának frissítése
+                cart.status = "checked_out";
+                cart.updated_at = DateTime.Now;
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                // 8. Válasz összeállítása
+                // Payment reload user adatokkal
+                payment = await _context.payments
+                    .Include(p => p.user)
+                    .FirstOrDefaultAsync(p => p.id == payment.id);
+
+                // Rentals reload teljes adatokkal
+                var rentalsList = await _context.rentals
+                    .Include(r => r.user)
+                    .Include(r => r.copy)
+                        .ThenInclude(c => c.book)
+                    .Where(r => r.payment_id == payment!.id)
+                    .ToListAsync();
+
+                var response = new CheckoutResponseDto
+                {
+                    payment = _mapper.Map<PaymentDto>(payment!),
+                    rentals = _mapper.Map<List<RentalDto>>(rentalsList),
+                    message = $"Sikeres fizetés! {rentalsList.Count} könyv kölcsönözve {checkoutDto.rental_days} napra."
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, new
+                {
+                    message = "Hiba történt a checkout során",
+                    error = ex.Message
+                });
+            }
+        }
     }
 }
