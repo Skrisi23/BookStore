@@ -40,7 +40,7 @@ function Cart({ onCheckout }) {
       </div>
 
       {cartItems.map(item => (
-        <CartItem key={item.cart_item_id} item={item} />
+        <CartItem key={item.id} item={item} />
       ))}
 
       <div className="card bg-light">
