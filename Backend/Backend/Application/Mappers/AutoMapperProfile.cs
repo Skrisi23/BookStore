@@ -20,7 +20,9 @@ namespace Backend.Application.Mappers
                 .ForMember(dest => dest.id, opt => opt.Ignore());
 
             // Rental mappings
-            CreateMap<rental, RentalDto>();
+            CreateMap<rental, RentalDto>()
+                .ForMember(dest => dest.copy, opt => opt.Ignore())
+                .ForMember(dest => dest.user, opt => opt.Ignore());
 
             // Cart mappings
             CreateMap<cart, CartDto>()

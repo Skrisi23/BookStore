@@ -107,24 +107,25 @@ namespace Backend.Api.Controllers
                     return NotFound(new { message = $"Nem található könyvpéldány ezzel az ID-vel: {addToCartDto.copy_id}" });
                 }
             }
-            // 1b. Ha book_id van megadva, automatikusan választunk egy elérhető példányt
+            // 1b. Ha book_id van megadva, automatikusan választunk egy példányt (bármilyen állapotban)
             else if (addToCartDto.book_id.HasValue)
             {
                 copy = await _context.copies
                     .Include(c => c.book)
-                    .Where(c => c.book_id == addToCartDto.book_id.Value && c.elerheto == true)
+                    .Where(c => c.book_id == addToCartDto.book_id.Value)
                     .FirstOrDefaultAsync();
 
                 if (copy == null)
                 {
-                    return NotFound(new { message = $"Nincs elérhető példány ehhez a könyvhöz (book_id: {addToCartDto.book_id})" });
+                    return NotFound(new { message = $"Nincs példány ehhez a könyvhöz (book_id: {addToCartDto.book_id})" });
                 }
             }
 
-            // 2. Ellenőrizzük, hogy elérhető-e a könyv
-            if (copy!.elerheto == false)
+            // 2. Kosárba helyezéskor NEM foglaljuk le - csak checkout-kor
+            // Ellenőrizzük hogy létezik-e a copy
+            if (copy == null)
             {
-                return BadRequest(new { message = $"Ez a könyvpéldány nem elérhető (leltári szám: {copy.leltari_szam})" });
+                return NotFound(new { message = "Könyvpéldány nem található" });
             }
 
             // 3. Aktív kosár keresése vagy létrehozása
@@ -317,6 +318,18 @@ namespace Backend.Api.Controllers
                 decimal totalAmount = cart.cart_items.Sum(ci => ci.price * ci.quantity);
 
                 // 4. Payment létrehozása
+                var orderDetailsJson = System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    cart_id = cart.id,
+                    items_count = cart.cart_items.Count,
+                    books = cart.cart_items.Select(ci => new
+                    {
+                        copy_id = ci.copy_id,
+                        book_title = ci.copy.book.cim,
+                        price = ci.price
+                    }).ToList()
+                });
+
                 var payment = new payment
                 {
                     user_id = checkoutDto.user_id,
@@ -326,7 +339,7 @@ namespace Backend.Api.Controllers
                     payment_date = DateTime.Now,
                     status = "completed",
                     transaction_id = checkoutDto.transaction_id,
-                    order_details = $"Kosár ID: {cart.id}, Könyvek száma: {cart.cart_items.Count}"
+                    order_details = orderDetailsJson
                 };
 
                 _context.payments.Add(payment);
