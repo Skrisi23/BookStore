@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { getBooks, getAuthors, deleteBook, updateBook } from '../../api';
+import { getBooks, getAuthors, deleteBook, updateBook, createBook, toggleBookAvailability } from '../../api';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useToast } from '../../context/ToastContext';
 
 
 function BookManagement() {
   const [books, setBooks] = useState([]);
+  const [authors, setAuthors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingBook, setEditingBook] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newBook, setNewBook] = useState({
+    cim: '',
+    boritokep: '',
+    kiadasi_datum: '',
+    tartalom: '',
+    ar: '',
+    kategoria: '',
+    author_id: ''
+  });
   const { success, error } = useToast();
 
   const loadBooks = async (signal) => {
@@ -19,7 +30,8 @@ function BookManagement() {
         getAuthors(signal).catch(() => [])
       ]);
 
-      const authors = Array.isArray(authorsData) ? authorsData : [];
+      const authorsArray = Array.isArray(authorsData) ? authorsData : [];
+      setAuthors(authorsArray);
 
       const normalized = Array.isArray(booksData) ? booksData.map(book => {
         return {
@@ -91,9 +103,61 @@ function BookManagement() {
     }
   };
 
-  const handleToggleAvailability = (bookId) => {
-    // Ez a copy elérhetőségét változtatná, nem a book-ét
-    // Egyelőre skip
+  const handleToggleAvailability = async (bookId) => {
+    const result = await toggleBookAvailability(bookId);
+    if (result.success) {
+      success(result.message);
+      const ac = new AbortController();
+      await loadBooks(ac.signal);
+    } else {
+      error(result.message || 'Elérhetőség váltása sikertelen');
+    }
+  };
+
+  const handleAddBook = () => {
+    setNewBook({
+      cim: '',
+      boritokep: '',
+      kiadasi_datum: new Date().toISOString().split('T')[0],
+      tartalom: '',
+      ar: '',
+      kategoria: '',
+      author_id: authors.length > 0 ? authors[0].id : ''
+    });
+    setShowAddModal(true);
+  };
+
+  const handleSaveNewBook = async (e) => {
+    e.preventDefault();
+    
+    const bookData = {
+      cim: newBook.cim,
+      boritokep: newBook.boritokep,
+      kiadasi_datum: newBook.kiadasi_datum,
+      tartalom: newBook.tartalom,
+      ar: parseFloat(newBook.ar),
+      kategoria: newBook.kategoria,
+      author_id: parseInt(newBook.author_id)
+    };
+
+    const result = await createBook(bookData);
+    if (result.success) {
+      success('Könyv sikeresen hozzáadva');
+      setShowAddModal(false);
+      setNewBook({
+        cim: '',
+        boritokep: '',
+        kiadasi_datum: '',
+        tartalom: '',
+        ar: '',
+        kategoria: '',
+        author_id: ''
+      });
+      const ac = new AbortController();
+      await loadBooks(ac.signal);
+    } else {
+      error(result.message || 'Hozzáadás sikertelen');
+    }
   };
 
   if (loading || books.length === 0) {
@@ -108,7 +172,7 @@ function BookManagement() {
             <i className="bi bi-book me-2"></i>
             Könyvek kezelése
           </h4>
-          <button className="btn btn-primary">
+          <button className="btn btn-primary" onClick={handleAddBook}>
             <i className="bi bi-plus-circle me-2"></i>
             Új könyv
           </button>
@@ -167,6 +231,117 @@ function BookManagement() {
           </table>
         </div>
       </div>
+
+      {/* Új könyv Modal */}
+      {showAddModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Új könyv hozzáadása</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  onClick={() => setShowAddModal(false)}
+                ></button>
+              </div>
+              <form onSubmit={handleSaveNewBook}>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="form-label">Cím *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={newBook.cim}
+                      onChange={(e) => setNewBook({...newBook, cim: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Szerző *</label>
+                    <select
+                      className="form-select"
+                      value={newBook.author_id}
+                      onChange={(e) => setNewBook({...newBook, author_id: e.target.value})}
+                      required
+                    >
+                      <option value="">Válassz szerzőt...</option>
+                      {authors.map(author => (
+                        <option key={author.id} value={author.id}>
+                          {author.nev || author.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Kategória *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={newBook.kategoria}
+                      onChange={(e) => setNewBook({...newBook, kategoria: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Ár (Ft) *</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={newBook.ar}
+                      onChange={(e) => setNewBook({...newBook, ar: e.target.value})}
+                      required
+                      min="0"
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Borítókép URL</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={newBook.boritokep}
+                      onChange={(e) => setNewBook({...newBook, boritokep: e.target.value})}
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Kiadási dátum *</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={newBook.kiadasi_datum}
+                      onChange={(e) => setNewBook({...newBook, kiadasi_datum: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Tartalom</label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      value={newBook.tartalom}
+                      onChange={(e) => setNewBook({...newBook, tartalom: e.target.value})}
+                      placeholder="Rövid leírás..."
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary" 
+                    onClick={() => setShowAddModal(false)}
+                  >
+                    Mégse
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    Hozzáadás
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Szerkesztés Modal */}
       {showEditModal && editingBook && (

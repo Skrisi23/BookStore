@@ -11,6 +11,7 @@ const ENDPOINTS = {
   booksByPrice: `${defaultBaseUrl}/api/Books/by-price`,
   bookPriceStats: `${defaultBaseUrl}/api/Books/price-stats`,
   copies: `${defaultBaseUrl}/api/Copies`,
+  copiesToggleBookAvailability: (bookId) => `${defaultBaseUrl}/api/Copies/toggle-book-availability/${bookId}`,
   rentals: `${defaultBaseUrl}/api/Rentals`,
   users: `${defaultBaseUrl}/api/Users`,
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
@@ -419,6 +420,43 @@ export async function getTodayRevenue(signal) {
 }
 
 /**
+ * Új könyv hozzáadása
+ */
+export async function createBook(bookData, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.books, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(bookData),
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Könyv létrehozása sikertelen'
+      };
+    }
+
+    return {
+      success: true,
+      book: data
+    };
+  } catch (e) {
+    console.error('Könyv létrehozási hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a létrehozás során'
+    };
+  }
+}
+
+/**
  * Könyv törlése
  */
 export async function deleteBook(bookId, signal) {
@@ -442,6 +480,39 @@ export async function deleteBook(bookId, signal) {
     return {
       success: false,
       message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a törlés során'
+    };
+  }
+}
+
+/**
+ * Könyv összes példányának elérhetőségét váltja
+ */
+export async function toggleBookAvailability(bookId, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.copiesToggleBookAvailability(bookId), {
+      method: 'PUT',
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Elérhetőség váltása sikertelen'
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message,
+      new_availability: data.new_availability
+    };
+  } catch (e) {
+    console.error('Elérhetőség váltási hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt az elérhetőség váltása során'
     };
   }
 }
