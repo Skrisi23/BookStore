@@ -48,8 +48,9 @@ namespace Backend.Application.DTOs
     // Könyv kosárba helyezése
     public class AddToCartDto
     {
-        [Required(ErrorMessage = "A copy_id kötelező")]
-        public int copy_id { get; set; }
+        // Vagy copy_id vagy book_id kötelező
+        public int? copy_id { get; set; }
+        public int? book_id { get; set; }
 
         [Range(1, 1, ErrorMessage = "Egy könyvpéldányból csak 1 darab lehet a kosárban")]
         public int quantity { get; set; } = 1;

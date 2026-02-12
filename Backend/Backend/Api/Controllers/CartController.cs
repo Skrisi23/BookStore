@@ -82,23 +82,47 @@ namespace Backend.Api.Controllers
         }
 
         /// <summary>
-        /// Könyv hozzáadása a kosárhoz
+        /// Könyv hozzáadása a kosárhoz (copy_id vagy book_id alapján)
         /// </summary>
         [HttpPost("add")]
         public async Task<ActionResult<CartDto>> AddToCart([FromQuery] int userId, [FromBody] AddToCartDto addToCartDto)
         {
-            // 1. Ellenőrizzük, hogy létezik-e a copy
-            var copy = await _context.copies
-                .Include(c => c.book)
-                .FirstOrDefaultAsync(c => c.id == addToCartDto.copy_id);
-
-            if (copy == null)
+            // Validáció: legalább copy_id vagy book_id kötelező
+            if (!addToCartDto.copy_id.HasValue && !addToCartDto.book_id.HasValue)
             {
-                return NotFound(new { message = $"Nem található könyvpéldány ezzel az ID-vel: {addToCartDto.copy_id}" });
+                return BadRequest(new { message = "A copy_id vagy book_id megadása kötelező" });
+            }
+
+            copy? copy = null;
+
+            // 1a. Ha copy_id meg van adva, azt használjuk
+            if (addToCartDto.copy_id.HasValue)
+            {
+                copy = await _context.copies
+                    .Include(c => c.book)
+                    .FirstOrDefaultAsync(c => c.id == addToCartDto.copy_id.Value);
+
+                if (copy == null)
+                {
+                    return NotFound(new { message = $"Nem található könyvpéldány ezzel az ID-vel: {addToCartDto.copy_id}" });
+                }
+            }
+            // 1b. Ha book_id van megadva, automatikusan választunk egy elérhető példányt
+            else if (addToCartDto.book_id.HasValue)
+            {
+                copy = await _context.copies
+                    .Include(c => c.book)
+                    .Where(c => c.book_id == addToCartDto.book_id.Value && c.elerheto == true)
+                    .FirstOrDefaultAsync();
+
+                if (copy == null)
+                {
+                    return NotFound(new { message = $"Nincs elérhető példány ehhez a könyvhöz (book_id: {addToCartDto.book_id})" });
+                }
             }
 
             // 2. Ellenőrizzük, hogy elérhető-e a könyv
-            if (copy.elerheto == false)
+            if (copy!.elerheto == false)
             {
                 return BadRequest(new { message = $"Ez a könyvpéldány nem elérhető (leltári szám: {copy.leltari_szam})" });
             }
@@ -121,7 +145,7 @@ namespace Backend.Api.Controllers
             }
 
             // 4. Ellenőrizzük, hogy már van-e ez a copy a kosárban
-            var existingItem = cart.cart_items.FirstOrDefault(ci => ci.copy_id == addToCartDto.copy_id);
+            var existingItem = cart.cart_items.FirstOrDefault(ci => ci.copy_id == copy.id);
             if (existingItem != null)
             {
                 return BadRequest(new { message = "Ez a könyvpéldány már a kosárban van" });
@@ -131,7 +155,7 @@ namespace Backend.Api.Controllers
             var cartItem = new cart_item
             {
                 cart_id = cart.id,
-                copy_id = addToCartDto.copy_id,
+                copy_id = copy.id,
                 quantity = 1,
                 price = copy.book.ar,
                 added_at = DateTime.Now
