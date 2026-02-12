@@ -155,4 +155,133 @@ public class BooksController : ControllerBase
 
         return Ok(book);
     }
+
+    /// <summary>
+    /// Új könyv létrehozása
+    /// </summary>
+    [HttpPost]
+    public async Task<ActionResult<BookDto>> CreateBook([FromBody] CreateBookDto createBookDto)
+    {
+        // Ellenőrizzük hogy létezik-e a szerző
+        var authorExists = await _context.authors.AnyAsync(a => a.id == createBookDto.author_id);
+        if (!authorExists)
+        {
+            return BadRequest(new { message = $"Nem található szerző ezzel az ID-vel: {createBookDto.author_id}" });
+        }
+
+        var book = new book
+        {
+            cim = createBookDto.cim,
+            boritokep = createBookDto.boritokep,
+            kiadasi_datum = createBookDto.kiadasi_datum,
+            tartalom = createBookDto.tartalom,
+            ar = createBookDto.ar,
+            kategoria = createBookDto.kategoria,
+            author_id = createBookDto.author_id
+        };
+
+        _context.books.Add(book);
+        await _context.SaveChangesAsync();
+
+        // Reload with author
+        book = await _context.books
+            .Include(b => b.author)
+            .FirstOrDefaultAsync(b => b.id == book.id);
+
+        var bookDto = new BookDto
+        {
+            Id = book!.id,
+            Cim = book.cim,
+            Boritokep = book.boritokep,
+            KiadasiDatum = book.kiadasi_datum,
+            Tartalom = book.tartalom,
+            Ar = book.ar,
+            Kategoria = book.kategoria,
+            AuthorNev = book.author.nev
+        };
+
+        return CreatedAtAction(nameof(GetBook), new { id = book.id }, bookDto);
+    }
+
+    /// <summary>
+    /// Könyv módosítása
+    /// </summary>
+    [HttpPut("{id}")]
+    public async Task<ActionResult<BookDto>> UpdateBook(int id, [FromBody] UpdateBookDto updateBookDto)
+    {
+        var book = await _context.books
+            .Include(b => b.author)
+            .FirstOrDefaultAsync(b => b.id == id);
+
+        if (book == null)
+        {
+            return NotFound(new { message = $"Nem található könyv ezzel az ID-vel: {id}" });
+        }
+
+        // Ha author_id változik, ellenőrizzük hogy létezik-e
+        if (updateBookDto.author_id.HasValue && updateBookDto.author_id.Value != book.author_id)
+        {
+            var authorExists = await _context.authors.AnyAsync(a => a.id == updateBookDto.author_id.Value);
+            if (!authorExists)
+            {
+                return BadRequest(new { message = $"Nem található szerző ezzel az ID-vel: {updateBookDto.author_id}" });
+            }
+            book.author_id = updateBookDto.author_id.Value;
+        }
+
+        // Frissítjük a mezőket ha meg vannak adva
+        if (!string.IsNullOrEmpty(updateBookDto.cim)) book.cim = updateBookDto.cim;
+        if (updateBookDto.boritokep != null) book.boritokep = updateBookDto.boritokep;
+        if (updateBookDto.kiadasi_datum.HasValue) book.kiadasi_datum = updateBookDto.kiadasi_datum;
+        if (updateBookDto.tartalom != null) book.tartalom = updateBookDto.tartalom;
+        if (updateBookDto.ar.HasValue) book.ar = updateBookDto.ar.Value;
+        if (!string.IsNullOrEmpty(updateBookDto.kategoria)) book.kategoria = updateBookDto.kategoria;
+
+        await _context.SaveChangesAsync();
+
+        // Reload with author
+        book = await _context.books
+            .Include(b => b.author)
+            .FirstOrDefaultAsync(b => b.id == id);
+
+        var bookDto = new BookDto
+        {
+            Id = book!.id,
+            Cim = book.cim,
+            Boritokep = book.boritokep,
+            KiadasiDatum = book.kiadasi_datum,
+            Tartalom = book.tartalom,
+            Ar = book.ar,
+            Kategoria = book.kategoria,
+            AuthorNev = book.author.nev
+        };
+
+        return Ok(bookDto);
+    }
+
+    /// <summary>
+    /// Könyv törlése
+    /// </summary>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteBook(int id)
+    {
+        var book = await _context.books.FindAsync(id);
+
+        if (book == null)
+        {
+            return NotFound(new { message = $"Nem található könyv ezzel az ID-vel: {id}" });
+        }
+
+        // Ellenőrizzük hogy vannak-e hozzá kapcsolódó copies
+        var hasCopies = await _context.copies.AnyAsync(c => c.book_id == id);
+        if (hasCopies)
+        {
+            return BadRequest(new { message = "A könyv nem törölhető, mert vannak hozzá kapcsolódó példányok (copies)" });
+        }
+
+        _context.books.Remove(book);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

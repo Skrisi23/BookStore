@@ -22,3 +22,25 @@ public class BooksByCategoryRequest
 {
     public string Kategoria { get; set; } = null!;
 }
+
+public class CreateBookDto
+{
+    public string cim { get; set; } = null!;
+    public string? boritokep { get; set; }
+    public DateOnly? kiadasi_datum { get; set; }
+    public string? tartalom { get; set; }
+    public decimal ar { get; set; }
+    public string kategoria { get; set; } = null!;
+    public int author_id { get; set; }
+}
+
+public class UpdateBookDto
+{
+    public string? cim { get; set; }
+    public string? boritokep { get; set; }
+    public DateOnly? kiadasi_datum { get; set; }
+    public string? tartalom { get; set; }
+    public decimal? ar { get; set; }
+    public string? kategoria { get; set; }
+    public int? author_id { get; set; }
+}
