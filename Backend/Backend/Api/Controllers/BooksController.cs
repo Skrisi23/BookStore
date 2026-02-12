@@ -25,6 +25,7 @@ public class BooksController : ControllerBase
     {
         var books = await _context.books
             .Include(b => b.author)
+            .Include(b => b.copies)
             .Select(b => new BookDto
             {
                 Id = b.id,
@@ -34,7 +35,8 @@ public class BooksController : ControllerBase
                 Tartalom = b.tartalom,
                 Ar = b.ar,
                 Kategoria = b.kategoria,
-                AuthorNev = b.author.nev
+                AuthorNev = b.author.nev,
+                Elerheto = b.copies.Any(c => c.elerheto == true)
             })
             .ToListAsync();
 

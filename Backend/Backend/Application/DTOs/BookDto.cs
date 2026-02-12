@@ -10,6 +10,7 @@ public class BookDto
     public decimal Ar { get; set; }
     public string Kategoria { get; set; } = null!;
     public string AuthorNev { get; set; } = null!;
+    public bool Elerheto { get; set; }  // Van-e legalább 1 elérhető példány
 }
 
 public class BooksByPriceRangeRequest

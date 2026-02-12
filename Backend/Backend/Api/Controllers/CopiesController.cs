@@ -52,5 +52,45 @@ namespace Backend.Api.Controllers
             _context.SaveChanges();
             return NoContent();
         }
+
+        /// <summary>
+        /// Toggles availability of all copies for a specific book
+        /// If any copy is available, sets all to unavailable
+        /// If all copies are unavailable, sets all to available
+        /// </summary>
+        [HttpPut("toggle-book-availability/{bookId}")]
+        public async Task<IActionResult> ToggleBookAvailability(int bookId)
+        {
+            var copies = await _context.copies
+                .Where(c => c.book_id == bookId)
+                .ToListAsync();
+
+            if (!copies.Any())
+            {
+                return NotFound(new { message = "Ennek a könyvnek nincs egyetlen példánya sem" });
+            }
+
+            // Ha van legalább egy elérhető példány, akkor mindet elérhetetlenné tesszük
+            // Ha egyik sem elérhető, akkor mindet elérhetővé tesszük
+            bool hasAvailable = copies.Any(c => c.elerheto == true);
+            bool newAvailability = !hasAvailable;
+
+            foreach (var copy in copies)
+            {
+                copy.elerheto = newAvailability;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = newAvailability 
+                    ? $"{copies.Count} példány elérhetővé téve" 
+                    : $"{copies.Count} példány elérhetetlenné téve",
+                book_id = bookId,
+                copies_count = copies.Count,
+                new_availability = newAvailability
+            });
+        }
     }
 }
