@@ -18,6 +18,34 @@ namespace Backend.Application.Mappers
             CreateMap<CreatePaymentDto, payment>()
                 .ForMember(dest => dest.payment_date, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.id, opt => opt.Ignore());
+
+            // Cart mappings
+            CreateMap<cart, CartDto>()
+                .ForMember(dest => dest.user_name, opt => opt.MapFrom(src => src.user.nev))
+                .ForMember(dest => dest.user_email, opt => opt.MapFrom(src => src.user.email))
+                .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.cart_items))
+                .ForMember(dest => dest.total_price, opt => opt.MapFrom(src => src.cart_items.Sum(ci => ci.price * ci.quantity)))
+                .ForMember(dest => dest.total_items, opt => opt.MapFrom(src => src.cart_items.Sum(ci => ci.quantity)));
+            CreateMap<CreateCartDto, cart>()
+                .ForMember(dest => dest.created_at, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.status, opt => opt.MapFrom(src => "active"))
+                .ForMember(dest => dest.id, opt => opt.Ignore());
+
+            // CartItem mappings
+            CreateMap<cart_item, CartItemDto>()
+                .ForMember(dest => dest.leltari_szam, opt => opt.MapFrom(src => src.copy.leltari_szam))
+                .ForMember(dest => dest.copy_elerheto, opt => opt.MapFrom(src => src.copy.elerheto))
+                .ForMember(dest => dest.book_id, opt => opt.MapFrom(src => src.copy.book.id))
+                .ForMember(dest => dest.book_cim, opt => opt.MapFrom(src => src.copy.book.cim))
+                .ForMember(dest => dest.book_boritokep, opt => opt.MapFrom(src => src.copy.book.boritokep))
+                .ForMember(dest => dest.book_kategoria, opt => opt.MapFrom(src => src.copy.book.kategoria))
+                .ForMember(dest => dest.author_nev, opt => opt.MapFrom(src => src.copy.book.author.nev));
+            CreateMap<AddToCartDto, cart_item>()
+                .ForMember(dest => dest.added_at, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.quantity, opt => opt.MapFrom(src => 1))
+                .ForMember(dest => dest.id, opt => opt.Ignore())
+                .ForMember(dest => dest.cart_id, opt => opt.Ignore())
+                .ForMember(dest => dest.price, opt => opt.Ignore());
         }
     }
 }
