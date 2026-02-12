@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { checkout } from '../../api';
 
 function Checkout({ onSuccess, onCancel }) {
-  const { cartItems, getTotalPrice, clearCart } = useCart();
+  const { cartItems, getTotalPrice, refreshCart } = useCart();
   const { currentUser } = useAuth();
-  const { success } = useToast();
+  const { success, error } = useToast();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: currentUser?.name || '',
     email: currentUser?.email || '',
@@ -24,28 +26,31 @@ function Checkout({ onSuccess, onCancel }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Szimuláljuk a rendelés leadását
-    const order = {
-      id: Date.now(),
-      userId: currentUser.id,
-      items: cartItems,
-      total: getTotalPrice(),
-      shippingInfo: formData,
-      orderDate: new Date().toISOString(),
-      status: 'processing'
-    };
+    if (!currentUser?.id) {
+      error('Bejelentkezés szükséges');
+      return;
+    }
 
-    
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    orders.push(order);
-    localStorage.setItem('orders', JSON.stringify(orders));
-
-    clearCart();
-    success('Sikeres rendelés! Köszönjük a vásárlást!');
-    onSuccess();
+    try {
+      setLoading(true);
+      const result = await checkout(currentUser.id, formData.paymentMethod);
+      
+      if (result.success) {
+        await refreshCart();
+        success('Sikeres fizetés! Köszönjük a vásárlást!');
+        onSuccess();
+      } else {
+        error(result.message || 'Hiba történt a fizetés során');
+      }
+    } catch (err) {
+      console.error('Checkout hiba:', err);
+      error('Hiba történt a fizetés során');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -140,12 +145,22 @@ function Checkout({ onSuccess, onCancel }) {
                   type="button"
                   className="btn btn-secondary"
                   onClick={onCancel}
+                  disabled={loading}
                 >
                   Mégse
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  <i className="bi bi-check-circle me-2"></i>
-                  Rendelés leadása
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Feldolgozás...
+                    </>
+                  ) : (
+                    <>
+                      <i className="bi bi-check-circle me-2"></i>
+                      Rendelés leadása
+                    </>
+                  )}
                 </button>
               </div>
             </form>

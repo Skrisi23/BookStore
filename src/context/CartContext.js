@@ -39,13 +39,13 @@ export const CartProvider = ({ children }) => {
     loadCart();
   }, [currentUser?.id]);
 
-  const addToCart = async (copyId) => {
+  const addToCart = async (bookId) => {
     if (!currentUser?.id) {
       throw new Error('Bejelentkezés szükséges');
     }
 
     try {
-      const result = await apiAddToCart(currentUser.id, copyId);
+      const result = await apiAddToCart(currentUser.id, bookId);
       if (result.success) {
         setCartData(result.cart);
         return { success: true };

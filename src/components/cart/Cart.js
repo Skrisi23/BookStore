@@ -4,7 +4,17 @@ import CartItem from './CartItem';
 import { useCart } from '../../context/CartContext';
 
 function Cart({ onCheckout }) {
-  const { cartItems, getTotalPrice, clearCart } = useCart();
+  const { cartItems, getTotalPrice, clearCart, loading } = useCart();
+
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Betöltés...</span>
+        </div>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -30,7 +40,7 @@ function Cart({ onCheckout }) {
       </div>
 
       {cartItems.map(item => (
-        <CartItem key={`${item.id}-${item.type}`} item={item} />
+        <CartItem key={item.cart_item_id} item={item} />
       ))}
 
       <div className="card bg-light">

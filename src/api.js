@@ -216,7 +216,7 @@ export async function getMyCart(userId, signal) {
 /**
  * Könyv hozzáadása a kosárhoz
  */
-export async function addToCart(userId, copyId, signal) {
+export async function addToCart(userId, bookId, signal) {
   try {
     const response = await fetch(ENDPOINTS.cartAdd(userId), {
       method: 'POST',
@@ -225,7 +225,7 @@ export async function addToCart(userId, copyId, signal) {
         'Accept': 'application/json',
       },
       body: JSON.stringify({
-        copy_id: copyId,
+        book_id: bookId,
         quantity: 1
       }),
       signal
