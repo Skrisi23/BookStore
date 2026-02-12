@@ -22,6 +22,8 @@ const ENDPOINTS = {
   cartRemoveItem: (cartItemId, userId) => `${defaultBaseUrl}/api/Cart/item/${cartItemId}?userId=${userId}`,
   cartClear: (userId) => `${defaultBaseUrl}/api/Cart/clear?userId=${userId}`,
   cartCheckout: `${defaultBaseUrl}/api/Cart/checkout`,
+  // Payments endpoints
+  paymentsTodayRevenue: `${defaultBaseUrl}/api/Payments/today-revenue`,
 };
 
 async function fetchJson(url, options = {}) {
@@ -401,5 +403,17 @@ export async function verifyEmail(token, signal) {
       success: false,
       message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Email verifikáció során hiba történt'
     };
+  }
+}
+
+/**
+ * Mai bevétel lekérdezése
+ */
+export async function getTodayRevenue(signal) {
+  try {
+    return await fetchJson(ENDPOINTS.paymentsTodayRevenue, { signal });
+  } catch (e) {
+    console.error('Mai bevétel lekérdezési hiba:', e);
+    return { date: new Date().toISOString().split('T')[0], total_revenue: 0, payments_count: 0 };
   }
 }

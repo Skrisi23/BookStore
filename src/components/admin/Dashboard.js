@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Statistics from './Statistics';
 import RentalManagement from './RentalManagement';
 import BookManagement from './BookManagement';
-import { getBooks, getRentals, getUsers } from '../../api';
+import { getBooks, getRentals, getUsers, getTodayRevenue } from '../../api';
 
 function Dashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -15,36 +15,17 @@ function Dashboard() {
   });
   const [loading, setLoading] = useState(true);
 
-  // Mai bevétel számítása localStorage-ból (ideiglenesen)
-  // Később backend API hívással helyettesítendő: GET /api/Payments/today-revenue
-  const calculateTodayRevenue = () => {
-    try {
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const today = new Date().toDateString();
-      
-      const todayOrders = orders.filter(order => {
-        const orderDate = new Date(order.orderDate).toDateString();
-        return orderDate === today;
-      });
-
-      const revenue = todayOrders.reduce((sum, order) => sum + (order.total || 0), 0);
-      return revenue;
-    } catch (e) {
-      console.error('Mai bevétel számítása sikertelen:', e);
-      return 0;
-    }
-  };
-
   useEffect(() => {
     const ac = new AbortController();
     async function loadStats() {
       try {
         setLoading(true);
         // Párhuzamosan lekérjük az adatokat
-        const [booksData, rentalsData, usersData] = await Promise.all([
+        const [booksData, rentalsData, usersData, revenueData] = await Promise.all([
           getBooks(ac.signal).catch(() => []),
           getRentals(ac.signal).catch(() => []),
-          getUsers(ac.signal).catch(() => [])
+          getUsers(ac.signal).catch(() => []),
+          getTodayRevenue(ac.signal).catch(() => ({ total_revenue: 0 }))
         ]);
 
         const books = Array.isArray(booksData) ? booksData : [];
@@ -56,14 +37,11 @@ function Dashboard() {
           !r.visszahozva_datuma && !r.returnedDate
         ).length;
 
-        // Mai bevétel számítása (localStorage-ból ideiglenesen, később backend API-ból)
-        const todayRevenue = calculateTodayRevenue();
-
         setStats({
           totalBooks: books.length,
           activeRentals: activeRentals,
           totalUsers: users.length,
-          todayRevenue: todayRevenue
+          todayRevenue: revenueData.total_revenue || 0
         });
       } catch (e) {
         console.error('Statisztikák betöltése sikertelen:', e);
