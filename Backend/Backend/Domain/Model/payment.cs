@@ -44,4 +44,7 @@ public partial class payment
     [InverseProperty("payments")]
     [JsonIgnore]
     public virtual users user { get; set; } = null!;
+
+    [InverseProperty("payment")]
+    public virtual ICollection<rental> rentals { get; set; } = new List<rental>();
 }

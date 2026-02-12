@@ -34,4 +34,8 @@ public partial class copy
     [InverseProperty("copy")]
     [JsonIgnore]
     public virtual ICollection<rental> rentals { get; set; } = new List<rental>();
+
+    [InverseProperty("copy")]
+    [JsonIgnore]
+    public virtual ICollection<cart_item> cart_items { get; set; } = new List<cart_item>();
 }

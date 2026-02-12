@@ -27,10 +27,18 @@ public partial class rental
 
     public DateOnly? visszahozva_datuma { get; set; }
 
+    [Column(TypeName = "int(11)")]
+    public int? payment_id { get; set; }
+
     [ForeignKey("copy_id")]
     [InverseProperty("rentals")]
     [JsonIgnore]
     public virtual copy copy { get; set; } = null!;
+
+    [ForeignKey("payment_id")]
+    [InverseProperty("rentals")]
+    [JsonIgnore]
+    public virtual payment? payment { get; set; }
 
     [ForeignKey("user_id")]
     [InverseProperty("rentals")]

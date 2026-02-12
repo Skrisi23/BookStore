@@ -40,4 +40,7 @@ public partial class users
 
     [InverseProperty("user")]
     public virtual ICollection<payment> payments { get; set; } = new List<payment>();
+
+    [InverseProperty("user")]
+    public virtual ICollection<cart> carts { get; set; } = new List<cart>();
 }

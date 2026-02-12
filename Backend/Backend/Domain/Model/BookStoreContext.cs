@@ -23,6 +23,10 @@ public partial class BookStoreContext : DbContext
 
     public virtual DbSet<payment> payments { get; set; }
 
+    public virtual DbSet<cart> carts { get; set; }
+
+    public virtual DbSet<cart_item> cart_items { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -65,6 +69,10 @@ public partial class BookStoreContext : DbContext
             entity.HasOne(d => d.user).WithMany(p => p.rentals)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_rentals_user");
+
+            entity.HasOne(d => d.payment).WithMany(p => p.rentals)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_rentals_payment");
         });
 
         modelBuilder.Entity<users>(entity =>
@@ -81,6 +89,34 @@ public partial class BookStoreContext : DbContext
             entity.HasOne(d => d.user).WithMany(p => p.payments)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_payments_user");
+        });
+
+        modelBuilder.Entity<cart>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+
+            entity.Property(e => e.created_at).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.status).HasDefaultValue("active");
+
+            entity.HasOne(d => d.user).WithMany(p => p.carts)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_carts_user");
+        });
+
+        modelBuilder.Entity<cart_item>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+
+            entity.Property(e => e.added_at).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.quantity).HasDefaultValue(1);
+
+            entity.HasOne(d => d.cart).WithMany(p => p.cart_items)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_cart_items_cart");
+
+            entity.HasOne(d => d.copy).WithMany(p => p.cart_items)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_cart_items_copy");
         });
 
         OnModelCreatingPartial(modelBuilder);
