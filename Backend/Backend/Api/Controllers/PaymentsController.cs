@@ -149,6 +149,31 @@ namespace Backend.Api.Controllers
         }
 
         /// <summary>
+        /// Mai bevétel lekérdezése
+        /// </summary>
+        [HttpGet("today-revenue")]
+        public async Task<ActionResult<object>> GetTodayRevenue()
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            var todayPayments = await _context.payments
+                .Where(p => p.payment_date >= today && p.payment_date < tomorrow)
+                .Where(p => p.status == "completed")
+                .ToListAsync();
+
+            var totalRevenue = todayPayments.Sum(p => p.amount);
+            var paymentsCount = todayPayments.Count;
+
+            return Ok(new
+            {
+                date = today.ToString("yyyy-MM-dd"),
+                total_revenue = totalRevenue,
+                payments_count = paymentsCount
+            });
+        }
+
+        /// <summary>
         /// Fizetés törlése (opcionális - ha szükséges)
         /// </summary>
         [HttpDelete("{id}")]
