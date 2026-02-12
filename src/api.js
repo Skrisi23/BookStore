@@ -16,6 +16,12 @@ const ENDPOINTS = {
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
   authRegister: `${defaultBaseUrl}/api/Auth/register`,
   authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,
+  // Cart endpoints
+  cartMyCart: (userId) => `${defaultBaseUrl}/api/Cart/my-cart?userId=${userId}`,
+  cartAdd: (userId) => `${defaultBaseUrl}/api/Cart/add?userId=${userId}`,
+  cartRemoveItem: (cartItemId, userId) => `${defaultBaseUrl}/api/Cart/item/${cartItemId}?userId=${userId}`,
+  cartClear: (userId) => `${defaultBaseUrl}/api/Cart/clear?userId=${userId}`,
+  cartCheckout: `${defaultBaseUrl}/api/Cart/checkout`,
 };
 
 async function fetchJson(url, options = {}) {
@@ -193,7 +199,174 @@ export async function registerUser(name, email, password, signal) {
     };
   }
 }
+// ==================== CART API ====================
 
+/**
+ * Aktív kosár lekérdezése (automatikusan létrehozza, ha nincs)
+ */
+export async function getMyCart(userId, signal) {
+  try {
+    return await fetchJson(ENDPOINTS.cartMyCart(userId), { signal });
+  } catch (e) {
+    console.error('Kosár lekérése sikertelen:', e);
+    throw e;
+  }
+}
+
+/**
+ * Könyv hozzáadása a kosárhoz
+ */
+export async function addToCart(userId, copyId, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.cartAdd(userId), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        copy_id: copyId,
+        quantity: 1
+      }),
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Kosárba helyezés sikertelen'
+      };
+    }
+
+    return {
+      success: true,
+      cart: data
+    };
+  } catch (e) {
+    console.error('Kosárba helyezési hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt'
+    };
+  }
+}
+
+/**
+ * Elem eltávolítása a kosárból
+ */
+export async function removeFromCart(cartItemId, userId, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.cartRemoveItem(cartItemId, userId), {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Törlés sikertelen'
+      };
+    }
+
+    return {
+      success: true,
+      cart: data
+    };
+  } catch (e) {
+    console.error('Törlési hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt'
+    };
+  }
+}
+
+/**
+ * Kosár kiürítése
+ */
+export async function clearCart(userId, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.cartClear(userId), {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Kosár kiürítése sikertelen'
+      };
+    }
+
+    return {
+      success: true,
+      cart: data
+    };
+  } catch (e) {
+    console.error('Kosár kiürítési hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt'
+    };
+  }
+}
+
+/**
+ * Checkout - Fizetés és kölcsönzés létrehozása
+ */
+export async function checkout(userId, paymentMethod, transactionId = null, rentalDays = 14, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.cartCheckout, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        payment_method: paymentMethod,
+        transaction_id: transactionId,
+        rental_days: rentalDays
+      }),
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Checkout sikertelen',
+        unavailable_books: data.unavailable_books || null
+      };
+    }
+
+    return {
+      success: true,
+      payment: data.payment,
+      rentals: data.rentals,
+      message: data.message
+    };
+  } catch (e) {
+    console.error('Checkout hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a fizetés során'
+    };
+  }
+}
 export async function verifyEmail(token, signal) {
   try {
     const response = await fetch(ENDPOINTS.authVerifyEmail, {
