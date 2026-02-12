@@ -417,3 +417,68 @@ export async function getTodayRevenue(signal) {
     return { date: new Date().toISOString().split('T')[0], total_revenue: 0, payments_count: 0 };
   }
 }
+
+/**
+ * Könyv törlése
+ */
+export async function deleteBook(bookId, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.bookById(bookId), {
+      method: 'DELETE',
+      signal
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({ message: 'Törlés sikertelen' }));
+      return {
+        success: false,
+        message: data.message || 'Könyv törlése sikertelen'
+      };
+    }
+
+    return { success: true };
+  } catch (e) {
+    console.error('Könyv törlési hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a törlés során'
+    };
+  }
+}
+
+/**
+ * Könyv módosítása
+ */
+export async function updateBook(bookId, updateData, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.bookById(bookId), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(updateData),
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Módosítás sikertelen'
+      };
+    }
+
+    return {
+      success: true,
+      book: data
+    };
+  } catch (e) {
+    console.error('Könyv módosítási hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a módosítás során'
+    };
+  }
+}
