@@ -17,6 +17,7 @@ const ENDPOINTS = {
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
   authRegister: `${defaultBaseUrl}/api/Auth/register`,
   authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,
+  authChangePassword: (userId) => `${defaultBaseUrl}/api/Auth/${userId}/change-password`,
   // Cart endpoints
   cartMyCart: (userId) => `${defaultBaseUrl}/api/Cart/my-cart?userId=${userId}`,
   cartAdd: (userId) => `${defaultBaseUrl}/api/Cart/add?userId=${userId}`,
@@ -62,6 +63,45 @@ export async function getRentals(signal) {
 }
 export async function getUsers(signal) {
   return fetchJson(ENDPOINTS.users, { signal });
+}
+
+export async function changeUserPassword(userId, currentPassword, newPassword, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.authChangePassword(userId), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+      }),
+      signal,
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Password change failed',
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message || 'Password changed successfully',
+    };
+  } catch (e) {
+    console.error('Password change error:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError'
+        ? 'Request was aborted'
+        : 'An error occurred while changing the password',
+    };
+  }
 }
 
 // Új kategória és ár alapú lekérdezések
