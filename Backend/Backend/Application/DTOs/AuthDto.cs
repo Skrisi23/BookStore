@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Backend.Application.DTOs;
 
 public class LoginRequest
@@ -44,4 +46,14 @@ public class UserDto
     public string Nev { get; set; } = null!;
     public string Email { get; set; } = null!;
     public DateTime? Letrehozva { get; set; }
+}
+
+public class ChangePasswordDto
+{
+    [Required(ErrorMessage = "Jelenlegi jelszó megadása kötelező")]
+    public string CurrentPassword { get; set; } = null!;
+
+    [Required(ErrorMessage = "Új jelszó megadása kötelező")]
+    [MinLength(6, ErrorMessage = "Az új jelszónak legalább 6 karakter hosszúnak kell lennie")]
+    public string NewPassword { get; set; } = null!;
 }

@@ -20,6 +20,54 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Felhasználó jelszavának módosítása
+    /// </summary>
+    [HttpPatch("{id}/change-password")]
+    public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto dto)
+    {
+        // Ellenőrizzük, hogy a bejelentkezett user a saját jelszavát módosítja-e (ha van auth middleware)
+        var currentUserId = User.FindFirst("UserId")?.Value;
+        if (!string.IsNullOrEmpty(currentUserId) && currentUserId != id.ToString())
+        {
+            return Forbid();
+        }
+
+        // 1. Keressük meg a felhasználót
+        var user = await _context.users.FindAsync(id);
+        if (user == null)
+        {
+            return NotFound(new { message = "Felhasználó nem található" });
+        }
+
+        // 2. Ellenőrizzük a jelenlegi jelszót
+        bool isCurrentPasswordValid = false;
+        try
+        {
+            isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.jelszo_hash);
+        }
+        catch
+        {
+            // Ha nem BCrypt hash, egyszerű összehasonlítás (fejlesztési fallback)
+            isCurrentPasswordValid = user.jelszo_hash == dto.CurrentPassword;
+        }
+
+        if (!isCurrentPasswordValid)
+        {
+            return BadRequest(new { message = "Hibás jelenlegi jelszó" });
+        }
+
+        // 3. Hash-eljük az új jelszót
+        string newPasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+
+        // 4. Frissítsük az adatbázisban
+        user.jelszo_hash = newPasswordHash;
+        _context.Entry(user).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Jelszó sikeresen módosítva" });
+    }
+
+    /// <summary>
     /// Felhasználó bejelentkezés
     /// </summary>
     [HttpPost("login")]
