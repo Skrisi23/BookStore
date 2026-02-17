@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { getRentals, getBooks, getCopies } from '../../api';
+import { getRentals, getBooks, getCopies, changeUserPassword } from '../../api';
 
 function Profile() {
   const { currentUser, logout } = useAuth();
@@ -9,6 +9,7 @@ function Profile() {
   const [activeTab, setActiveTab] = useState('overview');
   const [userRentals, setUserRentals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [passwordLoading, setPasswordLoading] = useState(false);
   
   // Jelszó csere állapotok
   const [showPasswordChange, setShowPasswordChange] = useState(false);
@@ -66,7 +67,7 @@ function Profile() {
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
-    
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       error('Az új jelszavak nem egyeznek!');
       return;
@@ -77,16 +78,37 @@ function Profile() {
       return;
     }
 
-    // TODO: Backend API hívás a jelszó módosításhoz
-    // await updatePassword(currentUser.id, passwordData.currentPassword, passwordData.newPassword);
-    
-    success('Jelszó sikeresen módosítva! (Demo verzió - backend később)');
-    setShowPasswordChange(false);
-    setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
+    if (!currentUser?.id) {
+      error('A jelszó módosításához be kell jelentkezned.');
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const result = await changeUserPassword(
+        currentUser.id,
+        passwordData.currentPassword,
+        passwordData.newPassword
+      );
+
+      if (!result.success) {
+        error(result.message || 'A jelszó módosítása sikertelen.');
+        return;
+      }
+
+      success(result.message || 'Jelszó sikeresen módosítva!');
+      setShowPasswordChange(false);
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } catch (err) {
+      console.error('Jelszó módosítási hiba:', err);
+      error('Hiba történt a jelszó módosítása során.');
+    } finally {
+      setPasswordLoading(false);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -368,9 +390,22 @@ function Profile() {
                       />
                     </div>
                     <div className="d-flex gap-2">
-                      <button type="submit" className="btn btn-primary">
-                        <i className="bi bi-check-circle me-2"></i>
-                        Mentés
+                      <button type="submit" className="btn btn-primary" disabled={passwordLoading}>
+                        {passwordLoading ? (
+                          <>
+                            <span
+                              className="spinner-border spinner-border-sm me-2"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>
+                            Mentés folyamatban...
+                          </>
+                        ) : (
+                          <>
+                            <i className="bi bi-check-circle me-2"></i>
+                            Mentés
+                          </>
+                        )}
                       </button>
                       <button 
                         type="button" 
