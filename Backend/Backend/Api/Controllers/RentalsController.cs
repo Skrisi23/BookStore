@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Backend.Application.DTOs;
 using Backend.Domain.Model;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,11 +13,13 @@ namespace Backend.Api.Controllers
     {
         private readonly BookStoreContext _context;
         private readonly IMapper _mapper;
+        private readonly RentalNotificationService _notificationService;
 
-        public RentalsController(BookStoreContext context, IMapper mapper)
+        public RentalsController(BookStoreContext context, IMapper mapper, RentalNotificationService notificationService)
         {
             _context = context;
             _mapper = mapper;
+            _notificationService = notificationService;
         }
 
         /// <summary>
@@ -121,6 +124,29 @@ namespace Backend.Api.Controllers
                 rental = rentalDto,
                 was_late = wasLate
             });
+        }
+
+        /// <summary>
+        /// Értesítő emailek manuális küldése (admin)
+        /// </summary>
+        [HttpPost("send-notifications")]
+        public async Task<IActionResult> SendNotifications()
+        {
+            try
+            {
+                var (remindersSent, overduesSent) = await _notificationService.SendNotificationsNow();
+                return Ok(new
+                {
+                    message = "Értesítések elküldve",
+                    reminders_sent = remindersSent,
+                    overdue_sent = overduesSent,
+                    total = remindersSent + overduesSent
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Hiba az értesítések küldésekor: {ex.Message}" });
+            }
         }
 
         [HttpPost]

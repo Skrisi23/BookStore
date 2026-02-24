@@ -85,14 +85,13 @@ namespace Backend.Services
                 {
                     Text = $@"
                         <html>
-                        <body style='font-family: Arial, sans-serif;'>
-                            <h2>⏰ Kölcsönzési határidő figyelmeztetés</h2>
+                        <body style='font-family: Arial, sans-serif;'>                            <h2>Kölcsönzési határidő figyelmeztetés</h2>
                             <p>Kedves {toName},</p>
                             <p>Szeretnénk emlékeztetni, hogy a következő könyv kölcsönzési határideje hamarosan lejár:</p>
                             <div style='background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 5px; margin: 15px 0;'>
-                                <strong>📖 Könyv:</strong> {bookTitle}<br>
-                                <strong>📅 Határidő:</strong> {dueDate:yyyy. MMMM dd.}<br>
-                                <strong>⏳ Hátralévő napok:</strong> {daysLeft} nap
+                                <strong>Könyv:</strong> {bookTitle}<br>
+                                <strong>Határidő:</strong> {dueDate:yyyy. MMMM dd.}<br>
+                                <strong>Hátralévő napok:</strong> {daysLeft} nap
                             </div>
                             <p>Kérjük, hozd vissza a könyvet időben, hogy elkerüld a késedelmet!</p>
                             <br>
@@ -115,21 +114,20 @@ namespace Backend.Services
         {
             try
             {
-                var message = CreateBaseMessage(toName, toEmail);
-                message.Subject = "⚠️ Lejárt kölcsönzés - BookStore";
+                var message = CreateBaseMessage(toName, toEmail);                message.Subject = "Lejárt kölcsönzés - BookStore";
 
                 message.Body = new TextPart("html")
                 {
                     Text = $@"
                         <html>
                         <body style='font-family: Arial, sans-serif;'>
-                            <h2>🚨 Lejárt kölcsönzési határidő!</h2>
+                            <h2>Lejárt kölcsönzési határidő!</h2>
                             <p>Kedves {toName},</p>
                             <p>A következő könyv kölcsönzési határideje <strong>lejárt</strong>:</p>
                             <div style='background-color: #f8d7da; border: 1px solid #dc3545; padding: 15px; border-radius: 5px; margin: 15px 0;'>
-                                <strong>📖 Könyv:</strong> {bookTitle}<br>
-                                <strong>📅 Határidő volt:</strong> {dueDate:yyyy. MMMM dd.}<br>
-                                <strong>❌ Késés:</strong> {daysOverdue} nap
+                                <strong>Könyv:</strong> {bookTitle}<br>
+                                <strong>Határidő volt:</strong> {dueDate:yyyy. MMMM dd.}<br>
+                                <strong>Késés:</strong> {daysOverdue} nap
                             </div>
                             <p><strong>Kérjük, mielőbb hozd vissza a könyvet!</strong></p>
                             <br>

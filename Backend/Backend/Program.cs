@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -11,38 +12,28 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader();
-   });
+    });
 });
 
-
-
-// Add services to the container.
+// Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<BookStoreContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
-
+// Controllers & Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var conn = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<BookStoreContext>(options =>
-    options.UseMySql(conn, ServerVersion.AutoDetect(conn)));
-
+// AutoMapper
 builder.Services.AddAutoMapper(typeof(Backend.Application.Mappers.AutoMapperProfile).Assembly);
 
 // Email service
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Rental notification background service
+builder.Services.AddSingleton<RentalNotificationService>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<RentalNotificationService>());
 
 var app = builder.Build();
 
