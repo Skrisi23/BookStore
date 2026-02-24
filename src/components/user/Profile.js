@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { getRentals, getBooks, getCopies, changeUserPassword } from '../../api';
+import { getRentalsByUser, returnRental, changeUserPassword } from '../../api';
 
 function Profile() {
   const { currentUser, logout } = useAuth();
@@ -22,42 +22,48 @@ function Profile() {
   useEffect(() => {
     loadUserRentals();
   }, []);
-
   const loadUserRentals = async () => {
     try {
       setLoading(true);
-      // Backend-ről próbálunk kölcsönzéseket lekérni
-      try {
-        const [rentalsData, booksData, copiesData] = await Promise.all([
-          getRentals().catch(() => []),
-          getBooks().catch(() => []),
-          getCopies().catch(() => [])
-        ]);
+      const rentalsData = await getRentalsByUser(currentUser?.id);
+      const rentals = Array.isArray(rentalsData) ? rentalsData : [];
 
-        const rentals = Array.isArray(rentalsData) ? rentalsData : [];
-        const books = Array.isArray(booksData) ? booksData : [];
-        const copies = Array.isArray(copiesData) ? copiesData : [];
+      const myRentals = rentals.map(rental => {
+        const dueDate = rental.lejarat_datum;
+        const today = new Date().toISOString().split('T')[0];
+        const isReturned = !!rental.visszahozva_datuma;
+        
+        let daysLeft = null;
+        let statusType = 'active';
+        
+        if (isReturned) {
+          statusType = 'returned';
+        } else if (dueDate) {
+          const due = new Date(dueDate);
+          const now = new Date(today);
+          daysLeft = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+          
+          if (daysLeft < 0) {
+            statusType = 'overdue';
+          } else if (daysLeft <= 3) {
+            statusType = 'warning';
+          } else {
+            statusType = 'active';
+          }
+        }
 
-        // Szűrjük a current user kölcsönzéseit
-        const myRentals = rentals
-          .filter(r => r.user_id === currentUser?.id)
-          .map(rental => {
-            const copy = copies.find(c => c.id === rental.copy_id);
-            const book = books.find(b => b.id === copy?.book_id);
-            return {
-              id: rental.id,
-              bookTitle: book?.cim || 'N/A',
-              rentedDate: rental.kolcsonzes_datuma,
-              dueDate: rental.visszahozas_datuma,
-              returnedDate: rental.visszahozva_datuma,
-              status: rental.visszahozva_datuma ? 'returned' : 'active'
-            };
-          });
+        return {
+          id: rental.id,
+          bookTitle: rental.book_title || 'N/A',
+          rentedDate: rental.kolcsonzes_datuma,
+          dueDate: dueDate,
+          returnedDate: rental.visszahozva_datuma,
+          status: statusType,
+          daysLeft: daysLeft
+        };
+      });
 
-        setUserRentals(myRentals);
-      } catch (e) {
-        console.error('Backend kölcsönzések betöltése sikertelen:', e);
-      }
+      setUserRentals(myRentals);
     } catch (e) {
       console.error('Kölcsönzések betöltése sikertelen:', e);
     } finally {
@@ -105,9 +111,41 @@ function Profile() {
       });
     } catch (err) {
       console.error('Jelszó módosítási hiba:', err);
-      error('Hiba történt a jelszó módosítása során.');
-    } finally {
+      error('Hiba történt a jelszó módosítása során.');    } finally {
       setPasswordLoading(false);
+    }
+  };
+
+  const handleReturnBook = async (rentalId) => {
+    if (!window.confirm('Biztosan visszahoztad ezt a könyvet?')) {
+      return;
+    }
+
+    const result = await returnRental(rentalId);
+    if (result.success) {
+      if (result.was_late) {
+        error('Könyv visszahozva, de késve! 🕐');
+      } else {
+        success('Könyv sikeresen visszahozva! ✅');
+      }
+      await loadUserRentals();
+    } else {
+      error(result.message || 'Visszahozás sikertelen');
+    }
+  };
+
+  const getStatusBadge = (rental) => {
+    switch (rental.status) {
+      case 'returned':
+        return <span className="badge bg-success">✅ Visszahozva</span>;
+      case 'overdue':
+        return <span className="badge bg-danger">❌ Lejárt ({Math.abs(rental.daysLeft)} napja)</span>;
+      case 'warning':
+        return <span className="badge bg-warning text-dark">⚠️ {rental.daysLeft} nap van hátra</span>;
+      case 'active':
+        return <span className="badge bg-primary">📖 Aktív ({rental.daysLeft} nap hátra)</span>;
+      default:
+        return <span className="badge bg-secondary">Ismeretlen</span>;
     }
   };
 
@@ -124,8 +162,8 @@ function Profile() {
       return 'N/A';
     }
   };
-
-  const activeRentals = userRentals.filter(r => r.status === 'active');
+  const activeRentals = userRentals.filter(r => r.status === 'active' || r.status === 'warning' || r.status === 'overdue');
+  const overdueRentals = userRentals.filter(r => r.status === 'overdue');
   const completedRentals = userRentals.filter(r => r.status === 'returned');
 
   return (
@@ -162,11 +200,16 @@ function Profile() {
             <h6 className="card-title mb-3">
               <i className="bi bi-bar-chart me-2"></i>
               Statisztikák
-            </h6>
-            <div className="d-flex justify-content-between mb-2">
+            </h6>            <div className="d-flex justify-content-between mb-2">
               <small className="text-muted">Aktív kölcsönzések:</small>
               <strong className="text-primary">{activeRentals.length}</strong>
             </div>
+            {overdueRentals.length > 0 && (
+              <div className="d-flex justify-content-between mb-2">
+                <small className="text-muted">Lejárt:</small>
+                <strong className="text-danger">{overdueRentals.length}</strong>
+              </div>
+            )}
             <div className="d-flex justify-content-between mb-2">
               <small className="text-muted">Összes kölcsönzés:</small>
               <strong>{userRentals.length}</strong>
@@ -245,9 +288,7 @@ function Profile() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {activeRentals.length > 0 && (
+            </div>            {activeRentals.length > 0 && (
               <div className="card">
                 <div className="card-body">
                   <h5 className="card-title mb-3">
@@ -261,10 +302,19 @@ function Profile() {
                           <div>
                             <h6 className="mb-1">{rental.bookTitle}</h6>
                             <small className="text-muted">
-                              Kölcsönözve: {formatDate(rental.rentedDate)}
+                              Kölcsönözve: {formatDate(rental.rentedDate)} | Határidő: {formatDate(rental.dueDate)}
                             </small>
                           </div>
-                          <span className="badge bg-primary">Aktív</span>
+                          <div className="d-flex align-items-center gap-2">
+                            {getStatusBadge(rental)}
+                            <button
+                              className="btn btn-sm btn-outline-success"
+                              onClick={() => handleReturnBook(rental.id)}
+                              title="Visszahozom"
+                            >
+                              <i className="bi bi-arrow-return-left"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -303,8 +353,7 @@ function Profile() {
                   <i className="bi bi-inbox" style={{ fontSize: '3rem' }}></i>
                   <p className="mt-3">Még nincsenek kölcsönzéseid</p>
                 </div>
-              ) : (
-                <div className="table-responsive">
+              ) : (                <div className="table-responsive">
                   <table className="table table-hover">
                     <thead>
                       <tr>
@@ -312,19 +361,28 @@ function Profile() {
                         <th>Kölcsönzés dátuma</th>
                         <th>Határidő</th>
                         <th>Állapot</th>
+                        <th>Művelet</th>
                       </tr>
                     </thead>
                     <tbody>
                       {userRentals.map(rental => (
-                        <tr key={rental.id}>
+                        <tr key={rental.id} className={rental.status === 'overdue' ? 'table-danger' : rental.status === 'warning' ? 'table-warning' : ''}>
                           <td>{rental.bookTitle}</td>
                           <td>{formatDate(rental.rentedDate)}</td>
                           <td>{formatDate(rental.dueDate)}</td>
+                          <td>{getStatusBadge(rental)}</td>
                           <td>
-                            {rental.status === 'active' ? (
-                              <span className="badge bg-primary">Aktív</span>
-                            ) : (
-                              <span className="badge bg-success">Visszahozva</span>
+                            {rental.status !== 'returned' && (
+                              <button
+                                className="btn btn-sm btn-success"
+                                onClick={() => handleReturnBook(rental.id)}
+                              >
+                                <i className="bi bi-arrow-return-left me-1"></i>
+                                Visszahozom
+                              </button>
+                            )}
+                            {rental.status === 'returned' && (
+                              <small className="text-muted">{formatDate(rental.returnedDate)}</small>
                             )}
                           </td>
                         </tr>

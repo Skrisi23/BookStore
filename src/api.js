@@ -9,10 +9,13 @@ const ENDPOINTS = {
   bookCategories: `${defaultBaseUrl}/api/Books/categories`,
   booksByCategory: (category) => `${defaultBaseUrl}/api/Books/by-category/${encodeURIComponent(category)}`,
   booksByPrice: `${defaultBaseUrl}/api/Books/by-price`,
-  bookPriceStats: `${defaultBaseUrl}/api/Books/price-stats`,  copies: `${defaultBaseUrl}/api/Copies`,
+  bookPriceStats: `${defaultBaseUrl}/api/Books/price-stats`,  
+  copies: `${defaultBaseUrl}/api/Copies`,
   copiesByBook: (bookId) => `${defaultBaseUrl}/api/Copies/by-book/${bookId}`,
   copiesToggleBookAvailability: (bookId) => `${defaultBaseUrl}/api/Copies/toggle-book-availability/${bookId}`,
   rentals: `${defaultBaseUrl}/api/Rentals`,
+  rentalsByUser: (userId) => `${defaultBaseUrl}/api/Rentals/user/${userId}`,
+  rentalReturn: (rentalId) => `${defaultBaseUrl}/api/Rentals/${rentalId}/return`,
   users: `${defaultBaseUrl}/api/Users`,
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
   authRegister: `${defaultBaseUrl}/api/Auth/register`,
@@ -142,6 +145,51 @@ export async function createCopy(copyData, signal) {
 export async function getRentals(signal) {
   return fetchJson(ENDPOINTS.rentals, { signal });
 }
+
+/**
+ * Felhasználó kölcsönzéseinek lekérdezése
+ */
+export async function getRentalsByUser(userId, signal) {
+  return fetchJson(ENDPOINTS.rentalsByUser(userId), { signal });
+}
+
+/**
+ * Könyv visszahozása (kölcsönzés lezárása)
+ */
+export async function returnRental(rentalId, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.rentalReturn(rentalId), {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Visszahozás sikertelen'
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message,
+      rental: data.rental,
+      was_late: data.was_late
+    };
+  } catch (e) {
+    console.error('Visszahozási hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a visszahozás során'
+    };
+  }
+}
+
 export async function getUsers(signal) {
   return fetchJson(ENDPOINTS.users, { signal });
 }
