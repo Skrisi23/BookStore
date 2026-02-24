@@ -2,21 +2,29 @@ import React from 'react';
 
 function CategoryFilter({ categories, selectedCategory, onCategoryChange }) {
   return (
-    <div className="mb-4">
-      <h5 className="mb-3" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Kategóriák</h5>
-      <div className="btn-group-vertical w-100" role="group">
-        {categories.map(category => (
-          <button
-            key={category}
-            type="button"
-            className={`btn text-start ${selectedCategory === category ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => onCategoryChange(category)}
-            style={{ fontSize: '0.9rem' }}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
+    <div className="d-flex flex-wrap gap-2">
+      {categories.map(category => (
+        <button
+          key={category}
+          type="button"
+          onClick={() => onCategoryChange(category)}
+          style={{
+            padding: '0.4rem 1.2rem',
+            fontSize: '0.78rem',
+            fontWeight: selectedCategory === category ? 600 : 400,
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase',
+            border: selectedCategory === category ? '1px solid #1a1a1a' : '1px solid #ccc',
+            borderRadius: 0,
+            backgroundColor: selectedCategory === category ? '#1a1a1a' : 'transparent',
+            color: selectedCategory === category ? '#fff' : '#555',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          {category}
+        </button>
+      ))}
     </div>
   );
 }

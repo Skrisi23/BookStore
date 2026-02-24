@@ -234,7 +234,8 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
 
           <div className="mt-auto">
             <button
-              className="btn btn-primary btn-sm w-100 mb-2"
+              className="btn btn-dark btn-sm w-100 mb-2"
+              style={{ borderRadius: 0, letterSpacing: '0.5px', fontWeight: 500 }}
               onClick={() => handleAddToCart('purchase')}
               disabled={!book.available}
             >
@@ -242,7 +243,8 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
               Vásárlás
             </button>
             <button
-              className="btn btn-outline-secondary btn-sm w-100"
+              className="btn btn-outline-dark btn-sm w-100"
+              style={{ borderRadius: 0, letterSpacing: '0.5px' }}
               onClick={() => handleAddToCart('rental')}
               disabled={!book.availableForRent}
             >

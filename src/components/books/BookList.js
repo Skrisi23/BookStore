@@ -82,9 +82,9 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
 
   if (loading) return <LoadingSpinner fullPage text="Könyvek betöltése..." />;
   if (error) return (
-    <div className="alert alert-danger" role="alert">
-      <i className="bi bi-exclamation-triangle me-2"></i>
-      {error}
+    <div className="text-center py-5">
+      <i className="bi bi-exclamation-triangle" style={{ fontSize: '2.5rem', color: '#ccc', display: 'block', marginBottom: '1rem' }}></i>
+      <p style={{ color: '#888' }}>{error}</p>
     </div>
   );
   
@@ -94,19 +94,25 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
   }
   
   if (!filteredBooks.length) return (
-    <div className="alert alert-info text-center py-5">
-      <i className="bi bi-search me-2"></i>
-      Nincsenek könyvek a megadott szűréshez.
+    <div className="text-center py-5">
+      <i className="bi bi-search" style={{ fontSize: '2.5rem', color: '#ccc', display: 'block', marginBottom: '1rem' }}></i>
+      <h5 style={{ fontWeight: 600, color: '#555' }}>Nincs találat</h5>
+      <p style={{ color: '#888', fontSize: '0.9rem' }}>Próbálj más keresőkifejezést vagy kategóriát.</p>
     </div>
   );
 
   return (
-    <div className="row">
-      {filteredBooks.map((b) => (
-        
-        <BookCard key={b.id} book={b} />
-        
-      ))}
+    <div>
+      <p style={{ color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1.5rem' }}>
+        {filteredBooks.length} könyv{filteredBooks.length !== books.length ? ` (összesen: ${books.length})` : ''}
+      </p>
+      <div className="row">
+        {filteredBooks.map((b) => (
+          
+          <BookCard key={b.id} book={b} />
+          
+        ))}
+      </div>
     </div>
   );
 }

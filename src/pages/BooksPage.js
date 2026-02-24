@@ -36,31 +36,51 @@ function BooksPage() {
   }, []);
 
   return (
-    <div className="container-fluid" style={{ paddingTop: '2rem' }}>
-      <div className="row">
-        <div className="col-md-2">
-          {loadingCategories ? (
-            <div className="text-center py-3">
-              <div className="spinner-border spinner-border-sm text-primary" role="status">
-                <span className="visually-hidden">Kategóriák betöltése...</span>
-              </div>
-            </div>
-          ) : (
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-            />
-          )}
+    <div>
+      {/* Page header */}
+      <div style={{ backgroundColor: '#1a1a1a', color: '#fff', padding: '3rem 0' }}>
+        <div className="container">
+          <p style={{ textTransform: 'uppercase', letterSpacing: '6px', fontSize: '0.65rem', color: '#666', marginBottom: '0.8rem' }}>
+            Könyvtár
+          </p>
+          <h1 style={{ fontWeight: 700, fontSize: '2.5rem', letterSpacing: '-1px', marginBottom: '1rem' }}>
+            {selectedCategory === 'Minden' ? 'Összes könyv' : selectedCategory}
+          </h1>
+          <p style={{ color: '#888', fontSize: '1rem', marginBottom: 0, maxWidth: '500px' }}>
+            Böngéssz a könyveink között, szűrj kategóriák szerint vagy keress rá kedvenceidre.
+          </p>
         </div>
+      </div>
 
-        <div className="col-md-10">
-          <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
-          
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <h4>{selectedCategory === 'Minden' ? 'Összes könyv' : selectedCategory}</h4>
+      {/* Toolbar: search + category pills */}
+      <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #e8e8e8', padding: '1.5rem 0' }}>
+        <div className="container">
+          <div className="row align-items-center g-3">
+            <div className="col-lg-5">
+              <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+            </div>
+            <div className="col-lg-7">
+              {loadingCategories ? (
+                <div className="text-center py-2">
+                  <div className="spinner-border spinner-border-sm" style={{ color: '#1a1a1a' }} role="status">
+                    <span className="visually-hidden">Kategóriák betöltése...</span>
+                  </div>
+                </div>
+              ) : (
+                <CategoryFilter
+                  categories={categories}
+                  selectedCategory={selectedCategory}
+                  onCategoryChange={setSelectedCategory}
+                />
+              )}
+            </div>
           </div>
+        </div>
+      </div>
 
+      {/* Book grid */}
+      <div style={{ backgroundColor: '#f5f5f5', minHeight: '60vh', padding: '3rem 0' }}>
+        <div className="container">
           <BookList searchTerm={searchTerm} selectedCategory={selectedCategory} />
         </div>
       </div>
