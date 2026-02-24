@@ -38,14 +38,13 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     loadCart();
   }, [currentUser?.id]);
-
-  const addToCart = async (bookId) => {
+  const addToCart = async (bookId, orderType = 'rental', quantity = 1) => {
     if (!currentUser?.id) {
       throw new Error('Bejelentkezés szükséges');
     }
 
     try {
-      const result = await apiAddToCart(currentUser.id, bookId);
+      const result = await apiAddToCart(currentUser.id, bookId, orderType, quantity);
       if (result.success) {
         setCartData(result.cart);
         return { success: true };

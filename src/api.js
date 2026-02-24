@@ -453,8 +453,13 @@ export async function getMyCart(userId, signal) {
 
 /**
  * Könyv hozzáadása a kosárhoz
+ * @param {number} userId
+ * @param {number} bookId
+ * @param {string} orderType - 'rental' vagy 'purchase'
+ * @param {number} quantity - mennyiség (rental=1, purchase=1+)
+ * @param {AbortSignal} signal
  */
-export async function addToCart(userId, bookId, signal) {
+export async function addToCart(userId, bookId, orderType = 'rental', quantity = 1, signal) {
   try {
     const response = await fetch(ENDPOINTS.cartAdd(userId), {
       method: 'POST',
@@ -464,7 +469,8 @@ export async function addToCart(userId, bookId, signal) {
       },
       body: JSON.stringify({
         book_id: bookId,
-        quantity: 1
+        order_type: orderType,
+        quantity: quantity
       }),
       signal
     });

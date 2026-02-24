@@ -117,7 +117,6 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
     load();
     return () => ac.abort();
   }, [bookId, initialBook, apiBaseUrl]);
-
   const handleAddToCart = async (type) => {
     if (!isAuthenticated) {
       warning('Kérjük jelentkezz be a művelethez!');
@@ -128,9 +127,11 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
       return;
     }
     
-    const result = await addToCart(book.id);
+    const orderType = type === 'purchase' ? 'purchase' : 'rental';
+    const result = await addToCart(book.id, orderType, 1);
     if (result.success) {
-      success(`${book.title} hozzáadva a kosárhoz'`);
+      const label = orderType === 'purchase' ? 'megvásárolásra' : 'kölcsönzésre';
+      success(`${book.title} hozzáadva a kosárhoz (${label})`);
     } else {
       warning(result.message || 'Hiba történt a kosárba helyezésnél');
     }

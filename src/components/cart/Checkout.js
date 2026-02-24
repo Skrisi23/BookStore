@@ -37,10 +37,9 @@ function Checkout({ onSuccess, onCancel }) {
     try {
       setLoading(true);
       const result = await checkout(currentUser.id, formData.paymentMethod);
-      
-      if (result.success) {
+        if (result.success) {
         await refreshCart();
-        success('Sikeres fizetés! Köszönjük a vásárlást!');
+        success(result.message || 'Sikeres fizetés! Köszönjük a vásárlást!');
         onSuccess();
       } else {
         error(result.message || 'Hiba történt a fizetés során');
@@ -170,8 +169,7 @@ function Checkout({ onSuccess, onCancel }) {
         <div className="card">
           <div className="card-body">
             <h5 className="card-title">Rendelés összesítő</h5>
-            <hr />
-            <div className="mb-3">
+            <hr />            <div className="mb-3">
               {cartItems.map(item => (
                 <div key={item.id} className="mb-3 pb-2 border-bottom">
                   <div className="mb-1">
@@ -182,6 +180,15 @@ function Checkout({ onSuccess, onCancel }) {
                     }}>
                       {item.book_cim}
                     </small>
+                    <span 
+                      className="badge mt-1" 
+                      style={{ 
+                        backgroundColor: item.order_type === 'purchase' ? '#198754' : '#1a1a1a',
+                        fontSize: '0.65rem' 
+                      }}
+                    >
+                      {item.order_type === 'purchase' ? 'Vásárlás' : 'Kölcsönzés'}
+                    </span>
                   </div>
                   <div className="d-flex justify-content-between align-items-center">
                     <small className="text-muted">Mennyiség: {item.quantity} db</small>

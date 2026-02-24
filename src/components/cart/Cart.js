@@ -25,7 +25,6 @@ function Cart({ onCheckout }) {
       </div>
     );
   }
-
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -45,6 +44,32 @@ function Cart({ onCheckout }) {
 
       <div className="card bg-light">
         <div className="card-body">
+          {/* Rental / Purchase subtotals */}
+          {(() => {
+            const rentalItems = cartItems.filter(i => i.order_type !== 'purchase');
+            const purchaseItems = cartItems.filter(i => i.order_type === 'purchase');
+            return (
+              <>
+                {rentalItems.length > 0 && purchaseItems.length > 0 && (
+                  <div className="mb-3">
+                    <div className="d-flex justify-content-between mb-1">
+                      <small className="text-muted">Kölcsönzés ({rentalItems.length} tétel):</small>
+                      <small className="text-muted">
+                        {rentalItems.reduce((s, i) => s + i.price * i.quantity, 0).toLocaleString()} Ft
+                      </small>
+                    </div>
+                    <div className="d-flex justify-content-between">
+                      <small className="text-muted">Vásárlás ({purchaseItems.length} tétel):</small>
+                      <small className="text-muted">
+                        {purchaseItems.reduce((s, i) => s + i.price * i.quantity, 0).toLocaleString()} Ft
+                      </small>
+                    </div>
+                    <hr className="my-2" />
+                  </div>
+                )}
+              </>
+            );
+          })()}
           <div className="row">
             <div className="col-md-8">
               <h5>Összesen:</h5>
