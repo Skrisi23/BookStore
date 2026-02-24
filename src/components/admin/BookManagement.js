@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getBooks, getAuthors, deleteBook, updateBook, createBook, toggleBookAvailability } from '../../api';
+import { getBooks, getAuthors, deleteBook, updateBook, createBook, toggleBookAvailability, createAuthor, createCopy, getCopiesByBook } from '../../api';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useToast } from '../../context/ToastContext';
 
@@ -10,15 +10,16 @@ function BookManagement() {
   const [loading, setLoading] = useState(true);
   const [editingBook, setEditingBook] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newBook, setNewBook] = useState({
+  const [showAddModal, setShowAddModal] = useState(false);  const [newBook, setNewBook] = useState({
     cim: '',
     boritokep: '',
     kiadasi_datum: '',
     tartalom: '',
     ar: '',
     kategoria: '',
-    author_id: ''
+    author_id: '',
+    copies_count: 1,
+    new_author_name: ''
   });
   const { success, error } = useToast();
 
@@ -31,13 +32,12 @@ function BookManagement() {
       ]);
 
       const authorsArray = Array.isArray(authorsData) ? authorsData : [];
-      setAuthors(authorsArray);
-
-      const normalized = Array.isArray(booksData) ? booksData.map(book => {
+      setAuthors(authorsArray);      const normalized = Array.isArray(booksData) ? booksData.map(book => {
         return {
           id: book.id,
           title: book.cim || book.title || 'Név nélküli',
           author: book.authorNev || book.szerzo || book.author || 'Ismeretlen',
+          author_id: book.author_id || null,
           category: book.kategoria || book.category || '',
           price: book.ar || book.price || 0,
           available: typeof book.elerheto !== 'undefined' ? book.elerheto : (book.available ?? true)
@@ -78,12 +78,24 @@ function BookManagement() {
       error(result.message || 'Törlés sikertelen');
     }
   };
+  const handleEdit = async (book) => {
+    // Betöltjük a könyv példányszámát
+    let currentCopiesCount = 0;
+    try {
+      const copiesData = await getCopiesByBook(book.id);
+      currentCopiesCount = copiesData.count || 0;
+    } catch (e) {
+      console.error('Példányszám lekérdezési hiba:', e);
+    }
 
-  const handleEdit = (book) => {
-    setEditingBook(book);
+    setEditingBook({
+      ...book,
+      author_id: book.author_id || '',
+      copies_count: currentCopiesCount,
+      original_copies_count: currentCopiesCount
+    });
     setShowEditModal(true);
   };
-
   const handleSaveEdit = async (e) => {
     e.preventDefault();
     if (!editingBook) return;
@@ -91,12 +103,41 @@ function BookManagement() {
     const updateData = {
       cim: editingBook.title,
       ar: parseFloat(editingBook.price),
-      kategoria: editingBook.category
+      kategoria: editingBook.category,
+      author_id: editingBook.author_id ? parseInt(editingBook.author_id) : undefined
     };
 
     const result = await updateBook(editingBook.id, updateData);
     if (result.success) {
-      success('Könyv sikeresen módosítva');
+      // Példányszám kezelése
+      const newCount = parseInt(editingBook.copies_count) || 0;
+      const originalCount = editingBook.original_copies_count || 0;
+
+      if (newCount > originalCount) {
+        // Új példányok hozzáadása
+        const toAdd = newCount - originalCount;
+        let addedCount = 0;
+        for (let i = 0; i < toAdd; i++) {
+          const padded = String(originalCount + i + 1).padStart(4, '0');
+          const copyData = {
+            book_id: editingBook.id,
+            leltari_szam: `BK${editingBook.id}-${Date.now()}-${padded}`,
+            elerheto: true
+          };
+          const copyResult = await createCopy(copyData);
+          if (copyResult.success) {
+            addedCount++;
+          }
+        }
+        if (addedCount > 0) {
+          success(`Könyv módosítva, ${addedCount} új példány hozzáadva`);
+        } else {
+          success('Könyv módosítva');
+        }
+      } else {
+        success('Könyv sikeresen módosítva');
+      }
+
       setShowEditModal(false);
       setEditingBook(null);
       const ac = new AbortController();
@@ -116,7 +157,6 @@ function BookManagement() {
       error(result.message || 'Elérhetőség váltása sikertelen');
     }
   };
-
   const handleAddBook = () => {
     setNewBook({
       cim: '',
@@ -125,14 +165,41 @@ function BookManagement() {
       tartalom: '',
       ar: '',
       kategoria: '',
-      author_id: authors.length > 0 ? authors[0].id : ''
+      author_id: authors.length > 0 ? authors[0].id : '',
+      copies_count: 1,
+      new_author_name: ''
     });
     setShowAddModal(true);
   };
-
   const handleSaveNewBook = async (e) => {
     e.preventDefault();
     
+    let authorId = newBook.author_id;
+
+    // Ha új szerzőt kell létrehozni
+    if (newBook.new_author_name && newBook.new_author_name.trim() !== '') {
+      const authorResult = await createAuthor({ 
+        nev: newBook.new_author_name.trim() 
+      });
+      
+      if (authorResult.success) {
+        authorId = authorResult.author.id;
+        success('Új szerző létrehozva: ' + newBook.new_author_name);
+        // Frissítjük a szerzők listáját
+        const ac = new AbortController();
+        const authorsData = await getAuthors(ac.signal).catch(() => []);
+        setAuthors(Array.isArray(authorsData) ? authorsData : []);
+      } else {
+        error(authorResult.message || 'Szerző létrehozása sikertelen');
+        return;
+      }
+    }
+
+    if (!authorId) {
+      error('Válassz szerzőt vagy adj meg új szerző nevet!');
+      return;
+    }
+
     const bookData = {
       cim: newBook.cim,
       boritokep: newBook.boritokep,
@@ -140,12 +207,36 @@ function BookManagement() {
       tartalom: newBook.tartalom,
       ar: parseFloat(newBook.ar),
       kategoria: newBook.kategoria,
-      author_id: parseInt(newBook.author_id)
-    };
-
-    const result = await createBook(bookData);
+      author_id: parseInt(authorId)
+    };    const result = await createBook(bookData);
     if (result.success) {
-      success('Könyv sikeresen hozzáadva');
+      const createdBookId = result.book.id;
+      
+      // Példányok létrehozása - egyenként (sorosan), hogy ne legyen ütközés
+      const copiesCount = parseInt(newBook.copies_count) || 1;
+      let createdCopies = 0;
+      
+      for (let i = 0; i < copiesCount; i++) {
+        const padded = String(i + 1).padStart(4, '0');
+        const copyData = {
+          book_id: createdBookId,
+          leltari_szam: `BK${createdBookId}-${padded}`,
+          elerheto: true
+        };
+        const copyResult = await createCopy(copyData);
+        if (copyResult.success) {
+          createdCopies++;
+        } else {
+          console.error(`Példány ${i + 1} létrehozása sikertelen:`, copyResult.message);
+        }
+      }
+      
+      if (createdCopies > 0) {
+        success(`Könyv sikeresen hozzáadva ${createdCopies} példánnyal`);
+      } else {
+        error('Könyv létrehozva, de a példányok létrehozása sikertelen');
+      }
+      
       setShowAddModal(false);
       setNewBook({
         cim: '',
@@ -154,8 +245,11 @@ function BookManagement() {
         tartalom: '',
         ar: '',
         kategoria: '',
-        author_id: ''
+        author_id: '',
+        copies_count: 1,
+        new_author_name: ''
       });
+      
       const ac = new AbortController();
       await loadBooks(ac.signal);
     } else {
@@ -259,14 +353,13 @@ function BookManagement() {
                       onChange={(e) => setNewBook({...newBook, cim: e.target.value})}
                       required
                     />
-                  </div>
-                  <div className="mb-3">
+                  </div>                  <div className="mb-3">
                     <label className="form-label">Szerző *</label>
                     <select
                       className="form-select"
                       value={newBook.author_id}
-                      onChange={(e) => setNewBook({...newBook, author_id: e.target.value})}
-                      required
+                      onChange={(e) => setNewBook({...newBook, author_id: e.target.value, new_author_name: ''})}
+                      disabled={newBook.new_author_name !== ''}
                     >
                       <option value="">Válassz szerzőt...</option>
                       {authors.map(author => (
@@ -275,6 +368,35 @@ function BookManagement() {
                         </option>
                       ))}
                     </select>
+                    <div className="text-center my-2">
+                      <small className="text-muted">- VAGY -</small>
+                    </div>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={newBook.new_author_name}
+                      onChange={(e) => setNewBook({...newBook, new_author_name: e.target.value, author_id: ''})}
+                      placeholder="Új szerző neve..."
+                      disabled={newBook.author_id !== ''}
+                    />
+                    <small className="form-text text-muted">
+                      Válassz egy meglévő szerzőt vagy írj be egy újat
+                    </small>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Példányok száma *</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={newBook.copies_count}
+                      onChange={(e) => setNewBook({...newBook, copies_count: e.target.value})}
+                      required
+                      min="1"
+                      max="100"
+                    />
+                    <small className="form-text text-muted">
+                      Hány példány legyen ebből a könyvből (1-100)
+                    </small>
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Kategória *</label>
@@ -358,8 +480,7 @@ function BookManagement() {
                   className="btn-close" 
                   onClick={() => setShowEditModal(false)}
                 ></button>
-              </div>
-              <form onSubmit={handleSaveEdit}>
+              </div>              <form onSubmit={handleSaveEdit}>
                 <div className="modal-body">
                   <div className="mb-3">
                     <label className="form-label">Cím</label>
@@ -372,6 +493,21 @@ function BookManagement() {
                     />
                   </div>
                   <div className="mb-3">
+                    <label className="form-label">Szerző</label>
+                    <select
+                      className="form-select"
+                      value={editingBook.author_id || ''}
+                      onChange={(e) => setEditingBook({...editingBook, author_id: e.target.value})}
+                    >
+                      <option value="">Válassz szerzőt...</option>
+                      {authors.map(author => (
+                        <option key={author.id} value={author.id}>
+                          {author.nev || author.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mb-3">
                     <label className="form-label">Kategória</label>
                     <input
                       type="text"
@@ -380,8 +516,7 @@ function BookManagement() {
                       onChange={(e) => setEditingBook({...editingBook, category: e.target.value})}
                       required
                     />
-                  </div>
-                  <div className="mb-3">
+                  </div>                  <div className="mb-3">
                     <label className="form-label">Ár (Ft)</label>
                     <input
                       type="number"
@@ -391,6 +526,30 @@ function BookManagement() {
                       required
                       min="0"
                     />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Példányok száma
+                      <span className="text-muted ms-2">(jelenlegi: {editingBook.original_copies_count || 0})</span>
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={editingBook.copies_count}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 0;
+                        if (val >= (editingBook.original_copies_count || 0)) {
+                          setEditingBook({...editingBook, copies_count: val});
+                        }
+                      }}
+                      min={editingBook.original_copies_count || 0}
+                      max="100"
+                    />
+                    <small className="form-text text-muted">
+                      {parseInt(editingBook.copies_count) > (editingBook.original_copies_count || 0)
+                        ? `${parseInt(editingBook.copies_count) - (editingBook.original_copies_count || 0)} új példány lesz hozzáadva`
+                        : 'Növeld a számot új példányok hozzáadásához'}
+                    </small>
                   </div>
                 </div>
                 <div className="modal-footer">

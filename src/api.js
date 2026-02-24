@@ -9,8 +9,8 @@ const ENDPOINTS = {
   bookCategories: `${defaultBaseUrl}/api/Books/categories`,
   booksByCategory: (category) => `${defaultBaseUrl}/api/Books/by-category/${encodeURIComponent(category)}`,
   booksByPrice: `${defaultBaseUrl}/api/Books/by-price`,
-  bookPriceStats: `${defaultBaseUrl}/api/Books/price-stats`,
-  copies: `${defaultBaseUrl}/api/Copies`,
+  bookPriceStats: `${defaultBaseUrl}/api/Books/price-stats`,  copies: `${defaultBaseUrl}/api/Copies`,
+  copiesByBook: (bookId) => `${defaultBaseUrl}/api/Copies/by-book/${bookId}`,
   copiesToggleBookAvailability: (bookId) => `${defaultBaseUrl}/api/Copies/toggle-book-availability/${bookId}`,
   rentals: `${defaultBaseUrl}/api/Rentals`,
   users: `${defaultBaseUrl}/api/Users`,
@@ -49,6 +49,43 @@ export async function getAuthors(signal) {
 export async function getAuthorById(id, signal) {
   return fetchJson(ENDPOINTS.authorById(id), { signal });
 }
+
+/**
+ * Új szerző létrehozása
+ */
+export async function createAuthor(authorData, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.authors, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(authorData),
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Szerző létrehozása sikertelen'
+      };
+    }
+
+    return {
+      success: true,
+      author: data
+    };
+  } catch (e) {
+    console.error('Szerző létrehozási hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a létrehozás során'
+    };
+  }
+}
 export async function getBooks(signal) {
   return fetchJson(ENDPOINTS.books, { signal });
 }
@@ -57,6 +94,50 @@ export async function getBookById(id, signal) {
 }
 export async function getCopies(signal) {
   return fetchJson(ENDPOINTS.copies, { signal });
+}
+
+/**
+ * Könyv példányainak lekérdezése book_id alapján
+ */
+export async function getCopiesByBook(bookId, signal) {
+  return fetchJson(ENDPOINTS.copiesByBook(bookId), { signal });
+}
+
+/**
+ * Új példány létrehozása
+ */
+export async function createCopy(copyData, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.copies, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(copyData),
+      signal
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Példány létrehozása sikertelen'
+      };
+    }
+
+    return {
+      success: true,
+      copy: data
+    };
+  } catch (e) {
+    console.error('Példány létrehozási hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a létrehozás során'
+    };
+  }
 }
 export async function getRentals(signal) {
   return fetchJson(ENDPOINTS.rentals, { signal });
