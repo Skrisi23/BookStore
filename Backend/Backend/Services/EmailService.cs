@@ -146,6 +146,42 @@ namespace Backend.Services
             }
         }
 
+        public async Task SendCustomEmailAsync(string toEmail, string toName, string subject, string messageBody)
+        {
+            try
+            {
+                var message = CreateBaseMessage(toName, toEmail);
+                message.Subject = subject;
+
+                // A messageBody-ban lévő sortöréseket <br>-re cseréljük
+                var htmlBody = messageBody.Replace("\n", "<br>");
+
+                message.Body = new TextPart("html")
+                {
+                    Text = $@"
+                        <html>
+                        <body style='font-family: Arial, sans-serif;'>
+                            <p>Kedves {toName},</p>
+                            <div style='background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; border-radius: 5px; margin: 15px 0;'>
+                                {htmlBody}
+                            </div>
+                            <br>
+                            <p>Üdvözlettel,<br>BookStore csapata</p>
+                        </body>
+                        </html>
+                    "
+                };
+
+                await SendEmailAsync(message);
+                _logger.LogInformation($"Custom email sent to {toEmail} with subject: {subject}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to send custom email to {toEmail}: {ex.Message}");
+                throw;
+            }
+        }
+
         private MimeMessage CreateBaseMessage(string toName, string toEmail)
         {
             var fromEmail = _configuration["Smtp:FromEmail"];
