@@ -40,7 +40,7 @@ function HomePage() {
           <div className="row align-items-center">
             <div className="col-md-6">
               <h1 className="display-4 fw-bold mb-4">
-                Üdvözlünk a BookStore-ban!
+                Üdvözlünk az Alkotások Tára-ban!
               </h1>
               <p className="lead mb-4">
                 Fedezd fel könyveink széles választékát. Vásárolj vagy kölcsönözz könyveket kényelmesen otthonról!

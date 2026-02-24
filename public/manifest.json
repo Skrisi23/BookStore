@@ -1,6 +1,6 @@
 {
-  "short_name": "BookStore",
-  "name": "BookStore - Online könyvesbolt",
+  "short_name": "Alkotások Tára",
+  "name": "Alkotások Tára - Online könyvesbolt",
   "icons": [
     {
       "src": "android-chrome-192x192.png",

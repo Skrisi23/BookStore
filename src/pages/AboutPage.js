@@ -14,7 +14,7 @@ function AboutPage() {
               </h1>
 
               <p className="lead text-center mb-5">
-                Üdvözlünk a <strong>BookStore</strong>-ban - a modern online könyvesboltban!
+                Üdvözlünk az <strong>Alkotások Tára</strong>-ban - a modern online könyvesboltban!
               </p>
 
               <h4 className="mt-4 mb-3">
@@ -22,7 +22,7 @@ function AboutPage() {
                 Küldetésünk
               </h4>
               <p>
-                A BookStore célja, hogy megkönnyítse az olvasók számára a könyvek elérését.
+                Az Alkotások Tára célja, hogy megkönnyítse az olvasók számára a könyvek elérését.
                 Akár vásárolni, akár kölcsönözni szeretnél, nálunk minden megtalálható egy helyen.
                 Hiszünk abban, hogy a könyvek mindenki számára elérhetőek legyenek.
               </p>
@@ -85,7 +85,7 @@ function AboutPage() {
                 Technológia
               </h4>
               <p>
-                A BookStore egy modern React alkalmazás, amely Bootstrap 5-öt használ a
+                Az Alkotások Tára egy modern React alkalmazás, amely Bootstrap 5-öt használ a
                 dizájnhoz. Az alkalmazás teljes mértékben reszponzív és minden eszközön
                 kiválóan működik.
               </p>
@@ -97,7 +97,7 @@ function AboutPage() {
                 </h5>
                 <p className="mb-0">
                   Keress minket bizalommal az{' '}
-                  <strong>info@bookstore.hu</strong> email címen vagy hívj minket
+                  <strong>info@alkotasok-tara.hu</strong> email címen vagy hívj minket
                   a <strong>+36 1 234 5678</strong> telefonszámon!
                 </p>
               </div>

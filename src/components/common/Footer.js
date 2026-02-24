@@ -10,7 +10,7 @@ function Footer() {
           <div className="col-md-4 mb-3">
             <h5 className="text-white">
               <i className="bi bi-book me-2"></i>
-              BookStore
+              Alkotások Tára
             </h5>
             <p className="text-light">
               A legjobb online könyvesbolt Magyarországon. Vásárolj vagy kölcsönözz könyveket egyszerűen!
@@ -33,7 +33,7 @@ function Footer() {
               </li>
               <li>
                 <i className="bi bi-envelope me-2"></i>
-                info@bookstore.hu
+                info@alkotasok-tara.hu
               </li>
               <li>
                 <i className="bi bi-telephone me-2"></i>
@@ -45,7 +45,7 @@ function Footer() {
         <hr className="bg-light" />
         <div className="text-center text-light">
           <p className="mb-0">
-            &copy; 2025 BookStore. Minden jog fenntartva.
+            &copy; 2025 Alkotások Tára. Minden jog fenntartva.
           </p>
         </div>
       </div>

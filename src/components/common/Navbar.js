@@ -35,7 +35,7 @@ function Navbar() {
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
           <i className="bi bi-book me-2"></i>
-          BookStore
+          Alkotások Tára
         </Link>
         <button
           className="navbar-toggler"
