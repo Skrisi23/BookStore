@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function Footer() {
   return (
@@ -18,10 +19,9 @@ function Footer() {
           <div className="col-md-4 mb-3">
             <h5 className="text-white">Gyors linkek</h5>
             <ul className="list-unstyled">
-              <li><a href="#home" className="text-light text-decoration-none">Kezdőlap</a></li>
-              <li><a href="#books" className="text-light text-decoration-none">Könyvek</a></li>
-              <li><a href="#about" className="text-light text-decoration-none">Rólunk</a></li>
-              <li><a href="#contact" className="text-light text-decoration-none">Kapcsolat</a></li>
+              <li><Link to="/" className="text-light text-decoration-none">Kezdőlap</Link></li>
+              <li><Link to="/books" className="text-light text-decoration-none">Könyvek</Link></li>
+              <li><Link to="/about" className="text-light text-decoration-none">Rólunk</Link></li>
             </ul>
           </div>
           <div className="col-md-4 mb-3">
