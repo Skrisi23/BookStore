@@ -43,6 +43,9 @@ function BookManagement() {
           available: typeof book.elerheto !== 'undefined' ? book.elerheto : (book.available ?? true)
         };
       }) : [];
+
+      // Rendezés ID alapján (növekvő sorrend)
+      normalized.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
       
       setBooks(normalized);
     } catch (e) {

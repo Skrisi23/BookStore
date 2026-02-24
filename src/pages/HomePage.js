@@ -17,8 +17,9 @@ function HomePage() {
         setLoading(true);
         const data = await getBooks(ac.signal);
         const list = Array.isArray(data) ? data : [];
-        // Véletlenszerű 4 könyv kiválasztása
-        const shuffled = [...list].sort(() => Math.random() - 0.5);
+        // Rendezés ID alapján, majd véletlenszerű 4 könyv kiválasztása
+        const sorted = [...list].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+        const shuffled = [...sorted].sort(() => Math.random() - 0.5);
         setFeaturedBooks(shuffled.slice(0, 4));
       } catch (e) {
         // Ha hiba van, hagyjuk üresen a kiemelt listát

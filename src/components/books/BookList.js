@@ -28,6 +28,8 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
         const normalized = booksList.map(book => {
           return {
             ...book,
+            // ID explicit beállítása
+            id: book.id,
             // Normalizált mezők a szűréshez és megjelenítéshez
             title: book.cim || book.title || '',
             author: book.authorNev || book.szerzo || book.author || 'Ismeretlen',
@@ -36,6 +38,9 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
             rentalPrice: book.kolcsonzesi_ar || book.rentalPrice || Math.round((book.ar || book.price || 0) * 0.05)
           };
         });
+
+        // Rendezés ID alapján (növekvő sorrend)
+        normalized.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
 
         setBooks(normalized);
         setFilteredBooks(normalized); // Azonnal beállítjuk a teljes listát
