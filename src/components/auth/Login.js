@@ -33,10 +33,10 @@ function Login({ onSuccess, onSwitchToRegister }) {
   };
 
   return (
-    <div className="card shadow">
+    <div className="card" style={{ border: '1px solid #e8e8e8' }}>
       <div className="card-body p-4">
-        <h3 className="card-title text-center mb-4">
-          <i className="bi bi-box-arrow-in-right me-2"></i>
+        <p style={{ textTransform: 'uppercase', letterSpacing: '3px', fontSize: '0.65rem', color: '#888', textAlign: 'center', marginBottom: '0.3rem' }}>Fiók</p>
+        <h3 className="card-title text-center mb-4" style={{ fontWeight: 700 }}>
           Bejelentkezés
         </h3>
 

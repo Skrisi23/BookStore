@@ -36,7 +36,7 @@ function BooksPage() {
   }, []);
 
   return (
-    <div className="container-fluid mt-4">
+    <div className="container-fluid" style={{ paddingTop: '2rem' }}>
       <div className="row">
         <div className="col-md-2">
           {loadingCategories ? (

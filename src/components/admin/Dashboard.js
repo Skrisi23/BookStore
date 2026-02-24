@@ -54,10 +54,9 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="container-fluid mt-4">
+    <div className="container-fluid" style={{ paddingTop: '2rem' }}>
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>
-          <i className="bi bi-speedometer2 me-2"></i>
+        <h2 style={{ fontWeight: 700 }}>
           Admin Dashboard
         </h2>
       </div>
@@ -72,13 +71,13 @@ function Dashboard() {
         <>
           <Statistics stats={stats} />
 
-          <ul className="nav nav-tabs mb-4">
+          <ul className="nav nav-tabs mb-4" style={{ borderBottom: '2px solid #1a1a1a' }}>
             <li className="nav-item">
               <button
                 className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`}
                 onClick={() => setActiveTab('overview')}
+                style={activeTab === 'overview' ? { color: '#1a1a1a', fontWeight: 600, borderColor: '#1a1a1a #1a1a1a #fff', borderRadius: 0 } : { color: '#888', borderRadius: 0 }}
               >
-                <i className="bi bi-grid me-2"></i>
                 Áttekintés
               </button>
             </li>
@@ -86,8 +85,8 @@ function Dashboard() {
               <button
                 className={`nav-link ${activeTab === 'rentals' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rentals')}
+                style={activeTab === 'rentals' ? { color: '#1a1a1a', fontWeight: 600, borderColor: '#1a1a1a #1a1a1a #fff', borderRadius: 0 } : { color: '#888', borderRadius: 0 }}
               >
-                <i className="bi bi-bookmark-check me-2"></i>
                 Kölcsönzések
               </button>
             </li>
@@ -95,8 +94,8 @@ function Dashboard() {
               <button
                 className={`nav-link ${activeTab === 'books' ? 'active' : ''}`}
                 onClick={() => setActiveTab('books')}
+                style={activeTab === 'books' ? { color: '#1a1a1a', fontWeight: 600, borderColor: '#1a1a1a #1a1a1a #fff', borderRadius: 0 } : { color: '#888', borderRadius: 0 }}
               >
-                <i className="bi bi-book me-2"></i>
                 Könyvek
               </button>
             </li>

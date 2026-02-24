@@ -1,29 +1,52 @@
-/* Footer styling */
+/* ===== Alkotások Tára — App Styles ===== */
+
+/* Footer */
 footer {
-  background-color: #212529 !important;
-  color: #ffffff !important;
+  background-color: #1a1a1a !important;
+  color: #fff !important;
+  border-top: 1px solid #333;
 }
 
 footer h5 {
-  color: #ffffff !important;
+  color: #fff !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 0.85rem;
 }
 
 footer p,
 footer ul,
 footer li {
-  color: #f8f9fa !important;
-  }
+  color: #aaa !important;
+  font-size: 0.9rem;
+}
 
 footer a {
-  color: #f8f9fa !important;
+  color: #aaa !important;
   transition: color 0.2s ease;
+  text-decoration: none;
 }
 
 footer a:hover {
-  color: #ffffff !important;
+  color: #fff !important;
 }
 
 footer hr {
-  background-color: #f8f9fa !important;
-  opacity: 0.3;
+  border-color: #333 !important;
+  opacity: 1;
+}
+
+/* Global: elegant section spacing */
+section, .container {
+  /* keep natural spacing */
+}
+
+/* Subtle page transitions */
+.fade-in {
+  animation: fadeIn 0.4s ease-in;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

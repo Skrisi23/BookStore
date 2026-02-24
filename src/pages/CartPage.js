@@ -27,9 +27,8 @@ function CartPage() {
   };
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">
-        <i className="bi bi-cart3 me-2"></i>
+    <div className="container" style={{ paddingTop: '2rem' }}>
+      <h2 className="mb-4" style={{ fontWeight: 700 }}>
         Kosár
       </h2>
       

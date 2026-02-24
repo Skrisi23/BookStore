@@ -183,15 +183,16 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
 
   return (
     <div className="col-md-3 mb-4">
-      <div className="card h-100 shadow-sm" style={{ cursor: 'pointer' }}>
+      <div className="card h-100" style={{ cursor: 'pointer', border: '1px solid #e8e8e8', transition: 'box-shadow 0.25s ease' }}>
         <div 
           style={{ 
             height: '300px', 
             overflow: 'hidden', 
-            backgroundColor: '#f8f9fa',
+            backgroundColor: '#f5f5f5',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            borderBottom: '1px solid #e8e8e8'
           }}
           onClick={() => setShowDetails(true)}
         >
@@ -204,28 +205,26 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
               height: '100%',
               objectFit: 'contain',
               padding: '10px',
-              transition: 'transform 0.2s'
+              transition: 'transform 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
             onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
           />
         </div>
         <div className="card-body d-flex flex-column">
-          <h6 className="card-title" onClick={() => setShowDetails(true)} style={{ cursor: 'pointer' }}>
+          <h6 className="card-title" onClick={() => setShowDetails(true)} style={{ cursor: 'pointer', fontWeight: 600 }}>
             {book.title}
           </h6>
-          <p className="card-text text-muted small mb-2">
-            <i className="bi bi-person me-1"></i>
+          <p className="card-text small mb-1" style={{ color: '#888' }}>
             {book.author}
           </p>
-          <p className="card-text text-muted small mb-2">
-            <i className="bi bi-tag me-1"></i>
+          <p className="card-text small mb-2" style={{ color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '0.7rem' }}>
             {book.category}
           </p>
           <p className="card-text">
-            <strong className="text-primary">{Number(book.price).toLocaleString()} Ft</strong>
+            <strong style={{ color: '#1a1a1a', fontSize: '1.05rem' }}>{Number(book.price).toLocaleString()} Ft</strong>
             <br />
-            <small className="text-muted">Kölcsönzés: {Number(book.rentalPrice).toLocaleString()} Ft/hó</small>
+            <small style={{ color: '#999' }}>Kölcsönzés: {Number(book.rentalPrice).toLocaleString()} Ft/hó</small>
           </p>
 
           {!book.available && (

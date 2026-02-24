@@ -31,9 +31,9 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#fff', borderBottom: '1px solid #e8e8e8', padding: '1rem 0' }}>
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">
+        <Link className="navbar-brand" to="/" style={{ color: '#1a1a1a', fontWeight: 700, fontSize: '1.25rem', letterSpacing: '0.5px' }}>
           <i className="bi bi-book me-2"></i>
           Alkotások Tára
         </Link>
@@ -42,8 +42,9 @@ function Navbar() {
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
+          style={{ borderColor: '#ccc' }}
         >
-          <span className="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon" style={{ filter: 'invert(1)' }}></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
@@ -51,6 +52,7 @@ function Navbar() {
               <NavLink
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                 to="/"
+                style={({ isActive }) => ({ color: isActive ? '#1a1a1a' : '#888', fontWeight: isActive ? 600 : 400, fontSize: '0.9rem', letterSpacing: '0.3px' })}
               >
                 Kezdőlap
               </NavLink>
@@ -59,6 +61,7 @@ function Navbar() {
               <NavLink
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                 to="/books"
+                style={({ isActive }) => ({ color: isActive ? '#1a1a1a' : '#888', fontWeight: isActive ? 600 : 400, fontSize: '0.9rem', letterSpacing: '0.3px' })}
               >
                 Könyvek
               </NavLink>
@@ -67,6 +70,7 @@ function Navbar() {
               <NavLink
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                 to="/about"
+                style={({ isActive }) => ({ color: isActive ? '#1a1a1a' : '#888', fontWeight: isActive ? 600 : 400, fontSize: '0.9rem', letterSpacing: '0.3px' })}
               >
                 Rólunk
               </NavLink>
@@ -76,6 +80,7 @@ function Navbar() {
                 <NavLink
                   className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                   to="/admin"
+                  style={({ isActive }) => ({ color: isActive ? '#1a1a1a' : '#888', fontWeight: isActive ? 600 : 400, fontSize: '0.9rem', letterSpacing: '0.3px' })}
                 >
                   <i className="bi bi-speedometer2 me-1"></i>
                   Admin
@@ -88,11 +93,11 @@ function Navbar() {
               <Link
                 className="nav-link position-relative d-inline-flex align-items-center"
                 to="/cart"
-                style={{ paddingRight: '0.75rem' }}
+                style={{ paddingRight: '0.75rem', color: '#1a1a1a' }}
               >
                 <i className="bi bi-cart3 fs-5"></i>
                 {getItemCount() > 0 && (
-                  <span className="position-absolute badge rounded-pill bg-danger" style={{ top: '-5px', right: '-5px', fontSize: '0.7rem' }}>
+                  <span className="position-absolute badge" style={{ top: '-5px', right: '-5px', fontSize: '0.65rem', backgroundColor: '#1a1a1a', borderRadius: 0 }}>
                     {getItemCount()}
                   </span>
                 )}
@@ -110,7 +115,7 @@ function Navbar() {
                     e.stopPropagation();
                     setDropdownOpen(!dropdownOpen);
                   }}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', color: '#1a1a1a', fontSize: '0.9rem' }}
                 >
                   <i className="bi bi-person-circle me-1"></i>
                   {currentUser.nev || currentUser.name || 'Felhasználó'}
@@ -120,7 +125,10 @@ function Navbar() {
                   style={{ 
                     right: '0',
                     left: 'auto',
-                    minWidth: '180px'
+                    minWidth: '180px',
+                    borderRadius: 0,
+                    border: '1px solid #e8e8e8',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
                   }}
                 >
                   <li>

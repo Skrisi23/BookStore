@@ -35,68 +35,70 @@ function HomePage() {
   return (
     <div>
       {/* Hero section */}
-      <div className="bg-primary text-white py-5">
+      <div style={{ backgroundColor: '#1a1a1a', color: '#fff', padding: '6rem 0' }}>
         <div className="container">
           <div className="row align-items-center">
-            <div className="col-md-6">
-              <h1 className="display-4 fw-bold mb-4">
-                Üdvözlünk az Alkotások Tára-ban!
+            <div className="col-lg-7">
+              <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.75rem', color: '#888', marginBottom: '1.5rem' }}>
+                Könyvesbolt & Kölcsönző
+              </p>
+              <h1 style={{ fontSize: '3.2rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.5px' }}>
+                Alkotások<br/>Tára
               </h1>
-              <p className="lead mb-4">
-                Fedezd fel könyveink széles választékát. Vásárolj vagy kölcsönözz könyveket kényelmesen otthonról!
+              <p style={{ fontSize: '1.1rem', color: '#aaa', maxWidth: '480px', lineHeight: 1.7, marginBottom: '2.5rem' }}>
+                Fedezd fel könyveink széles választékát. Vásárolj vagy kölcsönözz könyveket kényelmesen otthonról.
               </p>
               <button
                 className="btn btn-light btn-lg me-3"
                 onClick={() => navigate('/books')}
               >
-                <i className="bi bi-book me-2"></i>
                 Böngészés
               </button>
               <button
                 className="btn btn-outline-light btn-lg"
                 onClick={() => navigate('/about')}
               >
-                Tudj meg többet
+                Rólunk
               </button>
             </div>
-            <div className="col-md-6 text-center">
-              <i className="bi bi-book display-1"></i>
+            <div className="col-lg-5 text-center d-none d-lg-block">
+              <i className="bi bi-book" style={{ fontSize: '8rem', opacity: 0.15 }}></i>
             </div>
           </div>
         </div>
       </div>
 
       {/* Features section */}
-      <div className="container my-5">
+      <div className="container" style={{ padding: '5rem 0' }}>
         <div className="row text-center">
           <div className="col-md-4 mb-4">
-            <div className="card border-0 shadow-sm h-100">
-              <div className="card-body p-4">
-                <i className="bi bi-cart-check display-4 text-primary mb-3"></i>
-                <h5 className="card-title">Egyszerű vásárlás</h5>
-                <p className="card-text text-muted">
+            <div className="card h-100" style={{ border: '1px solid #e8e8e8' }}>
+              <div className="card-body p-5">
+                <i className="bi bi-cart-check" style={{ fontSize: '2.5rem', color: '#1a1a1a', marginBottom: '1.2rem', display: 'block' }}></i>
+                <h5 className="card-title" style={{ fontWeight: 600 }}>Egyszerű vásárlás</h5>
+                <p className="card-text" style={{ color: '#888', fontSize: '0.92rem' }}>
                   Rendelj online, és akár 24 órán belül kézhez kapod a könyvet!
                 </p>
               </div>
             </div>
           </div>
           <div className="col-md-4 mb-4">
-            <div className="card border-0 shadow-sm h-100">
-              <div className="card-body p-4">
-                <i className="bi bi-bookmark-heart display-4 text-success mb-3"></i>
-                <h5 className="card-title">Kölcsönzési lehetőség</h5>
-                <p className="card-text text-muted">
+            <div className="card h-100" style={{ border: '1px solid #e8e8e8' }}>
+              <div className="card-body p-5">
+                <i className="bi bi-bookmark-heart" style={{ fontSize: '2.5rem', color: '#1a1a1a', marginBottom: '1.2rem', display: 'block' }}></i>
+                <h5 className="card-title" style={{ fontWeight: 600 }}>Kölcsönzési lehetőség</h5>
+                <p className="card-text" style={{ color: '#888', fontSize: '0.92rem' }}>
                   Nincs szükséged megvenni? Kölcsönözd ki kedvező áron!
                 </p>
               </div>
             </div>
           </div>
           <div className="col-md-4 mb-4">
-            <div className="card border-0 shadow-sm h-100">
-              <div className="card-body p-4">
-                <i className="bi bi-search display-4 text-info mb-3"></i>
-                <h5 className="card-title">Könnyű keresés</h5>
-                <p className="card-text text-muted">
+            <div className="card h-100" style={{ border: '1px solid #e8e8e8' }}>
+              <div className="card-body p-5">
+                <i className="bi bi-search" style={{ fontSize: '2.5rem', color: '#1a1a1a', marginBottom: '1.2rem', display: 'block' }}></i>
+                <h5 className="card-title" style={{ fontWeight: 600 }}>Könnyű keresés</h5>
+                <p className="card-text" style={{ color: '#888', fontSize: '0.92rem' }}>
                   Szűrj kategóriák szerint vagy keress címre, szerzőre!
                 </p>
               </div>
@@ -106,10 +108,9 @@ function HomePage() {
       </div>
 
       {/* Featured books section */}
-      <div className="container my-5">
+      <div className="container" style={{ paddingBottom: '4rem' }}>
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>
-            <i className="bi bi-star me-2"></i>
+          <h2 style={{ fontWeight: 700, fontSize: '1.6rem' }}>
             Kiemelt könyvek
           </h2>
           <button
@@ -132,17 +133,16 @@ function HomePage() {
       </div>
 
       {/* Call to action */}
-      <div className="bg-light py-5">
+      <div style={{ backgroundColor: '#f5f5f5', padding: '5rem 0', borderTop: '1px solid #e8e8e8' }}>
         <div className="container text-center">
-          <h3 className="mb-3">Készen állsz a felfedezésre?</h3>
-          <p className="text-muted mb-4">
+          <h3 style={{ fontWeight: 700, marginBottom: '1rem' }}>Készen állsz a felfedezésre?</h3>
+          <p style={{ color: '#888', marginBottom: '2rem', maxWidth: '420px', margin: '0 auto 2rem' }}>
             Csatlakozz hozzánk és fedezd fel a könyvek világát!
           </p>
           <button
             className="btn btn-primary btn-lg"
             onClick={() => navigate('/books')}
           >
-            <i className="bi bi-book me-2"></i>
             Kezdj el böngészni
           </button>
         </div>

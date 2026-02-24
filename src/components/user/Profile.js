@@ -136,8 +136,8 @@ function Profile() {
           <div className="card-body text-center">
             <div className="mb-3">
               <div 
-                className="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center"
-                style={{ width: '80px', height: '80px', fontSize: '2rem' }}
+                className="d-inline-flex align-items-center justify-content-center"
+                style={{ width: '80px', height: '80px', fontSize: '2rem', backgroundColor: '#1a1a1a', color: '#fff' }}
               >
                 {currentUser?.nev?.charAt(0).toUpperCase() || currentUser?.email?.charAt(0).toUpperCase() || '?'}
               </div>

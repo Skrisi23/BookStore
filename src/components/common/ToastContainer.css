@@ -1,4 +1,4 @@
-/* src/components/common/ToastContainer.css */
+/* src/components/common/ToastContainer.css — Monochrome */
 .toast-container {
   z-index: 9999;
 }
@@ -6,8 +6,8 @@
 .toast {
   min-width: 300px;
   margin-bottom: 0.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   animation: slideInRight 0.3s ease-out;
   border: none;
 }
@@ -25,8 +25,9 @@
 
 .toast-body {
   padding: 1rem;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 .toast-icon {
@@ -35,20 +36,24 @@
   align-items: center;
 }
 
-/* Színek típusonként */
+/* Monochrome toast types */
 .toast-success {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: white;
+  background: #1a1a1a;
+  color: #fff;
+  border-left: 4px solid #555;
 }
 
 .toast-error {
-  background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
-  color: white;
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid #1a1a1a;
 }
 
 .toast-warning {
-  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-  color: #333;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  border-left: 4px solid #888;
 }
 
 .toast-warning .btn-close {
@@ -56,8 +61,9 @@
 }
 
 .toast-info {
-  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-  color: white;
+  background: #333;
+  color: #fff;
+  border-left: 4px solid #888;
 }
 
 .btn-close-white {
