@@ -16,6 +16,9 @@ const ENDPOINTS = {
   rentals: `${defaultBaseUrl}/api/Rentals`,
   rentalsByUser: (userId) => `${defaultBaseUrl}/api/Rentals/user/${userId}`,
   rentalReturn: (rentalId) => `${defaultBaseUrl}/api/Rentals/${rentalId}/return`,
+  rentalSendReminder: (rentalId) => `${defaultBaseUrl}/api/Rentals/${rentalId}/send-reminder`,
+  rentalSendCustomEmail: `${defaultBaseUrl}/api/Rentals/send-custom-email`,
+  sendNotifications: `${defaultBaseUrl}/api/Rentals/send-notifications`,
   users: `${defaultBaseUrl}/api/Users`,
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
   authRegister: `${defaultBaseUrl}/api/Auth/register`,
@@ -182,11 +185,74 @@ export async function returnRental(rentalId, signal) {
       was_late: data.was_late
     };
   } catch (e) {
-    console.error('Visszahozási hiba:', e);
-    return {
+    console.error('Visszahozási hiba:', e);    return {
       success: false,
       message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a visszahozás során'
     };
+  }
+}
+
+/**
+ * Felszólító email küldése egy konkrét kölcsönzéshez (admin)
+ */
+export async function sendRentalReminder(rentalId) {
+  try {
+    const response = await fetch(ENDPOINTS.rentalSendReminder(rentalId), {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' }
+    });
+    const data = await response.json();
+    return {
+      success: response.ok,
+      message: data.message || (response.ok ? 'Email elküldve' : 'Küldés sikertelen')
+    };
+  } catch (e) {
+    console.error('Felszólító email hiba:', e);
+    return { success: false, message: 'Hiba történt az email küldés során' };
+  }
+}
+
+/**
+ * Custom email küldése (admin)
+ */
+export async function sendCustomEmail(emailData) {
+  try {
+    const response = await fetch(ENDPOINTS.rentalSendCustomEmail, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(emailData)
+    });
+    const data = await response.json();
+    return {
+      success: response.ok,
+      message: data.message || (response.ok ? 'Email elküldve' : 'Küldés sikertelen')
+    };
+  } catch (e) {
+    console.error('Custom email hiba:', e);
+    return { success: false, message: 'Hiba történt az email küldés során' };
+  }
+}
+
+/**
+ * Automatikus értesítések küldése (admin)
+ */
+export async function sendRentalNotifications() {
+  try {
+    const response = await fetch(ENDPOINTS.sendNotifications, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' }
+    });
+    const data = await response.json();
+    return {
+      success: response.ok,
+      ...data
+    };
+  } catch (e) {
+    console.error('Értesítés küldési hiba:', e);
+    return { success: false, message: 'Hiba történt az értesítések küldésekor' };
   }
 }
 

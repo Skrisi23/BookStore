@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getRentals, returnRental } from '../../api';
+import { getRentals, returnRental, sendRentalReminder, sendCustomEmail, sendRentalNotifications } from '../../api';
 import { useToast } from '../../context/ToastContext';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -7,8 +7,20 @@ function RentalManagement() {
   const [rentals, setRentals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('all'); // all, active, overdue, returned
+  const [filter, setFilter] = useState('all');
+  const [sendingEmail, setSendingEmail] = useState(null); // rental ID ami éppen küld
+  const [sendingNotifications, setSendingNotifications] = useState(false);
   const { success, error: toastError } = useToast();
+
+  // Custom email modal state
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailForm, setEmailForm] = useState({
+    toEmail: '',
+    toName: '',
+    subject: '',
+    message: ''
+  });
+  const [sendingCustomEmail, setSendingCustomEmail] = useState(false);
 
   const loadRentals = async () => {
     try {
@@ -77,9 +89,9 @@ function RentalManagement() {
     const result = await returnRental(rentalId);
     if (result.success) {
       if (result.was_late) {
-        success('Könyv visszavéve (késve érkezett!) 🕐');
+        success('Könyv visszavéve (késve érkezett!)');
       } else {
-        success('Könyv sikeresen visszavéve! ✅');
+        success('Könyv sikeresen visszavéve!');
       }
       await loadRentals();
     } else {
@@ -87,16 +99,69 @@ function RentalManagement() {
     }
   };
 
+  const handleSendReminder = async (rental) => {
+    setSendingEmail(rental.id);
+    const result = await sendRentalReminder(rental.id);
+    if (result.success) {
+      success(result.message);
+    } else {
+      toastError(result.message || 'Email küldés sikertelen');
+    }
+    setSendingEmail(null);
+  };
+
+  const handleSendNotifications = async () => {
+    setSendingNotifications(true);
+    const result = await sendRentalNotifications();
+    if (result.success) {
+      success(`Értesítések elküldve: ${result.reminders_sent || 0} emlékeztető, ${result.overdue_sent || 0} lejárt`);
+    } else {
+      toastError(result.message || 'Értesítések küldése sikertelen');
+    }
+    setSendingNotifications(false);
+  };
+
+  const openCustomEmailModal = (rental) => {
+    setEmailForm({
+      toEmail: rental ? rental.userEmail : '',
+      toName: rental ? rental.userName : '',
+      subject: rental ? `Kölcsönzés - ${rental.bookTitle}` : '',
+      message: ''
+    });
+    setShowEmailModal(true);
+  };
+
+  const handleSendCustomEmail = async (e) => {
+    e.preventDefault();
+    setSendingCustomEmail(true);
+
+    const result = await sendCustomEmail({
+      toEmail: emailForm.toEmail,
+      toName: emailForm.toName,
+      subject: emailForm.subject,
+      message: emailForm.message
+    });
+
+    if (result.success) {
+      success(result.message);
+      setShowEmailModal(false);
+      setEmailForm({ toEmail: '', toName: '', subject: '', message: '' });
+    } else {
+      toastError(result.message || 'Email küldés sikertelen');
+    }
+    setSendingCustomEmail(false);
+  };
+
   const getStatusBadge = (rental) => {
     switch (rental.status) {
       case 'returned':
-        return <span className="badge bg-success">✅ Visszahozva</span>;
+        return <span className="badge bg-success">Visszahozva</span>;
       case 'overdue':
-        return <span className="badge bg-danger">❌ Lejárt ({Math.abs(rental.daysLeft)} napja)</span>;
+        return <span className="badge bg-danger">Lejárt ({Math.abs(rental.daysLeft)} napja)</span>;
       case 'warning':
-        return <span className="badge bg-warning text-dark">⚠️ {rental.daysLeft} nap hátra</span>;
+        return <span className="badge bg-warning text-dark">{rental.daysLeft} nap hátra</span>;
       case 'active':
-        return <span className="badge bg-primary">📖 Aktív ({rental.daysLeft} nap)</span>;
+        return <span className="badge bg-primary">Aktív ({rental.daysLeft} nap)</span>;
       default:
         return <span className="badge bg-secondary">Ismeretlen</span>;
     }
@@ -122,6 +187,32 @@ function RentalManagement() {
             <i className="bi bi-bookmark-check me-2"></i>
             Kölcsönzések kezelése
           </h4>
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-outline-primary"
+              onClick={() => openCustomEmailModal(null)}
+            >
+              <i className="bi bi-envelope-plus me-1"></i>
+              Egyéni email
+            </button>
+            <button
+              className="btn btn-warning"
+              onClick={handleSendNotifications}
+              disabled={sendingNotifications}
+            >
+              {sendingNotifications ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-1"></span>
+                  Küldés...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-bell me-1"></i>
+                  Összes értesítés
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Statisztikák */}
@@ -205,18 +296,41 @@ function RentalManagement() {
                     <td>{rental.dueDate ? new Date(rental.dueDate).toLocaleDateString('hu-HU') : 'N/A'}</td>
                     <td>{getStatusBadge(rental)}</td>
                     <td>
-                      {rental.status !== 'returned' && (
-                        <button
-                          className="btn btn-sm btn-success"
-                          onClick={() => handleReturn(rental.id)}
-                        >
-                          <i className="bi bi-check-circle me-1"></i>
-                          Visszavétel
-                        </button>
-                      )}
-                      {rental.status === 'returned' && rental.returnedDate && (
-                        <small className="text-muted">{new Date(rental.returnedDate).toLocaleDateString('hu-HU')}</small>
-                      )}
+                      <div className="d-flex gap-1">
+                        {rental.status !== 'returned' && (
+                          <>
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={() => handleReturn(rental.id)}
+                              title="Visszavétel"
+                            >
+                              <i className="bi bi-check-circle"></i>
+                            </button>
+                            <button
+                              className="btn btn-sm btn-warning"
+                              onClick={() => handleSendReminder(rental)}
+                              disabled={sendingEmail === rental.id}
+                              title="Felszólító email"
+                            >
+                              {sendingEmail === rental.id ? (
+                                <span className="spinner-border spinner-border-sm"></span>
+                              ) : (
+                                <i className="bi bi-envelope-exclamation"></i>
+                              )}
+                            </button>
+                            <button
+                              className="btn btn-sm btn-outline-secondary"
+                              onClick={() => openCustomEmailModal(rental)}
+                              title="Egyéni email küldése"
+                            >
+                              <i className="bi bi-pencil-square"></i>
+                            </button>
+                          </>
+                        )}
+                        {rental.status === 'returned' && rental.returnedDate && (
+                          <small className="text-muted">{new Date(rental.returnedDate).toLocaleDateString('hu-HU')}</small>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -225,6 +339,105 @@ function RentalManagement() {
           </div>
         )}
       </div>
+
+      {/* Custom Email Modal */}
+      {showEmailModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  <i className="bi bi-envelope me-2"></i>
+                  Egyéni email küldése
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowEmailModal(false)}
+                ></button>
+              </div>
+              <form onSubmit={handleSendCustomEmail}>
+                <div className="modal-body">
+                  <div className="row mb-3">
+                    <div className="col-md-6">
+                      <label className="form-label">Címzett email *</label>
+                      <input
+                        type="email"
+                        className="form-control"
+                        value={emailForm.toEmail}
+                        onChange={(e) => setEmailForm({...emailForm, toEmail: e.target.value})}
+                        required
+                        placeholder="pelda@email.com"
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <label className="form-label">Címzett neve</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={emailForm.toName}
+                        onChange={(e) => setEmailForm({...emailForm, toName: e.target.value})}
+                        placeholder="Felhasználó neve"
+                      />
+                    </div>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Tárgy *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={emailForm.subject}
+                      onChange={(e) => setEmailForm({...emailForm, subject: e.target.value})}
+                      required
+                      placeholder="Email tárgya..."
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Üzenet *</label>
+                    <textarea
+                      className="form-control"
+                      rows="6"
+                      value={emailForm.message}
+                      onChange={(e) => setEmailForm({...emailForm, message: e.target.value})}
+                      required
+                      placeholder="Írd ide az üzeneted..."
+                    ></textarea>
+                    <small className="form-text text-muted">
+                      Az üzenet automatikusan BookStore fejléccel és aláírással lesz elküldve.
+                    </small>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setShowEmailModal(false)}
+                  >
+                    Mégse
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={sendingCustomEmail}
+                  >
+                    {sendingCustomEmail ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-1"></span>
+                        Küldés...
+                      </>
+                    ) : (
+                      <>
+                        <i className="bi bi-send me-1"></i>
+                        Küldés
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
