@@ -146,9 +146,7 @@ namespace Backend.Api.Controllers
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
             return Ok(paymentDto);
-        }
-
-        /// <summary>
+        }        /// <summary>
         /// Mai bevétel lekérdezése
         /// </summary>
         [HttpGet("today-revenue")]
@@ -171,6 +169,91 @@ namespace Backend.Api.Controllers
                 total_revenue = totalRevenue,
                 payments_count = paymentsCount
             });
+        }
+
+        /// <summary>
+        /// Vásárlások lekérdezése (purchase és mixed típusú payment-ek)
+        /// </summary>
+        [HttpGet("purchases")]
+        public async Task<ActionResult> GetPurchases()
+        {
+            var payments = await _context.payments
+                .Include(p => p.user)
+                .Where(p => p.order_type == "purchase" || p.order_type == "mixed")
+                .Where(p => p.status == "completed")
+                .OrderByDescending(p => p.payment_date)
+                .ToListAsync();
+
+            var result = new List<object>();
+
+            foreach (var payment in payments)
+            {
+                // order_details JSON-ból kinyerjük a könyveket
+                var purchasedBooks = new List<object>();
+
+                if (!string.IsNullOrEmpty(payment.order_details))
+                {
+                    try
+                    {
+                        using var doc = System.Text.Json.JsonDocument.Parse(payment.order_details);
+                        var root = doc.RootElement;
+
+                        if (root.TryGetProperty("books", out var booksElement))
+                        {
+                            foreach (var bookItem in booksElement.EnumerateArray())
+                            {
+                                var orderType = bookItem.TryGetProperty("order_type", out var ot) ? ot.GetString() : "rental";
+                                if (orderType != "purchase") continue;
+
+                                var copyId = bookItem.TryGetProperty("copy_id", out var ci) ? ci.GetInt32() : 0;
+                                var bookTitle = bookItem.TryGetProperty("book_title", out var bt) ? bt.GetString() : "Ismeretlen";
+                                var price = bookItem.TryGetProperty("price", out var pr) ? pr.GetDecimal() : 0;
+                                var quantity = bookItem.TryGetProperty("quantity", out var qt) ? qt.GetInt32() : 1;
+
+                                // Copy-ból próbáljuk bővíteni a könyvadatokat
+                                var copy = copyId > 0 ? await _context.copies
+                                    .Include(c => c.book)
+                                        .ThenInclude(b => b.author)
+                                    .FirstOrDefaultAsync(c => c.id == copyId) : null;
+
+                                purchasedBooks.Add(new
+                                {
+                                    copy_id = copyId,
+                                    book_title = copy?.book?.cim ?? bookTitle,
+                                    book_id = copy?.book_id,
+                                    book_cover = copy?.book?.boritokep,
+                                    author_name = copy?.book?.author?.nev,
+                                    price = price,
+                                    quantity = quantity
+                                });
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Ha a JSON parse nem sikerül, átugorjuk
+                    }
+                }
+
+                if (purchasedBooks.Any())
+                {
+                    result.Add(new
+                    {
+                        payment_id = payment.id,
+                        user_id = payment.user_id,
+                        user_name = payment.user?.nev,
+                        user_email = payment.user?.email,
+                        amount = payment.amount,
+                        payment_method = payment.payment_method,
+                        payment_date = payment.payment_date,
+                        status = payment.status,
+                        order_type = payment.order_type,
+                        books = purchasedBooks
+                    });
+                }
+            }
+
+            return Ok(result);
         }
 
         /// <summary>
