@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import Statistics from './Statistics';
 import RentalManagement from './RentalManagement';
 import BookManagement from './BookManagement';
+import PurchaseManagement from './PurchaseManagement';
 import { getBooks, getRentals, getUsers, getTodayRevenue } from '../../api';
 
 function Dashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('purchases');
   const [stats, setStats] = useState({
     totalBooks: 0,
     activeRentals: 0,
@@ -71,14 +72,13 @@ function Dashboard() {
         <>
           <Statistics stats={stats} />
 
-          <ul className="nav nav-tabs mb-4" style={{ borderBottom: '2px solid #1a1a1a' }}>
-            <li className="nav-item">
+          <ul className="nav nav-tabs mb-4" style={{ borderBottom: '2px solid #1a1a1a' }}>            <li className="nav-item">
               <button
-                className={`nav-link ${activeTab === 'overview' ? 'active' : ''}`}
-                onClick={() => setActiveTab('overview')}
-                style={activeTab === 'overview' ? { color: '#1a1a1a', fontWeight: 600, borderColor: '#1a1a1a #1a1a1a #fff', borderRadius: 0 } : { color: '#888', borderRadius: 0 }}
+                className={`nav-link ${activeTab === 'purchases' ? 'active' : ''}`}
+                onClick={() => setActiveTab('purchases')}
+                style={activeTab === 'purchases' ? { color: '#1a1a1a', fontWeight: 600, borderColor: '#1a1a1a #1a1a1a #fff', borderRadius: 0 } : { color: '#888', borderRadius: 0 }}
               >
-                Áttekintés
+                Vásárlások
               </button>
             </li>
             <li className="nav-item">
@@ -99,15 +99,7 @@ function Dashboard() {
                 Könyvek
               </button>
             </li>
-          </ul>
-
-          {activeTab === 'overview' && (
-            <div className="alert alert-info">
-              <i className="bi bi-info-circle me-2"></i>
-              Üdvözlünk az Admin Dashboard-on! Válassz egy fület a menüből.
-            </div>
-          )}
-
+          </ul>          {activeTab === 'purchases' && <PurchaseManagement />}
           {activeTab === 'rentals' && <RentalManagement />}
           {activeTab === 'books' && <BookManagement />}
         </>

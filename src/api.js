@@ -29,9 +29,9 @@ const ENDPOINTS = {
   cartAdd: (userId) => `${defaultBaseUrl}/api/Cart/add?userId=${userId}`,
   cartRemoveItem: (cartItemId, userId) => `${defaultBaseUrl}/api/Cart/item/${cartItemId}?userId=${userId}`,
   cartClear: (userId) => `${defaultBaseUrl}/api/Cart/clear?userId=${userId}`,
-  cartCheckout: `${defaultBaseUrl}/api/Cart/checkout`,
-  // Payments endpoints
+  cartCheckout: `${defaultBaseUrl}/api/Cart/checkout`,  // Payments endpoints
   paymentsTodayRevenue: `${defaultBaseUrl}/api/Payments/today-revenue`,
+  paymentsPurchases: `${defaultBaseUrl}/api/Payments/purchases`,
 };
 
 async function fetchJson(url, options = {}) {
@@ -657,6 +657,18 @@ export async function getTodayRevenue(signal) {
   } catch (e) {
     console.error('Mai bevétel lekérdezési hiba:', e);
     return { date: new Date().toISOString().split('T')[0], total_revenue: 0, payments_count: 0 };
+  }
+}
+
+/**
+ * Vásárlások lekérdezése (admin)
+ */
+export async function getPurchases(signal) {
+  try {
+    return await fetchJson(ENDPOINTS.paymentsPurchases, { signal });
+  } catch (e) {
+    console.error('Vásárlások lekérdezési hiba:', e);
+    return [];
   }
 }
 
