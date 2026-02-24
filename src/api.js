@@ -51,7 +51,7 @@ export async function getAuthorById(id, signal) {
 }
 
 /**
- * Új szerző létrehozása
+ * Új szerző létrehozásaaaaaaaa
  */
 export async function createAuthor(authorData, signal) {
   try {

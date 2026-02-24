@@ -211,6 +211,8 @@ function BookManagement() {
     };    const result = await createBook(bookData);
     if (result.success) {
       const createdBookId = result.book.id;
+
+      console.log('Könyv létrehozva, ID:', createdBookId);
       
       // Példányok létrehozása - egyenként (sorosan), hogy ne legyen ütközés
       const copiesCount = parseInt(newBook.copies_count) || 1;
