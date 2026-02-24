@@ -124,9 +124,9 @@ function Profile() {
     const result = await returnRental(rentalId);
     if (result.success) {
       if (result.was_late) {
-        error('Könyv visszahozva, de késve! 🕐');
+        error('Könyv visszahozva, de késve!');
       } else {
-        success('Könyv sikeresen visszahozva! ✅');
+        success('Könyv sikeresen visszahozva!');
       }
       await loadUserRentals();
     } else {
@@ -136,14 +136,13 @@ function Profile() {
 
   const getStatusBadge = (rental) => {
     switch (rental.status) {
-      case 'returned':
-        return <span className="badge bg-success">✅ Visszahozva</span>;
+      case 'returned':        return <span className="badge bg-success">Visszahozva</span>;
       case 'overdue':
-        return <span className="badge bg-danger">❌ Lejárt ({Math.abs(rental.daysLeft)} napja)</span>;
+        return <span className="badge bg-danger">Lejárt ({Math.abs(rental.daysLeft)} napja)</span>;
       case 'warning':
-        return <span className="badge bg-warning text-dark">⚠️ {rental.daysLeft} nap van hátra</span>;
+        return <span className="badge bg-warning text-dark">{rental.daysLeft} nap van hátra</span>;
       case 'active':
-        return <span className="badge bg-primary">📖 Aktív ({rental.daysLeft} nap hátra)</span>;
+        return <span className="badge bg-primary">Aktív ({rental.daysLeft} nap hátra)</span>;
       default:
         return <span className="badge bg-secondary">Ismeretlen</span>;
     }
