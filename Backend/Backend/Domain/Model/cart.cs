@@ -19,10 +19,10 @@ public partial class cart
     [Column(TypeName = "int(11)")]
     public int user_id { get; set; }
 
-    [Column(TypeName = "timestamp")]
+    [Column("creation_date", TypeName = "timestamp")]
     public DateTime created_at { get; set; }
 
-    [Column(TypeName = "timestamp")]
+    [Column("update_time", TypeName = "timestamp")]
     public DateTime? updated_at { get; set; }
 
     [StringLength(20)]

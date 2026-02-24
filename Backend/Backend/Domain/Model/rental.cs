@@ -23,8 +23,10 @@ public partial class rental
     [Column(TypeName = "int(11)")]
     public int copy_id { get; set; }
 
+    [Column("rental_date")]
     public DateOnly kolcsonzes_datuma { get; set; }
 
+    [Column("return_date")]
     public DateOnly? visszahozva_datuma { get; set; }
 
     [Column(TypeName = "int(11)")]

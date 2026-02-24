@@ -26,6 +26,7 @@ public class BooksController : ControllerBase
         var books = await _context.books
             .Include(b => b.author)
             .Include(b => b.copies)
+            .OrderBy(b => b.id)
             .Select(b => new BookDto
             {
                 Id = b.id,

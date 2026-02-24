@@ -15,6 +15,7 @@ public partial class author
     [Column(TypeName = "int(11)")]
     public int id { get; set; }
 
+    [Column("name")]
     [StringLength(255)]
     public string nev { get; set; } = null!;
 

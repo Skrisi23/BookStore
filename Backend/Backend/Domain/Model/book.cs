@@ -16,23 +16,27 @@ public partial class book
     [Column(TypeName = "int(11)")]
     public int id { get; set; }
 
+    [Column("title")]
     [StringLength(255)]
     public string cim { get; set; } = null!;
 
     [Column(TypeName = "int(11)")]
     public int author_id { get; set; }
 
+    [Column("image")]
     [StringLength(255)]
     public string? boritokep { get; set; }
 
+    [Column("release_date")]
     public DateOnly? kiadasi_datum { get; set; }
 
-    [Column(TypeName = "text")]
+    [Column("content", TypeName = "text")]
     public string? tartalom { get; set; }
 
-    [Column(TypeName = "decimal(10,2)")]
+    [Column("price", TypeName = "decimal(10,2)")]
     public decimal ar { get; set; }
 
+    [Column("category")]
     [StringLength(100)]
     public string kategoria { get; set; } = "Egyéb";
 

@@ -20,9 +20,11 @@ public partial class copy
     [Column(TypeName = "int(11)")]
     public int book_id { get; set; }
 
+    [Column("inventory_number")]
     [StringLength(50)]
     public string leltari_szam { get; set; } = null!;
 
+    [Column("available")]
     [Required]
     public bool? elerheto { get; set; }
 
