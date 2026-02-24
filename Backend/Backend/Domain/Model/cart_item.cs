@@ -27,7 +27,9 @@ public partial class cart_item
     public int quantity { get; set; } = 1;
 
     [Column(TypeName = "decimal(10,2)")]
-    public decimal price { get; set; }
+    public decimal price { get; set; }    [Column("order_type")]
+    [StringLength(20)]
+    public string order_type { get; set; } = "rental"; // "rental" or "purchase"
 
     [Column(TypeName = "timestamp")]
     public DateTime added_at { get; set; }

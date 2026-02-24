@@ -86,11 +86,23 @@ namespace Backend.Api.Controllers
         /// </summary>
         [HttpPost("add")]
         public async Task<ActionResult<CartDto>> AddToCart([FromQuery] int userId, [FromBody] AddToCartDto addToCartDto)
-        {
-            // Validáció: legalább copy_id vagy book_id kötelező
+        {            // Validáció: legalább copy_id vagy book_id kötelező
             if (!addToCartDto.copy_id.HasValue && !addToCartDto.book_id.HasValue)
             {
                 return BadRequest(new { message = "A copy_id vagy book_id megadása kötelező" });
+            }
+
+            var orderType = addToCartDto.order_type ?? "rental";
+            if (orderType != "rental" && orderType != "purchase")
+            {
+                return BadRequest(new { message = "Az order_type értéke 'rental' vagy 'purchase' lehet" });
+            }
+
+            // Kölcsönzésnél max 1 db
+            var quantity = addToCartDto.quantity > 0 ? addToCartDto.quantity : 1;
+            if (orderType == "rental" && quantity > 1)
+            {
+                quantity = 1;
             }
 
             copy? copy = null;
@@ -121,16 +133,14 @@ namespace Backend.Api.Controllers
                 }
             }
 
-            // 2. Kosárba helyezéskor NEM foglaljuk le - csak checkout-kor
-            // Ellenőrizzük hogy létezik-e a copy
+            // 2. Ellenőrizzük hogy létezik-e a copy
             if (copy == null)
             {
                 return NotFound(new { message = "Könyvpéldány nem található" });
-            }
-
-            // 3. Aktív kosár keresése vagy létrehozása
+            }            // 3. Aktív kosár keresése vagy létrehozása
             var cart = await _context.carts
                 .Include(c => c.cart_items)
+                    .ThenInclude(ci => ci.copy)
                 .FirstOrDefaultAsync(c => c.user_id == userId && c.status == "active");
 
             if (cart == null)
@@ -143,28 +153,72 @@ namespace Backend.Api.Controllers
                 };
                 _context.carts.Add(cart);
                 await _context.SaveChangesAsync();
+            }            // 4. Vásárlásnál ellenőrizzük a készletet
+            if (orderType == "purchase")
+            {
+                var bookId = copy.book_id;
+
+                // Összes elérhető példány a könyvből
+                var availableCopiesCount = await _context.copies
+                    .CountAsync(c => c.book_id == bookId && c.elerheto == true);
+
+                // Más felhasználók aktív kosaraiban lévő mennyiség (ugyanez a könyv, purchase)
+                var inOtherCartsQty = await _context.cart_items
+                    .Include(ci => ci.cart)
+                    .Include(ci => ci.copy)
+                    .Where(ci => ci.cart.status == "active"
+                                 && ci.cart.user_id != userId
+                                 && ci.copy.book_id == bookId
+                                 && ci.order_type == "purchase")
+                    .SumAsync(ci => ci.quantity);
+
+                // A jelenlegi felhasználó kosarában már benne lévő mennyiség (ugyanez a könyv, purchase)
+                var alreadyInMyCart = cart.cart_items
+                    .Where(ci => ci.copy.book_id == bookId && ci.order_type == "purchase")
+                    .Sum(ci => ci.quantity);
+
+                var totalRequested = alreadyInMyCart + quantity;
+                var realAvailable = availableCopiesCount - inOtherCartsQty;
+
+                if (totalRequested > realAvailable)
+                {
+                    return BadRequest(new
+                    {
+                        message = $"Nincs elég készlet! Elérhető: {Math.Max(0, realAvailable)} db, kosárban már: {alreadyInMyCart} db"
+                    });
+                }
             }
 
-            // 4. Ellenőrizzük, hogy már van-e ez a copy a kosárban
-            var existingItem = cart.cart_items.FirstOrDefault(ci => ci.copy_id == copy.id);
+            // 5. Ellenőrizzük, hogy már van-e ez a könyv a kosárban (ugyanazzal a típussal)
+            var existingItem = cart.cart_items.FirstOrDefault(ci => ci.copy_id == copy.id && ci.order_type == orderType);
             if (existingItem != null)
             {
-                return BadRequest(new { message = "Ez a könyvpéldány már a kosárban van" });
+                if (orderType == "rental")
+                {
+                    return BadRequest(new { message = "Ez a könyv már a kosárban van kölcsönzésre" });
+                }
+                // Vásárlásnál növeljük a mennyiséget
+                existingItem.quantity += quantity;
+                cart.updated_at = DateTime.Now;
+                await _context.SaveChangesAsync();
             }
-
-            // 5. Új cart_item létrehozása
-            var cartItem = new cart_item
+            else
             {
-                cart_id = cart.id,
-                copy_id = copy.id,
-                quantity = 1,
-                price = copy.book.ar,
-                added_at = DateTime.Now
-            };
+                // 6. Új cart_item létrehozása
+                var cartItem = new cart_item
+                {
+                    cart_id = cart.id,
+                    copy_id = copy.id,
+                    quantity = quantity,
+                    price = copy.book.ar,
+                    order_type = orderType,
+                    added_at = DateTime.Now
+                };
 
-            _context.cart_items.Add(cartItem);
-            cart.updated_at = DateTime.Now;
-            await _context.SaveChangesAsync();
+                _context.cart_items.Add(cartItem);
+                cart.updated_at = DateTime.Now;
+                await _context.SaveChangesAsync();
+            }
 
             // 6. Frissített kosár visszaküldése
             cart = await _context.carts
@@ -297,27 +351,46 @@ namespace Backend.Api.Controllers
                 if (!cart.cart_items.Any())
                 {
                     return BadRequest(new { message = "A kosár üres" });
-                }
+                }                // 2. Kölcsönzéseknél ellenőrizzük, hogy a copy elérhető-e
+                var rentalItems = cart.cart_items.Where(ci => ci.order_type == "rental").ToList();
+                var purchaseItems = cart.cart_items.Where(ci => ci.order_type == "purchase").ToList();
 
-                // 2. Ellenőrizzük, hogy minden könyv még elérhető-e
-                var unavailableBooks = cart.cart_items
+                var unavailableRentals = rentalItems
                     .Where(ci => ci.copy.elerheto == false)
                     .Select(ci => new { ci.copy.leltari_szam, ci.copy.book.cim })
-                    .ToList();
-
-                if (unavailableBooks.Any())
+                    .ToList();                if (unavailableRentals.Any())
                 {
                     return BadRequest(new
                     {
-                        message = "Néhány könyv már nem elérhető",
-                        unavailable_books = unavailableBooks
+                        message = "Néhány könyv már nem elérhető kölcsönzésre",
+                        unavailable_books = unavailableRentals
                     });
+                }
+
+                // 2b. Vásárlásoknál ellenőrizzük a készletet
+                foreach (var purchaseItem in purchaseItems)
+                {
+                    var bookId = purchaseItem.copy.book_id;
+                    var availableCount = await _context.copies
+                        .CountAsync(c => c.book_id == bookId && c.elerheto == true);
+
+                    if (purchaseItem.quantity > availableCount)
+                    {
+                        return BadRequest(new
+                        {
+                            message = $"Nincs elég készlet a(z) \"{purchaseItem.copy.book.cim}\" könyvből. Elérhető: {availableCount} db, kért: {purchaseItem.quantity} db"
+                        });
+                    }
                 }
 
                 // 3. Összeg számítása
                 decimal totalAmount = cart.cart_items.Sum(ci => ci.price * ci.quantity);
 
                 // 4. Payment létrehozása
+                var hasRentals = rentalItems.Any();
+                var hasPurchases = purchaseItems.Any();
+                var paymentOrderType = hasRentals && hasPurchases ? "mixed" : hasRentals ? "rental" : "purchase";
+
                 var orderDetailsJson = System.Text.Json.JsonSerializer.Serialize(new
                 {
                     cart_id = cart.id,
@@ -326,14 +399,16 @@ namespace Backend.Api.Controllers
                     {
                         copy_id = ci.copy_id,
                         book_title = ci.copy.book.cim,
-                        price = ci.price
+                        price = ci.price,
+                        quantity = ci.quantity,
+                        order_type = ci.order_type
                     }).ToList()
                 });
 
                 var payment = new payment
                 {
                     user_id = checkoutDto.user_id,
-                    order_type = "rental",
+                    order_type = paymentOrderType,
                     amount = totalAmount,
                     payment_method = checkoutDto.payment_method,
                     payment_date = DateTime.Now,
@@ -343,12 +418,14 @@ namespace Backend.Api.Controllers
                 };
 
                 _context.payments.Add(payment);
-                await _context.SaveChangesAsync();                // 5. Rental-ok létrehozása minden cart_item-hez
+                await _context.SaveChangesAsync();
+
+                // 5. Kölcsönzések létrehozása (csak rental típusú itemekhez)
                 var rentals = new List<rental>();
                 var kolcsonzesDatum = DateOnly.FromDateTime(DateTime.Now);
                 var lejaratDatum = DateOnly.FromDateTime(DateTime.Now.AddDays(checkoutDto.rental_days));
                 
-                foreach (var cartItem in cart.cart_items)
+                foreach (var cartItem in rentalItems)
                 {
                     var rental = new rental
                     {
@@ -363,8 +440,21 @@ namespace Backend.Api.Controllers
                     _context.rentals.Add(rental);
                     rentals.Add(rental);
 
-                    // 6. Copy lefoglalása
+                    // Copy lefoglalása kölcsönzéskor
                     cartItem.copy.elerheto = false;
+                }                // 6. Vásárlásoknál a megfelelő számú copy-t elérhetetlenné tesszük
+                foreach (var purchaseItem in purchaseItems)
+                {
+                    var bookId = purchaseItem.copy.book_id;
+                    var copiesToMark = await _context.copies
+                        .Where(c => c.book_id == bookId && c.elerheto == true)
+                        .Take(purchaseItem.quantity)
+                        .ToListAsync();
+
+                    foreach (var c in copiesToMark)
+                    {
+                        c.elerheto = false;
+                    }
                 }
 
                 // 7. Kosár státuszának frissítése
@@ -386,13 +476,17 @@ namespace Backend.Api.Controllers
                     .Include(r => r.copy)
                         .ThenInclude(c => c.book)
                     .Where(r => r.payment_id == payment!.id)
-                    .ToListAsync();
+                    .ToListAsync();                var rentalCount = rentalsList.Count;
+                var purchaseCount = purchaseItems.Sum(ci => ci.quantity);
+                var messageParts = new List<string>();
+                if (rentalCount > 0) messageParts.Add($"{rentalCount} könyv kölcsönözve {checkoutDto.rental_days} napra");
+                if (purchaseCount > 0) messageParts.Add($"{purchaseCount} könyv megvásárolva");
 
                 var response = new CheckoutResponseDto
                 {
                     payment = _mapper.Map<PaymentDto>(payment!),
                     rentals = _mapper.Map<List<RentalDto>>(rentalsList),
-                    message = $"Sikeres fizetés! {rentalsList.Count} könyv kölcsönözve {checkoutDto.rental_days} napra."
+                    message = $"Sikeres fizetés! {string.Join(", ", messageParts)}."
                 };
 
                 return Ok(response);

@@ -21,9 +21,7 @@ namespace Backend.Application.DTOs
         // Számított értékek
         public decimal total_price { get; set; }
         public int total_items { get; set; }
-    }
-
-    // Kosár elem DTO - részletes könyv adatokkal
+    }    // Kosár elem DTO - részletes könyv adatokkal
     public class CartItemDto
     {
         public int id { get; set; }
@@ -31,6 +29,7 @@ namespace Backend.Application.DTOs
         public int copy_id { get; set; }
         public int quantity { get; set; }
         public decimal price { get; set; }
+        public string order_type { get; set; } = "rental";
         public DateTime added_at { get; set; }
         
         // Copy/Book adatok
@@ -52,7 +51,10 @@ namespace Backend.Application.DTOs
         public int? copy_id { get; set; }
         public int? book_id { get; set; }
 
-        [Range(1, 1, ErrorMessage = "Egy könyvpéldányból csak 1 darab lehet a kosárban")]
+        // "rental" vagy "purchase"
+        public string order_type { get; set; } = "rental";
+
+        [Range(1, 100, ErrorMessage = "Mennyiség 1 és 100 között lehet")]
         public int quantity { get; set; } = 1;
     }
 
