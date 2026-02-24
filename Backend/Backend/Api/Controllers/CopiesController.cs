@@ -1,4 +1,5 @@
-﻿using Backend.Domain.Model;
+﻿using Backend.Application.DTOs;
+using Backend.Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,21 +20,49 @@ namespace Backend.Api.Controllers
         public IActionResult GetAll()
         {
             return Ok(_context.copies.ToList());
-        }
-
-        [HttpGet("{id}")]
+        }        [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
             var copy = _context.copies.Find(id);
             return Ok(copy);
         }
 
-        [HttpPost]
-        public IActionResult Create(copy copy)
+        /// <summary>
+        /// Egy könyv példányainak lekérdezése book_id alapján
+        /// </summary>
+        [HttpGet("by-book/{bookId}")]
+        public async Task<IActionResult> GetByBookId(int bookId)
         {
-            _context.copies.Add(copy);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(GetById), new { id = copy.id }, copy);
+            var copies = await _context.copies
+                .Where(c => c.book_id == bookId)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                book_id = bookId,
+                count = copies.Count,
+                copies = copies
+            });
+        }[HttpPost]
+        public async Task<IActionResult> Create([FromBody] CopiesDto dto)
+        {
+            // Ellenőrizzük hogy létezik-e a könyv
+            var bookExists = await _context.books.AnyAsync(b => b.id == dto.book_id);
+            if (!bookExists)
+            {
+                return BadRequest(new { message = $"Nem található könyv ezzel az ID-vel: {dto.book_id}" });
+            }
+
+            var newCopy = new copy
+            {
+                book_id = dto.book_id,
+                leltari_szam = dto.leltari_szam,
+                elerheto = dto.elerheto ?? true
+            };
+
+            _context.copies.Add(newCopy);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetById), new { id = newCopy.id }, newCopy);
         }
 
         [HttpPut("{id}")]
@@ -42,14 +71,17 @@ namespace Backend.Api.Controllers
             _context.Entry(copy).State = EntityState.Modified;
             _context.SaveChanges();
             return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        }        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var copy = _context.copies.Find(id);
+            var copy = await _context.copies.FindAsync(id);
+            if (copy == null)
+            {
+                return NotFound(new { message = $"Nem található példány ezzel az ID-vel: {id}" });
+            }
+            
             _context.copies.Remove(copy);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 

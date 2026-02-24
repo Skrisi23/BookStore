@@ -37,6 +37,7 @@ public class BooksController : ControllerBase
                 Ar = b.ar,
                 Kategoria = b.kategoria,
                 AuthorNev = b.author.nev,
+                author_id = b.author_id,
                 Elerheto = b.copies.Any(c => c.elerheto == true)
             })
             .ToListAsync();
@@ -64,7 +65,8 @@ public class BooksController : ControllerBase
                 Tartalom = b.tartalom,
                 Ar = b.ar,
                 Kategoria = b.kategoria,
-                AuthorNev = b.author.nev
+                AuthorNev = b.author.nev,
+                author_id = b.author_id
             })
             .ToListAsync();
 
@@ -89,7 +91,8 @@ public class BooksController : ControllerBase
                 Tartalom = b.tartalom,
                 Ar = b.ar,
                 Kategoria = b.kategoria,
-                AuthorNev = b.author.nev
+                AuthorNev = b.author.nev,
+                author_id = b.author_id
             })
             .ToListAsync();
 
@@ -147,7 +150,8 @@ public class BooksController : ControllerBase
                 Tartalom = b.tartalom,
                 Ar = b.ar,
                 Kategoria = b.kategoria,
-                AuthorNev = b.author.nev
+                AuthorNev = b.author.nev,
+                author_id = b.author_id
             })
             .FirstOrDefaultAsync();
 
@@ -200,7 +204,8 @@ public class BooksController : ControllerBase
             Tartalom = book.tartalom,
             Ar = book.ar,
             Kategoria = book.kategoria,
-            AuthorNev = book.author.nev
+            AuthorNev = book.author.nev,
+            author_id = book.author_id
         };
 
         return CreatedAtAction(nameof(GetBook), new { id = book.id }, bookDto);
@@ -256,7 +261,8 @@ public class BooksController : ControllerBase
             Tartalom = book.tartalom,
             Ar = book.ar,
             Kategoria = book.kategoria,
-            AuthorNev = book.author.nev
+            AuthorNev = book.author.nev,
+            author_id = book.author_id
         };
 
         return Ok(bookDto);

@@ -10,6 +10,7 @@ public class BookDto
     public decimal Ar { get; set; }
     public string Kategoria { get; set; } = null!;
     public string AuthorNev { get; set; } = null!;
+    public int author_id { get; set; }  // Szerző ID a szerkesztéshez
     public bool Elerheto { get; set; }  // Van-e legalább 1 elérhető példány
 }
 
