@@ -166,23 +166,36 @@ function Checkout({ onSuccess, onCancel }) {
             </form>
           </div>
         </div>
-      </div>
-
-      <div className="col-md-4">
+      </div>      <div className="col-md-4">
         <div className="card">
           <div className="card-body">
             <h5 className="card-title">Rendelés összesítő</h5>
             <hr />
-            {cartItems.map(item => (
-              <div key={`${item.id}-${item.type}`} className="d-flex justify-content-between mb-2">
-                <small>{item.title} x{item.quantity}</small>
-                <small className="fw-bold">{(item.price * item.quantity).toLocaleString()} Ft</small>
-              </div>
-            ))}
-            <hr />
-            <div className="d-flex justify-content-between">
+            <div className="mb-3">
+              {cartItems.map(item => (
+                <div key={item.id} className="mb-3 pb-2 border-bottom">
+                  <div className="mb-1">
+                    <small className="fw-semibold d-block" style={{ 
+                      wordWrap: 'break-word', 
+                      overflowWrap: 'break-word',
+                      hyphens: 'auto'
+                    }}>
+                      {item.book_cim}
+                    </small>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <small className="text-muted">Mennyiség: {item.quantity} db</small>
+                    <small className="fw-bold text-nowrap">
+                      {(item.price * item.quantity).toLocaleString()} Ft
+                    </small>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <hr className="mt-0" />
+            <div className="d-flex justify-content-between align-items-center">
               <strong>Összesen:</strong>
-              <strong className="text-primary">{getTotalPrice().toLocaleString()} Ft</strong>
+              <strong className="text-primary fs-5">{getTotalPrice().toLocaleString()} Ft</strong>
             </div>
           </div>
         </div>
