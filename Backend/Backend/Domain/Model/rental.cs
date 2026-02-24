@@ -29,6 +29,9 @@ public partial class rental
     [Column("return_date")]
     public DateOnly? visszahozva_datuma { get; set; }
 
+    [Column("due_date")]
+    public DateOnly? lejarat_datum { get; set; }
+
     [Column(TypeName = "int(11)")]
     public int? payment_id { get; set; }
 

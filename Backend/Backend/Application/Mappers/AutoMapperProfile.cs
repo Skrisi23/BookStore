@@ -17,12 +17,13 @@ namespace Backend.Application.Mappers
                 .ForMember(dest => dest.user_email, opt => opt.MapFrom(src => src.user.email));
             CreateMap<CreatePaymentDto, payment>()
                 .ForMember(dest => dest.payment_date, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.id, opt => opt.Ignore());
-
-            // Rental mappings
+                .ForMember(dest => dest.id, opt => opt.Ignore());            // Rental mappings
             CreateMap<rental, RentalDto>()
-                .ForMember(dest => dest.copy, opt => opt.Ignore())
-                .ForMember(dest => dest.user, opt => opt.Ignore());
+                .ForMember(dest => dest.user_name, opt => opt.MapFrom(src => src.user != null ? src.user.nev : null))
+                .ForMember(dest => dest.user_email, opt => opt.MapFrom(src => src.user != null ? src.user.email : null))
+                .ForMember(dest => dest.book_title, opt => opt.MapFrom(src => src.copy != null && src.copy.book != null ? src.copy.book.cim : null))
+                .ForMember(dest => dest.book_id, opt => opt.MapFrom(src => src.copy != null ? src.copy.book_id : (int?)null))
+                .ForMember(dest => dest.payment_id, opt => opt.MapFrom(src => src.payment_id));
 
             // Cart mappings
             CreateMap<cart, CartDto>()

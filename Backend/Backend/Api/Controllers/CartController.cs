@@ -343,11 +343,10 @@ namespace Backend.Api.Controllers
                 };
 
                 _context.payments.Add(payment);
-                await _context.SaveChangesAsync();
-
-                // 5. Rental-ok létrehozása minden cart_item-hez
+                await _context.SaveChangesAsync();                // 5. Rental-ok létrehozása minden cart_item-hez
                 var rentals = new List<rental>();
                 var kolcsonzesDatum = DateOnly.FromDateTime(DateTime.Now);
+                var lejaratDatum = DateOnly.FromDateTime(DateTime.Now.AddDays(checkoutDto.rental_days));
                 
                 foreach (var cartItem in cart.cart_items)
                 {
@@ -357,6 +356,7 @@ namespace Backend.Api.Controllers
                         copy_id = cartItem.copy_id,
                         payment_id = payment.id,
                         kolcsonzes_datuma = kolcsonzesDatum,
+                        lejarat_datum = lejaratDatum,
                         visszahozva_datuma = null
                     };
 

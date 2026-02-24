@@ -16,8 +16,16 @@ namespace Backend.Application.DTOs
 
         public DateOnly? visszahozva_datuma { get; set; }
 
-        public virtual copy copy { get; set; } = null!;
+        public DateOnly? lejarat_datum { get; set; }
 
-        public virtual users user { get; set; } = null!;
+        public string? user_name { get; set; }
+
+        public string? user_email { get; set; }
+
+        public string? book_title { get; set; }
+
+        public int? book_id { get; set; }
+
+        public int? payment_id { get; set; }
     }
 }
