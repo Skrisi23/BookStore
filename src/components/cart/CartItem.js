@@ -5,10 +5,7 @@ function CartItem({ item }) {
   const { removeFromCart, addToCart } = useCart();
 
   const isPurchase = item.order_type === 'purchase';
-  const badgeLabel = isPurchase ? 'Vásárlás' : 'Kölcsönzés';
-  const badgeStyle = isPurchase
-    ? { backgroundColor: '#198754', color: '#fff' }
-    : { backgroundColor: '#1a1a1a', color: '#fff' };
+  const badgeLabel = isPurchase ? 'VÁSÁRLÁS' : 'KÖLCSÖNZÉS';
 
   const handleIncrement = async () => {
     if (!isPurchase) return;
@@ -16,60 +13,84 @@ function CartItem({ item }) {
   };
 
   return (
-    <div className="card mb-3" style={{ border: '1px solid #e8e8e8' }}>
-      <div className="card-body">
-        <div className="row align-items-center">
-          <div className="col-md-2">
-            <img
-              src={item.book_boritokep || '/placeholder.jpg'}
-              alt={item.book_cim}
-              className="img-fluid"
-              style={{ maxHeight: '100px', objectFit: 'cover' }}
-            />
-          </div>
-          <div className="col-md-4">
-            <h6 className="mb-1" style={{ fontWeight: 600 }}>{item.book_cim}</h6>
-            <p className="small mb-0" style={{ color: '#888' }}>
-              {item.author_nev}
-            </p>
-            <span className="badge mt-2" style={badgeStyle}>
-              {badgeLabel}
-            </span>
-          </div>
-          <div className="col-md-2 text-center">
-            {isPurchase ? (
-              <div className="d-flex align-items-center justify-content-center gap-2">
-                <span className="fw-semibold">{item.quantity} db</span>
-                <button
-                  className="btn btn-sm btn-outline-secondary"
-                  onClick={handleIncrement}
-                  title="Mennyiség növelése"
-                  style={{ lineHeight: 1, padding: '2px 8px' }}
-                >
-                  <i className="bi bi-plus"></i>
-                </button>
-              </div>
-            ) : (
-              <span className="text-muted small">{item.quantity} db</span>
-            )}
-          </div>
-          <div className="col-md-2 text-end">
-            <p className="mb-0 fw-bold" style={{ color: '#1a1a1a' }}>
-              {(item.price * item.quantity).toLocaleString()} Ft
-            </p>
-            {item.quantity > 1 && (
-              <small className="text-muted">{item.price.toLocaleString()} Ft/db</small>
-            )}
-          </div>
-          <div className="col-md-2 text-end">
-            <button
-              className="btn btn-sm"
-              onClick={() => removeFromCart(item.id)}
-              style={{ border: '1px solid #ccc', color: '#1a1a1a' }}
-            >
-              <i className="bi bi-trash"></i>
-            </button>
-          </div>
+    <div style={{ border: '1px solid #e8e8e8', marginBottom: '1rem', padding: '1.2rem 1.5rem' }}>
+      <div className="row align-items-center">
+        <div className="col-md-2 col-3">
+          <img
+            src={item.book_boritokep || '/placeholder.jpg'}
+            alt={item.book_cim}
+            style={{ width: '100%', height: '100px', objectFit: 'contain' }}
+          />
+        </div>
+        <div className="col-md-4 col-9">
+          <h6 style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: '0.25rem' }}>{item.book_cim}</h6>
+          <p style={{ color: '#888', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
+            {item.author_nev}
+          </p>
+          <span style={{
+            display: 'inline-block',
+            padding: '0.2rem 0.6rem',
+            fontSize: '0.62rem',
+            fontWeight: 600,
+            letterSpacing: '0.5px',
+            backgroundColor: isPurchase ? '#e8e8e8' : '#1a1a1a',
+            color: isPurchase ? '#333' : '#fff'
+          }}>{badgeLabel}</span>
+        </div>
+        <div className="col-md-2 col-4 text-center" style={{ marginTop: '0.5rem' }}>
+          {isPurchase ? (
+            <div className="d-flex align-items-center justify-content-center gap-2">
+              <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{item.quantity} db</span>
+              <button
+                onClick={handleIncrement}
+                title="Mennyiség növelése"
+                style={{
+                  width: '26px',
+                  height: '26px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid #ccc',
+                  backgroundColor: 'transparent',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  color: '#555'
+                }}
+              >
+                <i className="bi bi-plus"></i>
+              </button>
+            </div>
+          ) : (
+            <span style={{ color: '#888', fontSize: '0.85rem' }}>{item.quantity} db</span>
+          )}
+        </div>
+        <div className="col-md-2 col-4 text-end" style={{ marginTop: '0.5rem' }}>
+          <p style={{ fontWeight: 700, fontSize: '1rem', color: '#1a1a1a', marginBottom: '0.1rem' }}>
+            {(item.price * item.quantity).toLocaleString()} Ft
+          </p>
+          {item.quantity > 1 && (
+            <span style={{ color: '#aaa', fontSize: '0.75rem' }}>{item.price.toLocaleString()} Ft/db</span>
+          )}
+        </div>
+        <div className="col-md-2 col-4 text-end" style={{ marginTop: '0.5rem' }}>
+          <button
+            onClick={() => removeFromCart(item.id)}
+            style={{
+              width: '32px',
+              height: '32px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid #e8e8e8',
+              backgroundColor: 'transparent',
+              cursor: 'pointer',
+              color: '#888',
+              transition: 'all 0.2s'
+            }}
+            title="Eltávolítás"
+          >
+            <i className="bi bi-x-lg" style={{ fontSize: '0.75rem' }}></i>
+          </button>
         </div>
       </div>
     </div>

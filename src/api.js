@@ -20,6 +20,7 @@ const ENDPOINTS = {
   rentalSendCustomEmail: `${defaultBaseUrl}/api/Rentals/send-custom-email`,
   sendNotifications: `${defaultBaseUrl}/api/Rentals/send-notifications`,
   users: `${defaultBaseUrl}/api/Users`,
+  userById: (id) => `${defaultBaseUrl}/api/Users/${id}`,
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
   authRegister: `${defaultBaseUrl}/api/Auth/register`,
   authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,
@@ -295,6 +296,34 @@ export async function changeUserPassword(userId, currentPassword, newPassword, s
       message: e.name === 'AbortError'
         ? 'Request was aborted'
         : 'An error occurred while changing the password',
+    };
+  }
+}
+
+export async function deleteUser(userId, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.userById(userId), {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal,
+    });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      return {
+        success: false,
+        message: text || 'Fiók törlése sikertelen',
+      };
+    }
+
+    return { success: true };
+  } catch (e) {
+    console.error('Fiók törlési hiba:', e);
+    return {
+      success: false,
+      message: 'Hiba történt a fiók törlése során',
     };
   }
 }
