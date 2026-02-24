@@ -91,7 +91,7 @@ function PurchaseManagement() {
   if (loading) {
     return (
       <div className="text-center py-5">
-        <div className="spinner-border text-primary" role="status">
+        <div className="spinner-border" role="status" style={{ color: '#1a1a1a' }}>
           <span className="visually-hidden">Betöltés...</span>
         </div>
         <p className="mt-2 text-muted">Vásárlások betöltése...</p>
@@ -104,26 +104,26 @@ function PurchaseManagement() {
       {/* Összesítő kártyák */}
       <div className="row mb-4">
         <div className="col-md-4">
-          <div className="card" style={{ border: '1px solid #e0e0e0' }}>
+          <div className="card" style={{ backgroundColor: '#1a1a1a', color: '#fff', border: 'none' }}>
             <div className="card-body text-center">
-              <h6 className="text-muted mb-1">Összes vásárlás</h6>
+              <h6 style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.7rem', opacity: 0.7 }} className="mb-1">Összes vásárlás</h6>
               <h3 className="mb-0" style={{ fontWeight: 700 }}>{filteredPurchases.length}</h3>
             </div>
           </div>
         </div>
         <div className="col-md-4">
-          <div className="card" style={{ border: '1px solid #e0e0e0' }}>
+          <div className="card" style={{ backgroundColor: '#333', color: '#fff', border: 'none' }}>
             <div className="card-body text-center">
-              <h6 className="text-muted mb-1">Eladott könyvek</h6>
+              <h6 style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.7rem', opacity: 0.7 }} className="mb-1">Eladott könyvek</h6>
               <h3 className="mb-0" style={{ fontWeight: 700 }}>{totalBooksSold} db</h3>
             </div>
           </div>
         </div>
         <div className="col-md-4">
-          <div className="card" style={{ border: '1px solid #e0e0e0' }}>
+          <div className="card" style={{ backgroundColor: '#555', color: '#fff', border: 'none' }}>
             <div className="card-body text-center">
-              <h6 className="text-muted mb-1">Bevétel</h6>
-              <h3 className="mb-0" style={{ fontWeight: 700, color: '#198754' }}>{totalRevenue.toLocaleString()} Ft</h3>
+              <h6 style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.7rem', opacity: 0.7 }} className="mb-1">Bevétel</h6>
+              <h3 className="mb-0" style={{ fontWeight: 700 }}>{totalRevenue.toLocaleString()} Ft</h3>
             </div>
           </div>
         </div>
@@ -192,7 +192,11 @@ function PurchaseManagement() {
             <tbody>
               {filteredPurchases.map((purchase, index) => (
                 <tr key={purchase.payment_id}>
-                  <td className="text-muted">{index + 1}</td>
+                  <td>
+                    <span style={{ backgroundColor: '#1a1a1a', color: '#fff', padding: '2px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 600 }}>
+                      {index + 1}
+                    </span>
+                  </td>
                   <td>
                     <small>{formatDate(purchase.payment_date)}</small>
                   </td>

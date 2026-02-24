@@ -64,7 +64,7 @@ function Dashboard() {
 
       {loading ? (
         <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status">
+          <div className="spinner-border" role="status" style={{ color: '#1a1a1a' }}>
             <span className="visually-hidden">Betöltés...</span>
           </div>
         </div>

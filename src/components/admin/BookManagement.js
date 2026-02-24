@@ -264,40 +264,41 @@ function BookManagement() {
   }
 
   return (
-    <div className="card">
+    <div className="card" style={{ border: '1px solid #e8e8e8', borderRadius: 0, boxShadow: 'none' }}>
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h4 className="card-title mb-0">
-            <i className="bi bi-book me-2"></i>
-            Könyvek kezelése
-          </h4>
-          <button className="btn btn-primary" onClick={handleAddBook}>
+          <h5 className="mb-0" style={{ fontWeight: 700, letterSpacing: '-0.3px' }}>Könyvek kezelése</h5>
+          <button className="btn btn-dark" onClick={handleAddBook}>
             <i className="bi bi-plus-circle me-2"></i>
             Új könyv
           </button>
         </div>
 
         <div className="table-responsive">
-          <table className="table table-hover">
-            <thead>
+          <table className="table table-hover align-middle" style={{ fontSize: '0.9rem' }}>
+            <thead style={{ backgroundColor: '#f8f8f8' }}>
               <tr>
-                <th>ID</th>
-                <th>Cím</th>
-                <th>Szerző</th>
-                <th>Kategória</th>
-                <th>Ár</th>
-                <th>Elérhető</th>
-                <th>Műveletek</th>
+                <th style={{ fontWeight: 600 }}>ID</th>
+                <th style={{ fontWeight: 600 }}>Cím</th>
+                <th style={{ fontWeight: 600 }}>Szerző</th>
+                <th style={{ fontWeight: 600 }}>Kategória</th>
+                <th style={{ fontWeight: 600 }}>Ár</th>
+                <th style={{ fontWeight: 600 }}>Elérhető</th>
+                <th style={{ fontWeight: 600 }}>Műveletek</th>
               </tr>
             </thead>
             <tbody>
               {books.map((book, index) => (
                 <tr key={book.id}>
-                  <td>#{index + 1}</td>
+                  <td>
+                    <span style={{ backgroundColor: '#1a1a1a', color: '#fff', padding: '2px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 600 }}>
+                      {index + 1}
+                    </span>
+                  </td>
                   <td>{book.title}</td>
                   <td>{book.author}</td>
                   <td>
-                    <span className="badge bg-secondary">{book.category}</span>
+                    <span className="badge" style={{ backgroundColor: '#1a1a1a', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '0.7rem', fontWeight: 500 }}>{book.category}</span>
                   </td>
                   <td>{book.price.toLocaleString()} Ft</td>
                   <td>
@@ -312,13 +313,13 @@ function BookManagement() {
                   </td>
                   <td>
                     <button 
-                      className="btn btn-sm btn-primary me-2"
+                      className="btn btn-sm btn-dark me-2"
                       onClick={() => handleEdit(book)}
                     >
                       <i className="bi bi-pencil"></i>
                     </button>
                     <button
-                      className="btn btn-sm btn-danger"
+                      className="btn btn-sm btn-outline-dark"
                       onClick={() => handleDelete(book.id)}
                     >
                       <i className="bi bi-trash"></i>
@@ -460,7 +461,7 @@ function BookManagement() {
                   >
                     Mégse
                   </button>
-                  <button type="submit" className="btn btn-primary">
+                  <button type="submit" className="btn btn-dark">
                     Hozzáadás
                   </button>
                 </div>
@@ -562,7 +563,7 @@ function BookManagement() {
                   >
                     Mégse
                   </button>
-                  <button type="submit" className="btn btn-primary">
+                  <button type="submit" className="btn btn-dark">
                     Mentés
                   </button>
                 </div>
