@@ -201,11 +201,14 @@
   .book-details-description p {
     font-size: 0.95rem;
   }
-
   .close-button {
     width: 32px;
     height: 32px;
     font-size: 20px;
+  }
+
+  .book-details-actions {
+    flex-direction: column !important;
   }
 }
 

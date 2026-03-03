@@ -599,7 +599,7 @@ export async function clearCart(userId, signal) {
 /**
  * Checkout - Fizetés és kölcsönzés létrehozása
  */
-export async function checkout(userId, paymentMethod, transactionId = null, rentalDays = 14, signal) {
+export async function checkout(userId, paymentMethod, rentalDays = 14, signal) {
   try {
     const response = await fetch(ENDPOINTS.cartCheckout, {
       method: 'POST',
@@ -610,7 +610,6 @@ export async function checkout(userId, paymentMethod, transactionId = null, rent
       body: JSON.stringify({
         user_id: userId,
         payment_method: paymentMethod,
-        transaction_id: transactionId,
         rental_days: rentalDays
       }),
       signal
@@ -696,6 +695,7 @@ export async function getPurchases(signal) {
   try {
     return await fetchJson(ENDPOINTS.paymentsPurchases, { signal });
   } catch (e) {
+    if (e.name === 'AbortError') throw e;
     console.error('Vásárlások lekérdezési hiba:', e);
     return [];
   }

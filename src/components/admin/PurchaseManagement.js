@@ -6,24 +6,29 @@ function PurchaseManagement() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, today, week, month
   const [searchTerm, setSearchTerm] = useState('');
+  const loadPurchases = async (signal) => {
+    try {
+      setLoading(true);
+      const data = await getPurchases(signal);
+      if (!signal || !signal.aborted) {
+        setPurchases(Array.isArray(data) ? data : []);
+      }
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        console.error('Vásárlások betöltése sikertelen:', e);
+      }
+    } finally {
+      if (!signal || !signal.aborted) {
+        setLoading(false);
+      }
+    }
+  };
 
   useEffect(() => {
     const ac = new AbortController();
     loadPurchases(ac.signal);
     return () => ac.abort();
   }, []);
-
-  const loadPurchases = async (signal) => {
-    try {
-      setLoading(true);
-      const data = await getPurchases(signal);
-      setPurchases(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error('Vásárlások betöltése sikertelen:', e);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Szűrt adatok
   const getFilteredPurchases = () => {
