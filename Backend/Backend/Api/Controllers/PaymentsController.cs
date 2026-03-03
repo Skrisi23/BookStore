@@ -36,8 +36,7 @@ namespace Backend.Api.Controllers
 
         /// <summary>
         /// Egy fizetés lekérdezése ID alapján
-        /// </summary>
-        [HttpGet("{id}")]
+        /// </summary>        [HttpGet("{id:int}")]
         public async Task<ActionResult<PaymentDto>> GetPaymentById(int id)
         {
             var payment = await _context.payments
@@ -120,8 +119,7 @@ namespace Backend.Api.Controllers
 
         /// <summary>
         /// Fizetés státuszának frissítése
-        /// </summary>
-        [HttpPut("{id}/status")]
+        /// </summary>        [HttpPut("{id:int}/status")]
         public async Task<ActionResult<PaymentDto>> UpdatePaymentStatus(int id, [FromBody] UpdatePaymentStatusDto updateDto)
         {
             var payment = await _context.payments
@@ -131,16 +129,8 @@ namespace Backend.Api.Controllers
             if (payment == null)
             {
                 return NotFound(new { message = $"Nem található fizetés ezzel az ID-vel: {id}" });
-            }
-
-            // Státusz frissítése
+            }            // Státusz frissítése
             payment.status = updateDto.status;
-            
-            // Transaction ID frissítése, ha meg van adva
-            if (!string.IsNullOrEmpty(updateDto.transaction_id))
-            {
-                payment.transaction_id = updateDto.transaction_id;
-            }
 
             await _context.SaveChangesAsync();
 
@@ -169,97 +159,50 @@ namespace Backend.Api.Controllers
                 total_revenue = totalRevenue,
                 payments_count = paymentsCount
             });
-        }
-
-        /// <summary>
-        /// Vásárlások lekérdezése (purchase és mixed típusú payment-ek)
+        }        /// <summary>
+        /// Vásárlások lekérdezése (purchase_items táblából)
         /// </summary>
         [HttpGet("purchases")]
         public async Task<ActionResult> GetPurchases()
         {
             var payments = await _context.payments
                 .Include(p => p.user)
-                .Where(p => p.order_type == "purchase" || p.order_type == "mixed")
+                .Include(p => p.purchase_items)
+                    .ThenInclude(pi => pi.book)
+                        .ThenInclude(b => b.author)
                 .Where(p => p.status == "completed")
+                .Where(p => p.purchase_items.Any())
                 .OrderByDescending(p => p.payment_date)
                 .ToListAsync();
 
-            var result = new List<object>();
-
-            foreach (var payment in payments)
+            var result = payments.Select(p => new
             {
-                // order_details JSON-ból kinyerjük a könyveket
-                var purchasedBooks = new List<object>();
-
-                if (!string.IsNullOrEmpty(payment.order_details))
+                payment_id = p.id,
+                user_id = p.user_id,
+                user_name = p.user?.nev,
+                user_email = p.user?.email,
+                amount = p.amount,
+                payment_method = p.payment_method,
+                payment_date = p.payment_date,
+                status = p.status,
+                order_type = p.order_type,
+                books = p.purchase_items.Select(pi => new
                 {
-                    try
-                    {
-                        using var doc = System.Text.Json.JsonDocument.Parse(payment.order_details);
-                        var root = doc.RootElement;
-
-                        if (root.TryGetProperty("books", out var booksElement))
-                        {
-                            foreach (var bookItem in booksElement.EnumerateArray())
-                            {
-                                var orderType = bookItem.TryGetProperty("order_type", out var ot) ? ot.GetString() : "rental";
-                                if (orderType != "purchase") continue;
-
-                                var copyId = bookItem.TryGetProperty("copy_id", out var ci) ? ci.GetInt32() : 0;
-                                var bookTitle = bookItem.TryGetProperty("book_title", out var bt) ? bt.GetString() : "Ismeretlen";
-                                var price = bookItem.TryGetProperty("price", out var pr) ? pr.GetDecimal() : 0;
-                                var quantity = bookItem.TryGetProperty("quantity", out var qt) ? qt.GetInt32() : 1;
-
-                                // Copy-ból próbáljuk bővíteni a könyvadatokat
-                                var copy = copyId > 0 ? await _context.copies
-                                    .Include(c => c.book)
-                                        .ThenInclude(b => b.author)
-                                    .FirstOrDefaultAsync(c => c.id == copyId) : null;
-
-                                purchasedBooks.Add(new
-                                {
-                                    copy_id = copyId,
-                                    book_title = copy?.book?.cim ?? bookTitle,
-                                    book_id = copy?.book_id,
-                                    book_cover = copy?.book?.boritokep,
-                                    author_name = copy?.book?.author?.nev,
-                                    price = price,
-                                    quantity = quantity
-                                });
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // Ha a JSON parse nem sikerül, átugorjuk
-                    }
-                }
-
-                if (purchasedBooks.Any())
-                {
-                    result.Add(new
-                    {
-                        payment_id = payment.id,
-                        user_id = payment.user_id,
-                        user_name = payment.user?.nev,
-                        user_email = payment.user?.email,
-                        amount = payment.amount,
-                        payment_method = payment.payment_method,
-                        payment_date = payment.payment_date,
-                        status = payment.status,
-                        order_type = payment.order_type,
-                        books = purchasedBooks
-                    });
-                }
-            }
+                    book_id = pi.book_id,
+                    book_title = pi.book.cim,
+                    book_cover = pi.book.boritokep,
+                    author_name = pi.book.author?.nev,
+                    price = pi.unit_price,
+                    quantity = pi.quantity
+                }).ToList()
+            }).ToList();
 
             return Ok(result);
         }
 
         /// <summary>
         /// Fizetés törlése (opcionális - ha szükséges)
-        /// </summary>
-        [HttpDelete("{id}")]
+        /// </summary>        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePayment(int id)
         {
             var payment = await _context.payments.FindAsync(id);

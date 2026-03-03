@@ -27,6 +27,8 @@ public partial class BookStoreContext : DbContext
 
     public virtual DbSet<cart_item> cart_items { get; set; }
 
+    public virtual DbSet<purchase_item> purchase_items { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -117,6 +119,21 @@ public partial class BookStoreContext : DbContext
             entity.HasOne(d => d.copy).WithMany(p => p.cart_items)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_cart_items_copy");
+        });
+
+        modelBuilder.Entity<purchase_item>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+
+            entity.Property(e => e.quantity).HasDefaultValue(1);
+
+            entity.HasOne(d => d.payment).WithMany(p => p.purchase_items)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_purchase_items_payment");
+
+            entity.HasOne(d => d.book).WithMany(p => p.purchase_items)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_purchase_items_book");
         });
 
         OnModelCreatingPartial(modelBuilder);

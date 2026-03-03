@@ -48,4 +48,8 @@ public partial class book
     [InverseProperty("book")]
     [JsonIgnore]
     public virtual ICollection<copy> copies { get; set; } = new List<copy>();
+
+    [InverseProperty("book")]
+    [JsonIgnore]
+    public virtual ICollection<purchase_item> purchase_items { get; set; } = new List<purchase_item>();
 }

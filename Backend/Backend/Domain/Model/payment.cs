@@ -30,14 +30,7 @@ public partial class payment
     [Column(TypeName = "datetime")]
     public DateTime payment_date { get; set; }
 
-    [StringLength(20)]
-    public string status { get; set; } = null!;
-
-    [Column(TypeName = "text")]
-    public string? order_details { get; set; }
-
-    [StringLength(255)]
-    public string? transaction_id { get; set; }
+    [StringLength(20)]    public string status { get; set; } = null!;
 
     // Navigation property - kapcsolat a users táblához
     [ForeignKey("user_id")]
@@ -47,4 +40,7 @@ public partial class payment
 
     [InverseProperty("payment")]
     public virtual ICollection<rental> rentals { get; set; } = new List<rental>();
+
+    [InverseProperty("payment")]
+    public virtual ICollection<purchase_item> purchase_items { get; set; } = new List<purchase_item>();
 }

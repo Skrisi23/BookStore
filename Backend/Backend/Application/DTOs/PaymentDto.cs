@@ -19,10 +19,6 @@ namespace Backend.Application.DTOs
 
         public string status { get; set; } = null!;
 
-        public string? order_details { get; set; }
-
-        public string? transaction_id { get; set; }
-
         // Opcionális: user adatok is
         public string? user_name { get; set; }
         public string? user_email { get; set; }
@@ -49,10 +45,6 @@ namespace Backend.Application.DTOs
         [Required(ErrorMessage = "A status kötelező")]
         [StringLength(20, ErrorMessage = "A status maximum 20 karakter lehet")]
         public string status { get; set; } = "pending";
-
-        public string? order_details { get; set; }
-
-        public string? transaction_id { get; set; }
     }
 
     // Payment status frissítéséhez
@@ -61,7 +53,5 @@ namespace Backend.Application.DTOs
         [Required(ErrorMessage = "A status kötelező")]
         [StringLength(20)]
         public string status { get; set; } = null!;
-
-        public string? transaction_id { get; set; }
     }
 }

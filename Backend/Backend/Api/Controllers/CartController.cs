@@ -203,14 +203,17 @@ namespace Backend.Api.Controllers
                 await _context.SaveChangesAsync();
             }
             else
-            {
-                // 6. Új cart_item létrehozása
+            {                // 6. Új cart_item létrehozása
+                var itemPrice = orderType == "rental"
+                    ? Math.Round(copy.book.ar * 0.05m, 0)
+                    : copy.book.ar;
+
                 var cartItem = new cart_item
                 {
                     cart_id = cart.id,
                     copy_id = copy.id,
                     quantity = quantity,
-                    price = copy.book.ar,
+                    price = itemPrice,
                     order_type = orderType,
                     added_at = DateTime.Now
                 };
@@ -335,12 +338,12 @@ namespace Backend.Api.Controllers
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
-            {
-                // 1. Aktív kosár keresése
+            {                // 1. Aktív kosár keresése
                 var cart = await _context.carts
                     .Include(c => c.cart_items)
                         .ThenInclude(ci => ci.copy)
                             .ThenInclude(cp => cp.book)
+                                .ThenInclude(b => b.author)
                     .FirstOrDefaultAsync(c => c.user_id == checkoutDto.user_id && c.status == "active");
 
                 if (cart == null)
@@ -381,40 +384,20 @@ namespace Backend.Api.Controllers
                             message = $"Nincs elég készlet a(z) \"{purchaseItem.copy.book.cim}\" könyvből. Elérhető: {availableCount} db, kért: {purchaseItem.quantity} db"
                         });
                     }
-                }
-
-                // 3. Összeg számítása
+                }                // 3. Összeg számítása
                 decimal totalAmount = cart.cart_items.Sum(ci => ci.price * ci.quantity);
 
                 // 4. Payment létrehozása
                 var hasRentals = rentalItems.Any();
                 var hasPurchases = purchaseItems.Any();
-                var paymentOrderType = hasRentals && hasPurchases ? "mixed" : hasRentals ? "rental" : "purchase";
-
-                var orderDetailsJson = System.Text.Json.JsonSerializer.Serialize(new
-                {
-                    cart_id = cart.id,
-                    items_count = cart.cart_items.Count,
-                    books = cart.cart_items.Select(ci => new
-                    {
-                        copy_id = ci.copy_id,
-                        book_title = ci.copy.book.cim,
-                        price = ci.price,
-                        quantity = ci.quantity,
-                        order_type = ci.order_type
-                    }).ToList()
-                });
-
-                var payment = new payment
+                var paymentOrderType = hasRentals && hasPurchases ? "mixed" : hasRentals ? "rental" : "purchase";                var payment = new payment
                 {
                     user_id = checkoutDto.user_id,
                     order_type = paymentOrderType,
                     amount = totalAmount,
                     payment_method = checkoutDto.payment_method,
                     payment_date = DateTime.Now,
-                    status = "completed",
-                    transaction_id = checkoutDto.transaction_id,
-                    order_details = orderDetailsJson
+                    status = "completed"
                 };
 
                 _context.payments.Add(payment);
@@ -442,10 +425,21 @@ namespace Backend.Api.Controllers
 
                     // Copy lefoglalása kölcsönzéskor
                     cartItem.copy.elerheto = false;
-                }                // 6. Vásárlásoknál a megfelelő számú copy-t elérhetetlenné tesszük
+                }                // 6. Vásárlásoknál purchase_item rekordok létrehozása és copy-k elérhetetlenné tétele
                 foreach (var purchaseItem in purchaseItems)
                 {
                     var bookId = purchaseItem.copy.book_id;
+
+                    // Purchase item mentése a táblába
+                    var purchaseRecord = new purchase_item
+                    {
+                        payment_id = payment.id,
+                        book_id = bookId,
+                        quantity = purchaseItem.quantity,
+                        unit_price = purchaseItem.price
+                    };
+                    _context.purchase_items.Add(purchaseRecord);
+
                     var copiesToMark = await _context.copies
                         .Where(c => c.book_id == bookId && c.elerheto == true)
                         .Take(purchaseItem.quantity)
