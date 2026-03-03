@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { getRentalsByUser, returnRental, changeUserPassword, deleteUser } from '../../api';
+import { getRentalsByUser, returnRental, changeUserPassword, deleteUser, updateUserProfile } from '../../api';
 import { useNavigate } from 'react-router-dom';
 
-function Profile() {
-  const { currentUser, logout } = useAuth();
+function Profile() {  const { currentUser, logout, updateProfile } = useAuth();
   const { success, error } = useToast();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -13,6 +12,14 @@ function Profile() {
   const [userRentals, setUserRentals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [passwordLoading, setPasswordLoading] = useState(false);
+  
+  // Profil szerkesztés állapotok
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);  const [profileData, setProfileData] = useState({
+    last_name: currentUser?.last_name || '',
+    first_name: currentUser?.first_name || '',
+    default_address: currentUser?.default_address || ''
+  });
   
   // Jelszó csere állapotok
   const [showPasswordChange, setShowPasswordChange] = useState(false);
@@ -119,7 +126,6 @@ function Profile() {
       setPasswordLoading(false);
     }
   };
-
   const handleReturnBook = async (rentalId) => {
     if (!window.confirm('Biztosan visszahoztad ezt a könyvet?')) {
       return;
@@ -135,6 +141,31 @@ function Profile() {
       await loadUserRentals();
     } else {
       error(result.message || 'Visszahozás sikertelen');
+    }
+  };
+  const handleProfileSave = async (e) => {
+    e.preventDefault();
+    if (!profileData.last_name.trim() || !profileData.first_name.trim()) {
+      error('Vezetéknév és keresztnév megadása kötelező!');
+      return;
+    }
+    setProfileLoading(true);
+    try {
+      const result = await updateProfile({
+        LastName: profileData.last_name.trim(),
+        FirstName: profileData.first_name.trim(),
+        DefaultAddress: profileData.default_address.trim() || null
+      });
+      if (result.success) {
+        success('Profil sikeresen frissítve!');
+        setEditingProfile(false);
+      } else {
+        error(result.message || 'Profil frissítése sikertelen');
+      }
+    } catch (err) {
+      error('Hiba történt a profil frissítése során');
+    } finally {
+      setProfileLoading(false);
     }
   };
 
@@ -296,38 +327,160 @@ function Profile() {
         {/* Áttekintés tab */}
         {activeTab === 'overview' && (
           <div>
-            {/* Profile data */}
-            <div style={{ border: '1px solid #e8e8e8', marginBottom: '1.5rem' }}>
-              <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid #e8e8e8' }}>
+            {/* Profile data */}            <div style={{ border: '1px solid #e8e8e8', marginBottom: '1.5rem' }}>
+              <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid #e8e8e8', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h6 style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.7rem', color: '#888', marginBottom: 0 }}>
                   Profiladatok
                 </h6>
+                {!editingProfile && (
+                  <button
+                    style={{ background: 'none', border: 'none', color: '#1a1a1a', fontSize: '0.78rem', fontWeight: 500, cursor: 'pointer', textDecoration: 'underline' }}                    onClick={() => {
+                      setProfileData({
+                        last_name: currentUser?.last_name || '',
+                        first_name: currentUser?.first_name || '',
+                        default_address: currentUser?.default_address || ''
+                      });
+                      setEditingProfile(true);
+                    }}
+                  >
+                    <i className="bi bi-pencil me-1"></i> Szerkesztés
+                  </button>
+                )}
               </div>
               <div style={{ padding: '1.5rem' }}>
-                <div className="row mb-3">
-                  <div className="col-sm-4">
-                    <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Név</span>
-                  </div>
-                  <div className="col-sm-8">
-                    <span style={{ fontWeight: 500 }}>{currentUser?.nev || 'Nincs megadva'}</span>
-                  </div>
-                </div>
-                <div className="row mb-3">
-                  <div className="col-sm-4">
-                    <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Email</span>
-                  </div>
-                  <div className="col-sm-8">
-                    <span style={{ fontWeight: 500 }}>{currentUser?.email || 'Nincs megadva'}</span>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-sm-4">
-                    <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Regisztráció</span>
-                  </div>
-                  <div className="col-sm-8">
-                    <span style={{ fontWeight: 500 }}>{formatDate(currentUser?.letrehozva)}</span>
-                  </div>
-                </div>
+                {editingProfile ? (
+                  <form onSubmit={handleProfileSave}>
+                    <div className="row mb-3">
+                      <div className="col-sm-4">
+                        <label style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Vezetéknév</label>
+                      </div>
+                      <div className="col-sm-8">                        <input
+                          type="text"
+                          className="form-control"
+                          style={{ borderRadius: 0, borderColor: '#ccc' }}
+                          value={profileData.last_name}
+                          onChange={(e) => setProfileData({ ...profileData, last_name: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-sm-4">
+                        <label style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Keresztnév</label>
+                      </div>
+                      <div className="col-sm-8">
+                        <input
+                          type="text"
+                          className="form-control"
+                          style={{ borderRadius: 0, borderColor: '#ccc' }}
+                          value={profileData.first_name}
+                          onChange={(e) => setProfileData({ ...profileData, first_name: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-sm-4">
+                        <label style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Lakcím</label>
+                      </div>
+                      <div className="col-sm-8">
+                        <input
+                          type="text"
+                          className="form-control"
+                          style={{ borderRadius: 0, borderColor: '#ccc' }}
+                          value={profileData.default_address}
+                          onChange={(e) => setProfileData({ ...profileData, default_address: e.target.value })}
+                          placeholder="pl. 1011 Budapest, Fő utca 1."
+                        />
+                      </div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-sm-4">
+                        <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Email</span>
+                      </div>
+                      <div className="col-sm-8">
+                        <span style={{ fontWeight: 500 }}>{currentUser?.email || 'Nincs megadva'}</span>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-sm-4">
+                        <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Regisztráció</span>
+                      </div>
+                      <div className="col-sm-8">
+                        <span style={{ fontWeight: 500 }}>{formatDate(currentUser?.letrehozva)}</span>
+                      </div>
+                    </div>
+                    <div className="d-flex gap-2 mt-4">
+                      <button
+                        type="submit"
+                        className="btn"
+                        style={{ borderRadius: 0, backgroundColor: '#1a1a1a', color: '#fff', fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase', padding: '0.5rem 1.2rem' }}
+                        disabled={profileLoading}
+                      >
+                        {profileLoading ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Mentés...
+                          </>
+                        ) : (
+                          <>
+                            <i className="bi bi-check-circle me-2"></i>
+                            Mentés
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn"
+                        style={{ borderRadius: 0, border: '1px solid #ccc', backgroundColor: 'transparent', color: '#555', fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase', padding: '0.5rem 1.2rem' }}
+                        onClick={() => setEditingProfile(false)}
+                      >
+                        Mégse
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <div className="row mb-3">
+                      <div className="col-sm-4">
+                        <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Vezetéknév</span>
+                      </div>                      <div className="col-sm-8">                        <span style={{ fontWeight: 500 }}>{currentUser?.last_name || (<span style={{ color: '#ccc', fontStyle: 'italic' }}>Nincs megadva</span>)}</span>
+                      </div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-sm-4">
+                        <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Keresztnév</span>
+                      </div>
+                      <div className="col-sm-8">
+                        <span style={{ fontWeight: 500 }}>{currentUser?.first_name || (<span style={{ color: '#ccc', fontStyle: 'italic' }}>Nincs megadva</span>)}</span>
+                      </div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-sm-4">
+                        <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Lakcím</span>
+                      </div>
+                      <div className="col-sm-8">
+                        <span style={{ fontWeight: 500 }}>{currentUser?.default_address || (<span style={{ color: '#ccc', fontStyle: 'italic' }}>Nincs megadva</span>)}</span>
+                      </div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-sm-4">
+                        <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Email</span>
+                      </div>
+                      <div className="col-sm-8">
+                        <span style={{ fontWeight: 500 }}>{currentUser?.email || 'Nincs megadva'}</span>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-sm-4">
+                        <span style={{ color: '#888', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 500 }}>Regisztráció</span>
+                      </div>
+                      <div className="col-sm-8">
+                        <span style={{ fontWeight: 500 }}>{formatDate(currentUser?.letrehozva)}</span>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 

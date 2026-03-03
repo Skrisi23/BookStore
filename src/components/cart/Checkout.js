@@ -24,12 +24,25 @@ function Checkout({ onSuccess, onCancel }) {
   const { currentUser } = useAuth();
   const { success, error } = useToast();
   const [loading, setLoading] = useState(false);
+  // Parse user's saved address (format: "1234 Budapest, Fő utca 1.")
+  const parseAddress = (addr) => {
+    if (!addr) return { zipCode: '', city: '', address: '' };
+    const match = addr.match(/^(\d{4})\s+([^,]+),?\s*(.*)/);
+    if (match) {
+      return { zipCode: match[1], city: match[2].trim(), address: match[3].trim() };
+    }
+    return { zipCode: '', city: '', address: addr };
+  };
+
+  const parsed = parseAddress(currentUser?.default_address);
+  const fullName = currentUser?.nev || [currentUser?.last_name, currentUser?.first_name].filter(Boolean).join(' ') || '';
+
   const [formData, setFormData] = useState({
-    name: currentUser?.name || '',
+    name: fullName,
     email: currentUser?.email || '',
-    address: '',
-    city: '',
-    zipCode: '',
+    address: parsed.address,
+    city: parsed.city,
+    zipCode: parsed.zipCode,
     paymentMethod: 'card'
   });
 

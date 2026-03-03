@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import { registerUser } from '../../api';
 import { useToast } from '../../context/ToastContext';
 
-function Register({ onSuccess, onSwitchToLogin }) {
-  const [formData, setFormData] = useState({
-    username: '',
+function Register({ onSuccess, onSwitchToLogin }) {  const [formData, setFormData] = useState({
+    lastName: '',
+    firstName: '',
     password: '',
     confirmPassword: '',
-    name: '',
-    email: ''
+    email: '',
+    defaultAddress: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -39,10 +39,15 @@ function Register({ onSuccess, onSwitchToLogin }) {
       setError('A jelszónak legalább 6 karakter hosszúnak kell lennie!');
       setLoading(false);
       return;
+    }    if (!formData.lastName.trim() || !formData.firstName.trim()) {
+      setError('Vezetéknév és keresztnév megadása kötelező!');
+      setLoading(false);
+      return;
     }
 
     try {
-      const result = await registerUser(formData.name, formData.email, formData.password);
+      const fullName = `${formData.lastName.trim()} ${formData.firstName.trim()}`;
+      const result = await registerUser(fullName, formData.email, formData.password, formData.lastName.trim(), formData.firstName.trim(), formData.defaultAddress.trim() || null);
       if (result && result.success) {
         success('Sikeres regisztráció!');
         info('Kérlek, ellenőrizd az email fiókodat és erősítsd meg a címedet a bejelentkezéshez.');
@@ -73,19 +78,31 @@ function Register({ onSuccess, onSwitchToLogin }) {
             <i className="bi bi-exclamation-triangle me-2"></i>
             {error}
           </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label className="form-label">Teljes név</label>
-            <input
-              type="text"
-              className="form-control"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
+        )}        <form onSubmit={handleSubmit}>
+          <div className="row">
+            <div className="col-md-6 mb-3">              <label className="form-label">Vezetéknév</label>
+              <input
+                type="text"
+                className="form-control"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+                placeholder="pl. Kovács"
+              />
+            </div>
+            <div className="col-md-6 mb-3">
+              <label className="form-label">Keresztnév</label>
+              <input
+                type="text"
+                className="form-control"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                placeholder="pl. János"
+              />
+            </div>
           </div>
 
           <div className="mb-3">
@@ -166,8 +183,18 @@ function Register({ onSuccess, onSwitchToLogin }) {
                 title={showConfirmPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
               >
                 <i className={showConfirmPassword ? "bi bi-eye-slash" : "bi bi-eye"}></i>
-              </button>
-            </div>
+              </button>            </div>
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Lakcím <small className="text-muted">(opcionális)</small></label>            <input
+              type="text"
+              className="form-control"
+              name="defaultAddress"
+              value={formData.defaultAddress}
+              onChange={handleChange}
+              placeholder="pl. 1011 Budapest, Fő utca 1."
+            />
           </div>
 
           <button type="submit" className="btn btn-primary w-100 mb-3" disabled={loading}>

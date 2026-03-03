@@ -23,8 +23,8 @@ const ENDPOINTS = {
   userById: (id) => `${defaultBaseUrl}/api/Users/${id}`,
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
   authRegister: `${defaultBaseUrl}/api/Auth/register`,
-  authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,
-  authChangePassword: (userId) => `${defaultBaseUrl}/api/Auth/${userId}/change-password`,
+  authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,  authChangePassword: (userId) => `${defaultBaseUrl}/api/Auth/${userId}/change-password`,
+  userUpdateProfile: (userId) => `${defaultBaseUrl}/api/Users/${userId}/profile`,
   // Cart endpoints
   cartMyCart: (userId) => `${defaultBaseUrl}/api/Cart/my-cart?userId=${userId}`,
   cartAdd: (userId) => `${defaultBaseUrl}/api/Cart/add?userId=${userId}`,
@@ -316,14 +316,47 @@ export async function deleteUser(userId, signal) {
         success: false,
         message: text || 'Fiók törlése sikertelen',
       };
-    }
-
-    return { success: true };
+    }    return { success: true };
   } catch (e) {
     console.error('Fiók törlési hiba:', e);
     return {
       success: false,
       message: 'Hiba történt a fiók törlése során',
+    };
+  }
+}
+
+export async function updateUserProfile(userId, profileData, signal) {
+  try {
+    const response = await fetch(ENDPOINTS.userUpdateProfile(userId), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(profileData),
+      signal,
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Profil frissítése sikertelen',
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message || 'Profil sikeresen frissítve',
+      user: data.user,
+    };
+  } catch (e) {
+    console.error('Profil frissítési hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt a profil frissítése során',
     };
   }
 }
@@ -388,15 +421,16 @@ export async function loginUser(emailOrUsername, password, signal) {
         success: false,
         message: data.message || 'Bejelentkezés sikertelen'
       };
-    }
-
-    // Backend LoginResponse: { Success, Message, User: { Id, Nev, Email, Letrehozva } }
+    }    // Backend LoginResponse: { Success, Message, User: { Id, Nev, Email, Letrehozva, LastName, FirstName, DefaultAddress } }
     if (data.success) {
       return {
         success: true,
         user: {
           id: data.user.id,
           nev: data.user.nev,
+          last_name: data.user.lastName,
+          first_name: data.user.firstName,
+          default_address: data.user.defaultAddress,
           email: data.user.email,
           letrehozva: data.user.letrehozva
         }
@@ -416,16 +450,18 @@ export async function loginUser(emailOrUsername, password, signal) {
   }
 }
 
-export async function registerUser(name, email, password, signal) {
+export async function registerUser(name, email, password, lastName, firstName, defaultAddress, signal) {
   try {
     const response = await fetch(ENDPOINTS.authRegister, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-      },
-      body: JSON.stringify({
+      },      body: JSON.stringify({
         Nev: name,
+        LastName: lastName,
+        FirstName: firstName,
+        DefaultAddress: defaultAddress,
         Email: email,
         Jelszo: password
       }),
@@ -439,15 +475,16 @@ export async function registerUser(name, email, password, signal) {
         success: false,
         message: data.message || 'Regisztráció sikertelen'
       };
-    }
-
-    // Backend RegisterResponse: { Success, Message, User: { Id, Nev, Email, Letrehozva } }
+    }    // Backend RegisterResponse: { Success, Message, User: { Id, Nev, Email, Letrehozva, LastName, FirstName, DefaultAddress } }
     if (data.success) {
       return {
         success: true,
         user: {
           id: data.user.id,
           nev: data.user.nev,
+          last_name: data.user.lastName,
+          first_name: data.user.firstName,
+          default_address: data.user.defaultAddress,
           email: data.user.email,
           letrehozva: data.user.letrehozva
         }
