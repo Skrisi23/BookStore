@@ -17,7 +17,17 @@ public partial class users
 
     [Column("name")]
     [StringLength(255)]
-    public string nev { get; set; } = null!;
+    public string nev { get; set; } = null!;    [Column("last_name")]
+    [StringLength(255)]
+    public string? last_name { get; set; }
+
+    [Column("first_name")]
+    [StringLength(255)]
+    public string? first_name { get; set; }
+
+    [Column("default_address")]
+    [StringLength(500)]
+    public string? default_address { get; set; }
 
     public string email { get; set; } = null!;
 

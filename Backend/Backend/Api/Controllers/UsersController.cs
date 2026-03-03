@@ -78,9 +78,7 @@ namespace Backend.Api.Controllers
                 return Problem(ex.Message);
             }
 
-        }
-
-        [HttpPut("{id}")]
+        }        [HttpPut("{id}")]
         public IActionResult Update(int id, users user)
         {
 
@@ -98,6 +96,60 @@ namespace Backend.Api.Controllers
             }
 
 
+        }
+
+        /// <summary>
+        /// Felhasználói profil adatok frissítése (név, cím)
+        /// </summary>
+        [HttpPatch("{id}/profile")]
+        public async Task<IActionResult> UpdateProfile(int id, [FromBody] UpdateProfileDto dto)
+        {
+            try
+            {
+                var user = await _context.users.FindAsync(id);
+                if (user == null)
+                {
+                    return NotFound(new { message = "Felhasználó nem található" });
+                }                if (dto.LastName != null)
+                    user.last_name = dto.LastName;
+
+                if (dto.FirstName != null)
+                    user.first_name = dto.FirstName;
+
+                if (dto.DefaultAddress != null)
+                    user.default_address = dto.DefaultAddress;
+
+                // Update nev (full name) from last_name + first_name
+                if (dto.LastName != null || dto.FirstName != null)
+                {
+                    var ln = user.last_name ?? "";
+                    var fn = user.first_name ?? "";
+                    user.nev = $"{ln} {fn}".Trim();
+                }
+
+                _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Profil sikeresen frissítve",
+                    user = new
+                    {
+                        id = user.id,
+                        nev = user.nev,
+                        last_name = user.last_name,
+                        first_name = user.first_name,
+                        default_address = user.default_address,
+                        email = user.email,
+                        letrehozva = user.letrehozva
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         [HttpDelete("{id}")]

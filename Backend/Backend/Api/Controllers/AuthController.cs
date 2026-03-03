@@ -124,16 +124,16 @@ public class AuthController : ControllerBase
                 Success = false,
                 Message = "Kérlek, erősítsd meg az email címedet a bejelentkezéshez"
             });
-        }
-
-        return Ok(new LoginResponse
+        }        return Ok(new LoginResponse
         {
             Success = true,
-            Message = "Sikeres bejelentkezés",
-            User = new UserDto
+            Message = "Sikeres bejelentkezés",            User = new UserDto
             {
                 Id = user.id,
                 Nev = user.nev,
+                LastName = user.last_name,
+                FirstName = user.first_name,
+                DefaultAddress = user.default_address,
                 Email = user.email,
                 Letrehozva = user.letrehozva
             }
@@ -172,13 +172,15 @@ public class AuthController : ControllerBase
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Jelszo);
 
         // Verifikációs token generálás (GUID)
-        string verificationToken = Guid.NewGuid().ToString();
-        DateTime tokenExpires = DateTime.Now.AddHours(24); // 24 óra érvényesség
+        string verificationToken = Guid.NewGuid().ToString();        DateTime tokenExpires = DateTime.Now.AddHours(24); // 24 óra érvényesség
 
         // Új user létrehozása
         var newUser = new users
         {
             nev = request.Nev,
+            last_name = request.LastName,
+            first_name = request.FirstName,
+            default_address = request.DefaultAddress,
             email = request.Email,
             jelszo_hash = hashedPassword,
             letrehozva = DateTime.Now,
@@ -203,16 +205,16 @@ public class AuthController : ControllerBase
         {
             // Ha az email küldés sikertelen, logoljuk, de a regisztráció sikeres
             Console.WriteLine($"Failed to send verification email: {ex.Message}");
-        }
-
-        return Ok(new RegisterResponse
+        }        return Ok(new RegisterResponse
         {
             Success = true,
-            Message = "Sikeres regisztráció! Kérlek, ellenőrizd az emailedet a megerősítéshez.",
-            User = new UserDto
+            Message = "Sikeres regisztráció! Kérlek, ellenőrizd az emailedet a megerősítéshez.",            User = new UserDto
             {
                 Id = newUser.id,
                 Nev = newUser.nev,
+                LastName = newUser.last_name,
+                FirstName = newUser.first_name,
+                DefaultAddress = newUser.default_address,
                 Email = newUser.email,
                 Letrehozva = newUser.letrehozva
             }
