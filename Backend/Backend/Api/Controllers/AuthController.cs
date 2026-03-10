@@ -282,4 +282,38 @@ public class AuthController : ControllerBase
             Message = "Email cím sikeresen verifikálva"
         });
     }
+
+    /// <summary>
+    /// Verifikációs email újraküldése lejárt vagy nem kapott token esetén
+    /// </summary>
+    [HttpPost("resend-verification")]
+    public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationRequest request)
+    {
+        if (string.IsNullOrEmpty(request.Email))
+            return BadRequest(new { success = false, message = "Email cím megadása kötelező" });
+
+        var user = await _context.users.FirstOrDefaultAsync(u => u.email == request.Email);
+
+        if (user == null)
+            return BadRequest(new { success = false, message = "Nem találunk ilyen email címmel felhasználót" });
+
+        if (user.is_verified)
+            return BadRequest(new { success = false, message = "Ez az email cím már verifikálva van, jelentkezz be!" });
+
+        user.verification_token = Guid.NewGuid().ToString();
+        user.token_expires = DateTime.Now.AddHours(24);
+        await _context.SaveChangesAsync();
+
+        try
+        {
+            await _emailService.SendVerificationEmailAsync(user.email, user.nev, user.verification_token);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to resend verification email: {ex.Message}");
+            return StatusCode(500, new { success = false, message = "Email küldés sikertelen, próbáld újra később!" });
+        }
+
+        return Ok(new { success = true, message = "Verifikációs email újra elküldve! Ellenőrizd a postafládádat (spam mappát is)." });
+    }
 }
