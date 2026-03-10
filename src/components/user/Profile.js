@@ -4,7 +4,7 @@ import { useToast } from '../../context/ToastContext';
 import { getRentalsByUser, returnRental, changeUserPassword, deleteUser, updateUserProfile } from '../../api';
 import { useNavigate } from 'react-router-dom';
 
-function Profile() {  const { currentUser, logout, updateProfile } = useAuth();
+function Profile() {  const { currentUser, logout, updateProfile, isAdmin } = useAuth();
   const { success, error } = useToast();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -131,7 +131,7 @@ function Profile() {  const { currentUser, logout, updateProfile } = useAuth();
       return;
     }
 
-    const result = await returnRental(rentalId);
+    const result = await returnRental(rentalId, currentUser?.id);
     if (result.success) {
       if (result.was_late) {
         error('Könyv visszahozva, de késve!');
@@ -511,14 +511,16 @@ function Profile() {  const { currentUser, logout, updateProfile } = useAuth();
                       </div>
                       <div className="d-flex align-items-center gap-2">
                         {getStatusBadge(rental)}
-                        <button
-                          className="btn btn-sm"
-                          style={{ borderRadius: 0, border: '1px solid #1a1a1a', backgroundColor: '#1a1a1a', color: '#fff', fontSize: '0.75rem', padding: '0.25rem 0.6rem' }}
-                          onClick={() => handleReturnBook(rental.id)}
-                          title="Visszahozom"
-                        >
-                          <i className="bi bi-arrow-return-left"></i>
-                        </button>
+                        {isAdmin() && (
+                          <button
+                            className="btn btn-sm"
+                            style={{ borderRadius: 0, border: '1px solid #1a1a1a', backgroundColor: '#1a1a1a', color: '#fff', fontSize: '0.75rem', padding: '0.25rem 0.6rem' }}
+                            onClick={() => handleReturnBook(rental.id)}
+                            title="Visszahozom"
+                          >
+                            <i className="bi bi-arrow-return-left"></i>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -557,7 +559,7 @@ function Profile() {  const { currentUser, logout, updateProfile } = useAuth();
                       <th style={{ backgroundColor: '#1a1a1a', color: '#fff', fontWeight: 500, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0.8rem 1rem', border: 'none' }}>Kölcsönzés</th>
                       <th style={{ backgroundColor: '#1a1a1a', color: '#fff', fontWeight: 500, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0.8rem 1rem', border: 'none' }}>Határidő</th>
                       <th style={{ backgroundColor: '#1a1a1a', color: '#fff', fontWeight: 500, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0.8rem 1rem', border: 'none' }}>Állapot</th>
-                      <th style={{ backgroundColor: '#1a1a1a', color: '#fff', fontWeight: 500, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0.8rem 1rem', border: 'none' }}>Művelet</th>
+                      {isAdmin() && <th style={{ backgroundColor: '#1a1a1a', color: '#fff', fontWeight: 500, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0.8rem 1rem', border: 'none' }}>Művelet</th>}
                     </tr>
                   </thead>
                   <tbody>
@@ -577,30 +579,32 @@ function Profile() {  const { currentUser, logout, updateProfile } = useAuth();
                           <td style={tdStyle}>{formatDate(rental.rentedDate)}</td>
                           <td style={tdStyle}>{formatDate(rental.dueDate)}</td>
                           <td style={tdStyle}>{getStatusBadge(rental)}</td>
-                          <td style={tdStyle}>
-                            {rental.status !== 'returned' ? (
-                              <button
-                                className="btn btn-sm"
-                                style={{
-                                  borderRadius: 0,
-                                  border: isOverdue ? '1px solid #fff' : '1px solid #1a1a1a',
-                                  backgroundColor: isOverdue ? '#fff' : '#1a1a1a',
-                                  color: isOverdue ? '#1a1a1a' : '#fff',
-                                  fontSize: '0.72rem',
-                                  fontWeight: 500,
-                                  letterSpacing: '0.5px',
-                                  textTransform: 'uppercase',
-                                  padding: '0.3rem 0.8rem'
-                                }}
-                                onClick={() => handleReturnBook(rental.id)}
-                              >
-                                <i className="bi bi-arrow-return-left me-1"></i>
-                                Visszahozom
-                              </button>
-                            ) : (
-                              <span style={{ color: isOverdue ? '#aaa' : '#aaa', fontSize: '0.82rem' }}>{formatDate(rental.returnedDate)}</span>
-                            )}
-                          </td>
+                          {isAdmin() && (
+                            <td style={tdStyle}>
+                              {rental.status !== 'returned' ? (
+                                <button
+                                  className="btn btn-sm"
+                                  style={{
+                                    borderRadius: 0,
+                                    border: isOverdue ? '1px solid #fff' : '1px solid #1a1a1a',
+                                    backgroundColor: isOverdue ? '#fff' : '#1a1a1a',
+                                    color: isOverdue ? '#1a1a1a' : '#fff',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 500,
+                                    letterSpacing: '0.5px',
+                                    textTransform: 'uppercase',
+                                    padding: '0.3rem 0.8rem'
+                                  }}
+                                  onClick={() => handleReturnBook(rental.id)}
+                                >
+                                  <i className="bi bi-arrow-return-left me-1"></i>
+                                  Visszahozom
+                                </button>
+                              ) : (
+                                <span style={{ color: '#aaa', fontSize: '0.82rem' }}>{formatDate(rental.returnedDate)}</span>
+                              )}
+                            </td>
+                          )}
                         </tr>
                       );
                     })}

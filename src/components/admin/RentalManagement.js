@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getRentals, returnRental, sendRentalReminder, sendCustomEmail, sendRentalNotifications } from '../../api';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 function RentalManagement() {
@@ -11,6 +12,7 @@ function RentalManagement() {
   const [sendingEmail, setSendingEmail] = useState(null); // rental ID ami éppen küld
   const [sendingNotifications, setSendingNotifications] = useState(false);
   const { success, error: toastError } = useToast();
+  const { currentUser } = useAuth();
 
   // Custom email modal state
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -86,7 +88,7 @@ function RentalManagement() {
   }, []);
 
   const handleReturn = async (rentalId) => {
-    const result = await returnRental(rentalId);
+    const result = await returnRental(rentalId, currentUser?.id);
     if (result.success) {
       if (result.was_late) {
         success('Könyv visszavéve (késve érkezett!)');

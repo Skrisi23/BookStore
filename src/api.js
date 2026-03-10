@@ -160,9 +160,12 @@ export async function getRentalsByUser(userId, signal) {
 /**
  * Könyv visszahozása (kölcsönzés lezárása)
  */
-export async function returnRental(rentalId, signal) {
+export async function returnRental(rentalId, userId, signal) {
   try {
-    const response = await fetch(ENDPOINTS.rentalReturn(rentalId), {
+    const url = userId
+      ? `${ENDPOINTS.rentalReturn(rentalId)}?userId=${userId}`
+      : ENDPOINTS.rentalReturn(rentalId);
+    const response = await fetch(url, {
       method: 'PATCH',
       headers: {
         'Accept': 'application/json',
