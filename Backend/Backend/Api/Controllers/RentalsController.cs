@@ -80,11 +80,25 @@ namespace Backend.Api.Controllers
         }
 
         /// <summary>
-        /// Könyv visszahozása (felhasználó vagy admin)
+        /// Könyv visszahozása (csak admin)
         /// </summary>
         [HttpPatch("{id}/return")]
-        public async Task<IActionResult> ReturnBook(int id)
+        public async Task<IActionResult> ReturnBook(int id, [FromQuery] int? userId = null)
         {
+            // Admin jogosultság ellenőrzése
+            if (!userId.HasValue)
+            {
+                return Forbid();
+            }
+
+            var requestingUser = await _context.users.FindAsync(userId.Value);
+            if (requestingUser == null ||
+                (!requestingUser.nev.ToLower().Contains("admin") &&
+                 !requestingUser.email.ToLower().Contains("admin")))
+            {
+                return StatusCode(403, new { message = "Csak admin végezhet visszahozást" });
+            }
+
             var rental = await _context.rentals
                 .Include(r => r.copy)
                     .ThenInclude(c => c.book)
