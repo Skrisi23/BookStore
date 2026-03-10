@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { verifyEmail } from '../../api';
+import { verifyEmail, resendVerificationEmail } from '../../api';
 
 function EmailVerification() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState('loading'); // 'loading', 'success', 'error'
+  const [status, setStatus] = useState('loading');
   const [message, setMessage] = useState('');
+  const [resendEmail, setResendEmail] = useState('');
+  const [resending, setResending] = useState(false);
+  const [resendDone, setResendDone] = useState(false);
+  const [resendError, setResendError] = useState('');
 
   useEffect(() => {
     const token = searchParams.get('token');
@@ -35,6 +39,16 @@ function EmailVerification() {
 
     verify();
   }, [searchParams]);
+
+  const handleResend = async () => {
+    if (!resendEmail.trim()) return;
+    setResending(true);
+    setResendError('');
+    const result = await resendVerificationEmail(resendEmail.trim());
+    setResending(false);
+    if (result.success) setResendDone(true);
+    else setResendError(result.message || 'Email küldés sikertelen');
+  };
 
   const handleGoToLogin = () => {
     navigate('/login');
@@ -79,18 +93,44 @@ function EmailVerification() {
                     <i className="bi bi-x-circle-fill"></i>
                   </div>
                   <h3 className="card-title text-danger">Verifikáció sikertelen</h3>
-                  <p className="text-muted mb-4">{message}</p>
+                  <p className="text-muted mb-3">{message}</p>
+
+                  {!resendDone ? (
+                    <div className="mb-4 text-start">
+                      <p className="text-muted small mb-2"><i className="bi bi-envelope-arrow-up me-1"></i>Kérj új verifikációs emailt:</p>
+                      <div className="input-group input-group-sm">
+                        <input
+                          type="email"
+                          className="form-control"
+                          placeholder="email@example.com"
+                          value={resendEmail}
+                          onChange={e => setResendEmail(e.target.value)}
+                        />
+                        <button
+                          className="btn btn-warning"
+                          onClick={handleResend}
+                          disabled={resending || !resendEmail.trim()}
+                        >
+                          {resending
+                            ? <span className="spinner-border spinner-border-sm"></span>
+                            : 'Küldés'
+                          }
+                        </button>
+                      </div>
+                      {resendError && <p className="text-danger small mt-1 mb-0">{resendError}</p>}
+                    </div>
+                  ) : (
+                    <div className="alert alert-success small mb-4">
+                      <i className="bi bi-check-circle me-1"></i>
+                      Email elküldve! Ellenőrizd a postaládádat (spam mappát is).
+                    </div>
+                  )}
+
                   <div className="d-grid gap-2">
-                    <button 
-                      className="btn btn-primary"
-                      onClick={handleGoToLogin}
-                    >
+                    <button className="btn btn-primary" onClick={handleGoToLogin}>
                       Vissza a bejelentkezéshez
                     </button>
-                    <button 
-                      className="btn btn-outline-secondary"
-                      onClick={() => navigate('/')}
-                    >
+                    <button className="btn btn-outline-secondary" onClick={() => navigate('/')}>
                       Vissza a főoldalra
                     </button>
                   </div>

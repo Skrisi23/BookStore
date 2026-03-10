@@ -23,7 +23,8 @@ const ENDPOINTS = {
   userById: (id) => `${defaultBaseUrl}/api/Users/${id}`,
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
   authRegister: `${defaultBaseUrl}/api/Auth/register`,
-  authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,  authChangePassword: (userId) => `${defaultBaseUrl}/api/Auth/${userId}/change-password`,
+  authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,
+  authResendVerification: `${defaultBaseUrl}/api/Auth/resend-verification`,  authChangePassword: (userId) => `${defaultBaseUrl}/api/Auth/${userId}/change-password`,
   userUpdateProfile: (userId) => `${defaultBaseUrl}/api/Users/${userId}/profile`,
   // Cart endpoints
   cartMyCart: (userId) => `${defaultBaseUrl}/api/Cart/my-cart?userId=${userId}`,
@@ -713,6 +714,20 @@ export async function verifyEmail(token, signal) {
       success: false,
       message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Email verifikáció során hiba történt'
     };
+  }
+}
+
+export async function resendVerificationEmail(email) {
+  try {
+    const response = await fetch(ENDPOINTS.authResendVerification, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ Email: email })
+    });
+    const data = await response.json();
+    return { success: response.ok && (data.success ?? true), message: data.message };
+  } catch (e) {
+    return { success: false, message: 'Hiba történt az email küldés során' };
   }
 }
 

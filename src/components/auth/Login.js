@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { resendVerificationEmail } from '../../api';
 
 function Login({ onSuccess, onSwitchToRegister }) {
   const [username, setUsername] = useState('');
@@ -9,12 +10,15 @@ function Login({ onSuccess, onSwitchToRegister }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendDone, setResendDone] = useState(false);
   const { login } = useAuth();
   const { success } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setResendDone(false);
     setLoading(true);
 
     try {
@@ -32,6 +36,23 @@ function Login({ onSuccess, onSwitchToRegister }) {
     }
   };
 
+  const handleResend = async () => {
+    if (!username) {
+      setError('Add meg az email címedet, majd kérj új emailt!');
+      return;
+    }
+    setResending(true);
+    setResendDone(false);
+    const result = await resendVerificationEmail(username);
+    setResending(false);
+    if (result.success) {
+      setResendDone(true);
+      setError('');
+    } else {
+      setError(result.message || 'Email küldés sikertelen');
+    }
+  };
+
   return (
     <div className="card" style={{ border: '1px solid #e8e8e8' }}>
       <div className="card-body p-4">
@@ -41,17 +62,33 @@ function Login({ onSuccess, onSwitchToRegister }) {
         </h3>
 
         {error && (
-          <div className={`alert ${error.includes('email') || error.includes('verifikál') ? 'alert-warning' : 'alert-danger'}`} role="alert">
-            <i className={`bi ${error.includes('email') || error.includes('verifikál') ? 'bi-envelope-exclamation' : 'bi-exclamation-triangle'} me-2`}></i>
+          <div className={`alert ${error.includes('email') || error.includes('verifikál') || error.includes('erősítsd') ? 'alert-warning' : 'alert-danger'}`} role="alert">
+            <i className={`bi ${error.includes('email') || error.includes('verifikál') || error.includes('erősítsd') ? 'bi-envelope-exclamation' : 'bi-exclamation-triangle'} me-2`}></i>
             {error}
-            {(error.includes('email') || error.includes('verifikál')) && (
-              <div className="mt-2">
-                <small className="text-muted">
-                  <i className="bi bi-info-circle me-1"></i>
-                  Nem kaptad meg az emailt? Ellenőrizd a spam mappát!
-                </small>
+            {(error.includes('email') || error.includes('verifikál') || error.includes('erősítsd')) && (
+              <div className="mt-2 d-flex align-items-center gap-2 flex-wrap">
+                <small className="text-muted"><i className="bi bi-info-circle me-1"></i>Nem kaptad meg az emailt?</small>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-warning"
+                  style={{ fontSize: '0.75rem', padding: '0.2rem 0.7rem' }}
+                  onClick={handleResend}
+                  disabled={resending}
+                >
+                  {resending
+                    ? <><span className="spinner-border spinner-border-sm me-1"></span>Küldés...</>
+                    : <><i className="bi bi-envelope-arrow-up me-1"></i>Új email kérése</>
+                  }
+                </button>
               </div>
             )}
+          </div>
+        )}
+
+        {resendDone && (
+          <div className="alert alert-success" role="alert">
+            <i className="bi bi-check-circle me-2"></i>
+            Email elküldve! Ellenőrizd a postaládádat (spam mappát is).
           </div>
         )}
 
