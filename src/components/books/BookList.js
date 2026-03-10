@@ -4,7 +4,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import { getBooks, getAuthors } from '../../api';
 
 
-export default function BooksList({ searchTerm = '', selectedCategory = 'Minden' }) {
+export default function BooksList({ searchTerm = '', selectedCategory = 'Minden', sortBy = 'default' }) {
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,8 +77,30 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
       );
     }
 
-    setFilteredBooks(filtered);
-  }, [books, searchTerm, selectedCategory]);
+    // Rendezés
+    const sorted = [...filtered];
+    switch (sortBy) {
+      case 'title-asc':
+        sorted.sort((a, b) => a.title.localeCompare(b.title, 'hu'));
+        break;
+      case 'title-desc':
+        sorted.sort((a, b) => b.title.localeCompare(a.title, 'hu'));
+        break;
+      case 'price-asc':
+        sorted.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+        break;
+      case 'price-desc':
+        sorted.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+        break;
+      case 'category-asc':
+        sorted.sort((a, b) => a.category.localeCompare(b.category, 'hu'));
+        break;
+      default:
+        sorted.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+    }
+
+    setFilteredBooks(sorted);
+  }, [books, searchTerm, selectedCategory, sortBy]);
 
   if (loading) return <LoadingSpinner fullPage text="Könyvek betöltése..." />;
   if (error) return (
