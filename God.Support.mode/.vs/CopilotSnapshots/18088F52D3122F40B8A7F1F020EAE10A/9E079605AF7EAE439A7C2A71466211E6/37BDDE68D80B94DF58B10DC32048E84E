@@ -1,0 +1,15 @@
+﻿using Newtonsoft.Json;
+
+namespace God.Support.mode.Models;
+
+public class CopyDto
+{
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    [JsonProperty("book_id")]
+    public int BookId { get; set; }
+
+    [JsonProperty("elerheto")]
+    public bool Elerheto { get; set; }
+}

@@ -1,0 +1,30 @@
+using Newtonsoft.Json;
+
+namespace God.Support.mode.Models;
+
+public class CopyDto
+{
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    [JsonProperty("book_id")]
+    public int BookId { get; set; }
+
+    [JsonProperty("leltari_szam")]
+    public string? LeltariSzam { get; set; }
+
+    [JsonProperty("elerheto")]
+    public bool? Elerheto { get; set; }
+}
+
+public class CopiesByBookResponse
+{
+    [JsonProperty("book_id")]
+    public int BookId { get; set; }
+
+    [JsonProperty("count")]
+    public int Count { get; set; }
+
+    [JsonProperty("copies")]
+    public List<CopyDto> Copies { get; set; } = [];
+}

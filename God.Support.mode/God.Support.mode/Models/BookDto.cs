@@ -1,0 +1,36 @@
+using Newtonsoft.Json;
+
+namespace God.Support.mode.Models;
+
+public class BookDto
+{
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    [JsonProperty("cim")]
+    public string? Cim { get; set; }
+
+    [JsonProperty("author_id")]
+    public int AuthorId { get; set; }
+
+    [JsonProperty("authorNev")]
+    public string? AuthorNev { get; set; }
+
+    [JsonProperty("kategoria")]
+    public string? Kategoria { get; set; }
+
+    [JsonProperty("ar")]
+    public decimal Ar { get; set; }
+
+    [JsonProperty("boritokep")]
+    public string? Boritokep { get; set; }
+
+    [JsonProperty("kiadasi_datum")]
+    public DateTime? KiadasiDatum { get; set; }
+
+    [JsonProperty("tartalom")]
+    public string? Tartalom { get; set; }
+
+    [JsonProperty("elerheto")]
+    public bool Elerheto { get; set; }
+}

@@ -1,0 +1,33 @@
+﻿using Newtonsoft.Json;
+
+namespace God.Support.mode.Models;
+
+public class BookDto
+{
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    [JsonProperty("title")]
+    public string? Title { get; set; }
+
+    [JsonProperty("author_id")]
+    public int AuthorId { get; set; }
+
+    [JsonProperty("author_name")]
+    public string? AuthorName { get; set; }
+
+    [JsonProperty("category")]
+    public string? Category { get; set; }
+
+    [JsonProperty("price")]
+    public decimal Price { get; set; }
+
+    [JsonProperty("image")]
+    public string? Image { get; set; }
+
+    [JsonProperty("release_date")]
+    public DateTime? ReleaseDate { get; set; }
+
+    [JsonProperty("content")]
+    public string? Content { get; set; }
+}

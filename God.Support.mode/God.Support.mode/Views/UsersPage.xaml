@@ -1,0 +1,162 @@
+<UserControl x:Class="God.Support.mode.Views.UsersPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:God.Support.mode.Converters">
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:NullToVisibilityConverter x:Key="NullToVis"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Main Content -->
+        <DockPanel Grid.Column="0">
+            <!-- Header -->
+            <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
+                <TextBlock Text="Users" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                           VerticalAlignment="Center"/>
+                <Button Content="{materialDesign:PackIcon Kind=Refresh}"
+                        Command="{Binding LoadUsersCommand}"
+                        Style="{StaticResource MaterialDesignIconButton}"
+                        HorizontalAlignment="Right" ToolTip="Refresh"/>
+            </DockPanel>
+
+            <!-- Search Bar -->
+            <materialDesign:Card DockPanel.Dock="Top" Margin="24,12,24,0" Padding="8">
+                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:HintAssist.Hint="Search by name or email..."
+                         materialDesign:TextFieldAssist.HasClearButton="True"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Margin="4"/>
+            </materialDesign:Card>
+
+            <!-- DataGrid -->
+            <DataGrid Margin="24,12,24,24"
+                      ItemsSource="{Binding Users}"
+                      SelectedItem="{Binding SelectedUser}"
+                      AutoGenerateColumns="False" IsReadOnly="True"
+                      SelectionMode="Single" CanUserSortColumns="True"
+                      AlternatingRowBackground="#1E1E1E"
+                      materialDesign:DataGridAssist.CellPadding="12 8">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Nev}" Width="*"/>
+                    <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" Width="*"/>
+                    <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="*"/>
+                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                    <DataGridTextColumn Header="Address" Binding="{Binding DefaultAddress}" Width="140"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
+        <!-- Detail Flyout Panel -->
+        <Border Grid.Column="1" Width="380" Background="{DynamicResource MaterialDesign.Brush.Card.Background}"
+                Visibility="{Binding IsDetailOpen, Converter={StaticResource BoolToVis}}"
+                BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1,0,0,0">
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Top" Margin="16,12">
+                    <TextBlock Text="User Details" Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                               VerticalAlignment="Center"/>
+                    <Button Content="{materialDesign:PackIcon Kind=Close}"
+                            Command="{Binding CloseDetailCommand}"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            HorizontalAlignment="Right"/>
+                </DockPanel>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16,0,16,16">
+                    <StackPanel DataContext="{Binding}">
+                        <!-- User Info -->
+                        <TextBlock Text="{Binding SelectedUser.Nev}" FontSize="18" FontWeight="Bold" Margin="0,0,0,4"/>
+                        <TextBlock Text="{Binding SelectedUser.Email}" Opacity="0.7" Margin="0,0,0,12"/>
+
+                        <TextBlock Text="ID:" Opacity="0.6"/>
+                        <TextBlock Text="{Binding SelectedUser.Id}" Margin="0,0,0,8"/>
+                        <TextBlock Text="Last Name:" Opacity="0.6"/>
+                        <TextBlock Text="{Binding SelectedUser.LastName}" Margin="0,0,0,8"/>
+                        <TextBlock Text="First Name:" Opacity="0.6"/>
+                        <TextBlock Text="{Binding SelectedUser.FirstName}" Margin="0,0,0,8"/>
+                        <TextBlock Text="Address:" Opacity="0.6"/>
+                        <TextBlock Text="{Binding SelectedUser.DefaultAddress}" TextWrapping="Wrap" Margin="0,0,0,16"/>
+
+                        <Separator Margin="0,0,0,12"/>
+
+                        <!-- Active Rentals -->
+                        <TextBlock Text="Active Rentals" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <ItemsControl ItemsSource="{Binding UserRentals}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding BookTitle}" FontWeight="SemiBold"/>
+                                            <TextBlock Opacity="0.6">
+                                                <Run Text="Due:"/>
+                                                <Run Text="{Binding LejaratDatum, StringFormat=yyyy-MM-dd, Mode=OneWay}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Separator Margin="0,12"/>
+
+                        <!-- Cart Contents -->
+                        <TextBlock Text="Cart Contents" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <ItemsControl ItemsSource="{Binding UserCartItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                        <DockPanel>
+                                            <TextBlock Text="{Binding BookCim}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding Price, StringFormat='{}{0:N0} Ft'}"
+                                                       HorizontalAlignment="Right" Opacity="0.7"/>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Separator Margin="0,12"/>
+
+                        <!-- Payment History -->
+                        <TextBlock Text="Payment History" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <ItemsControl ItemsSource="{Binding UserPayments}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                        <DockPanel>
+                                            <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} Ft'}" FontWeight="SemiBold"/>
+                                             <TextBlock Text="{Binding PaymentDate, StringFormat=yyyy-MM-dd}"
+                                                       HorizontalAlignment="Right" Opacity="0.7"/>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Separator Margin="0,12"/>
+
+                        <!-- Actions -->
+                        <Button Content="Delete User" Command="{Binding DeleteUserCommand}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Foreground="#F44336" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.ColumnSpan="2" Background="#80000000"
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"
+              IsHitTestVisible="False">
+            <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                         IsIndeterminate="True" Width="48" Height="48"
+                         HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+    </Grid>
+</UserControl>

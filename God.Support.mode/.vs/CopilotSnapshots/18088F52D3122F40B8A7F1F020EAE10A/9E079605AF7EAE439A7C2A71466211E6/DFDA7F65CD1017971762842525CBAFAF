@@ -1,0 +1,43 @@
+﻿using God.Support.mode.Models;
+
+namespace God.Support.mode.Services;
+
+public interface IApiService
+{
+    // Users
+    Task<List<UserDto>> GetUsersAsync();
+    Task DeleteUserAsync(int id);
+    Task VerifyUserAsync(int id);
+
+    // Books
+    Task<List<BookDto>> GetBooksAsync();
+    Task<BookDto?> CreateBookAsync(BookDto book);
+    Task UpdateBookAsync(int id, BookDto book);
+    Task DeleteBookAsync(int id);
+
+    // Authors
+    Task<List<AuthorDto>> GetAuthorsAsync();
+
+    // Copies
+    Task<List<CopyDto>> GetCopiesAsync();
+    Task<List<CopyDto>> GetCopiesByBookAsync(int bookId);
+    Task<CopyDto?> CreateCopyAsync(CopyDto copy);
+    Task DeleteCopyAsync(int id);
+
+    // Rentals
+    Task<List<RentalDto>> GetRentalsAsync();
+    Task<List<RentalDto>> GetRentalsByUserAsync(int userId);
+    Task MarkRentalReturnedAsync(int rentalId, int adminUserId);
+    Task SendRentalReminderAsync(int rentalId);
+
+    // Payments
+    Task<List<PaymentDto>> GetPaymentsAsync();
+
+    // Cart
+    Task<List<CartDto>> GetCartsAsync();
+    Task<CartDto?> GetCartByUserAsync(int userId);
+    Task ClearCartAsync(int userId);
+
+    // Health
+    Task<bool> TestConnectionAsync();
+}

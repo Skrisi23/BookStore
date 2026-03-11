@@ -1,0 +1,12 @@
+﻿using Newtonsoft.Json;
+
+namespace God.Support.mode.Models;
+
+public class AuthorDto
+{
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    [JsonProperty("nev")]
+    public string? Nev { get; set; }
+}

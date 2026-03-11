@@ -1,0 +1,681 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\School\\Desktop\\God.Support.mode\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\cartspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\cartspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\dashboardpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\dashboardpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\bookspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\bookspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\orderspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\orderspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\bookspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\bookspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\dashboardpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\dashboardpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\models\\bookdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\models\\bookdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\rentalspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\rentalspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\settingspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\settingspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\userspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\userspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\userspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\userspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\cartspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\cartspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\settingspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\settingspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\orderspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\orderspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\views\\rentalspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\views\\rentalspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\models\\paymentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\models\\paymentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\models\\rentaldto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\models\\rentaldto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\models\\authordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\models\\authordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\models\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\models\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\models\\cartdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\models\\cartdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\models\\copydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\models\\copydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\services\\iapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\services\\iapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\services\\apiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\services\\apiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\viewmodels\\rentalsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\viewmodels\\rentalsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\viewmodels\\cartsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\viewmodels\\cartsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\viewmodels\\ordersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\viewmodels\\ordersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\viewmodels\\settingsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\viewmodels\\settingsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\viewmodels\\booksviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\viewmodels\\booksviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\viewmodels\\usersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\viewmodels\\usersviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\converters\\statustobrushconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\converters\\statustobrushconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\app.config||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\app.config||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\converters\\visibilityconverters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\converters\\visibilityconverters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\services\\notificationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\services\\notificationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|d:\\school\\desktop\\god.support.mode\\god.support.mode\\services\\settingsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3190299-4F8C-80EE-D0A4-D4471920BBCE}|God.Support.mode\\God.Support.mode.csproj|solutionrelative:god.support.mode\\services\\settingsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 10,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "God.Support.mode\\MainWindow.xaml",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\MainWindow.xaml",
+              "RelativeToolTip": "God.Support.mode\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-10T13:38:05.152Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DashboardPage.xaml",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\DashboardPage.xaml",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\DashboardPage.xaml",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\DashboardPage.xaml",
+              "RelativeToolTip": "God.Support.mode\\Views\\DashboardPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-10T13:55:43.946Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "BooksPage.xaml",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\BooksPage.xaml",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\BooksPage.xaml",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\BooksPage.xaml",
+              "RelativeToolTip": "God.Support.mode\\Views\\BooksPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-10T13:55:43.733Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "OrdersPage.xaml",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\OrdersPage.xaml",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\OrdersPage.xaml",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\OrdersPage.xaml",
+              "RelativeToolTip": "God.Support.mode\\Views\\OrdersPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-10T13:56:38.484Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "BooksPage.xaml.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\BooksPage.xaml.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\BooksPage.xaml.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\BooksPage.xaml.cs",
+              "RelativeToolTip": "God.Support.mode\\Views\\BooksPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:55:43.621Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "DashboardPage.xaml.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\DashboardPage.xaml.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\DashboardPage.xaml.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\DashboardPage.xaml.cs",
+              "RelativeToolTip": "God.Support.mode\\Views\\DashboardPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAABBwBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:55:43.526Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "BookDto.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\BookDto.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Models\\BookDto.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\BookDto.cs",
+              "RelativeToolTip": "God.Support.mode\\Models\\BookDto.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAA1wCQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:51:23.322Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CartsPage.xaml",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\CartsPage.xaml",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\CartsPage.xaml",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\CartsPage.xaml",
+              "RelativeToolTip": "God.Support.mode\\Views\\CartsPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-10T13:56:38.178Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "App.config",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\App.config",
+              "RelativeDocumentMoniker": "God.Support.mode\\App.config",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\App.config",
+              "RelativeToolTip": "God.Support.mode\\App.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2026-03-10T14:03:42.987Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "RentalsPage.xaml.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\RentalsPage.xaml.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\RentalsPage.xaml.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\RentalsPage.xaml.cs",
+              "RelativeToolTip": "God.Support.mode\\Views\\RentalsPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:55:43.389Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\MainWindow.xaml.cs",
+              "RelativeToolTip": "God.Support.mode\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:38:02.271Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "SettingsPage.xaml",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\SettingsPage.xaml",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\SettingsPage.xaml",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\SettingsPage.xaml",
+              "RelativeToolTip": "God.Support.mode\\Views\\SettingsPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-10T13:56:38.663Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "App.xaml",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\App.xaml",
+              "RelativeDocumentMoniker": "God.Support.mode\\App.xaml",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\App.xaml",
+              "RelativeToolTip": "God.Support.mode\\App.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-10T13:57:17.375Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\App.xaml.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\App.xaml.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\App.xaml.cs",
+              "RelativeToolTip": "God.Support.mode\\App.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAABBwAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:57:17.901Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "UsersPage.xaml",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\UsersPage.xaml",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\UsersPage.xaml",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\UsersPage.xaml",
+              "RelativeToolTip": "God.Support.mode\\Views\\UsersPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-10T13:55:44.248Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "UsersPage.xaml.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\UsersPage.xaml.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\UsersPage.xaml.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\UsersPage.xaml.cs",
+              "RelativeToolTip": "God.Support.mode\\Views\\UsersPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:55:44.152Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "CartsPage.xaml.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\CartsPage.xaml.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\CartsPage.xaml.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\CartsPage.xaml.cs",
+              "RelativeToolTip": "God.Support.mode\\Views\\CartsPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:56:37.91Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "SettingsPage.xaml.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\SettingsPage.xaml.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\SettingsPage.xaml.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\SettingsPage.xaml.cs",
+              "RelativeToolTip": "God.Support.mode\\Views\\SettingsPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:56:37.69Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "OrdersPage.xaml.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\OrdersPage.xaml.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\OrdersPage.xaml.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\OrdersPage.xaml.cs",
+              "RelativeToolTip": "God.Support.mode\\Views\\OrdersPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:56:37.354Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "RentalsPage.xaml",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\RentalsPage.xaml",
+              "RelativeDocumentMoniker": "God.Support.mode\\Views\\RentalsPage.xaml",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Views\\RentalsPage.xaml",
+              "RelativeToolTip": "God.Support.mode\\Views\\RentalsPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-10T13:55:44.63Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "PaymentDto.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\PaymentDto.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Models\\PaymentDto.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\PaymentDto.cs",
+              "RelativeToolTip": "God.Support.mode\\Models\\PaymentDto.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAIBHwDMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:51:23.073Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "RentalDto.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\RentalDto.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Models\\RentalDto.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\RentalDto.cs",
+              "RelativeToolTip": "God.Support.mode\\Models\\RentalDto.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAIBHwCcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:51:22.986Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "AuthorDto.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\AuthorDto.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Models\\AuthorDto.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\AuthorDto.cs",
+              "RelativeToolTip": "God.Support.mode\\Models\\AuthorDto.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAIBHwAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:51:23.153Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "UserDto.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\UserDto.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Models\\UserDto.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\UserDto.cs",
+              "RelativeToolTip": "God.Support.mode\\Models\\UserDto.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAIBHwBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:51:22.907Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "CartDto.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\CartDto.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Models\\CartDto.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\CartDto.cs",
+              "RelativeToolTip": "God.Support.mode\\Models\\CartDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:51:22.815Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "CopyDto.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\CopyDto.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Models\\CopyDto.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Models\\CopyDto.cs",
+              "RelativeToolTip": "God.Support.mode\\Models\\CopyDto.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAABQwB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:51:23.235Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "IApiService.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Services\\IApiService.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Services\\IApiService.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Services\\IApiService.cs",
+              "RelativeToolTip": "God.Support.mode\\Services\\IApiService.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAABOwCoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:52:13.638Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "ApiService.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Services\\ApiService.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Services\\ApiService.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Services\\ApiService.cs",
+              "RelativeToolTip": "God.Support.mode\\Services\\ApiService.cs",
+              "ViewState": "AgIAAEMAAAAAAAAAAEBTwHUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:52:13.74Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "RentalsViewModel.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\RentalsViewModel.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\ViewModels\\RentalsViewModel.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\RentalsViewModel.cs",
+              "RelativeToolTip": "God.Support.mode\\ViewModels\\RentalsViewModel.cs",
+              "ViewState": "AgIAAFUAAAAAAAAAAIBJwKkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:53:54.686Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "CartsViewModel.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\CartsViewModel.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\ViewModels\\CartsViewModel.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\CartsViewModel.cs",
+              "RelativeToolTip": "God.Support.mode\\ViewModels\\CartsViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:53:54.575Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "OrdersViewModel.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\OrdersViewModel.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\ViewModels\\OrdersViewModel.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\OrdersViewModel.cs",
+              "RelativeToolTip": "God.Support.mode\\ViewModels\\OrdersViewModel.cs",
+              "ViewState": "AgIAAEMAAAAAAAAAAABBwGoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:53:54.468Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "SettingsViewModel.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\SettingsViewModel.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\ViewModels\\SettingsViewModel.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\SettingsViewModel.cs",
+              "RelativeToolTip": "God.Support.mode\\ViewModels\\SettingsViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:53:54.352Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "BooksViewModel.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\BooksViewModel.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\ViewModels\\BooksViewModel.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\BooksViewModel.cs",
+              "RelativeToolTip": "God.Support.mode\\ViewModels\\BooksViewModel.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAIBJwOwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:53:54.264Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "DashboardViewModel.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\DashboardViewModel.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\ViewModels\\DashboardViewModel.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\DashboardViewModel.cs",
+              "RelativeToolTip": "God.Support.mode\\ViewModels\\DashboardViewModel.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAABBwG0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:53:54.179Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "UsersViewModel.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\UsersViewModel.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\ViewModels\\UsersViewModel.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\UsersViewModel.cs",
+              "RelativeToolTip": "God.Support.mode\\ViewModels\\UsersViewModel.cs",
+              "ViewState": "AgIAAHgAAAAAAAAAAIBJwHsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:53:54.088Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "MainViewModel.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\MainViewModel.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\ViewModels\\MainViewModel.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\ViewModels\\MainViewModel.cs",
+              "RelativeToolTip": "God.Support.mode\\ViewModels\\MainViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:53:54.003Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "StatusToBrushConverter.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Converters\\StatusToBrushConverter.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Converters\\StatusToBrushConverter.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Converters\\StatusToBrushConverter.cs",
+              "RelativeToolTip": "God.Support.mode\\Converters\\StatusToBrushConverter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:52:24.369Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "App.config",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\App.config",
+              "RelativeDocumentMoniker": "God.Support.mode\\App.config",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\App.config",
+              "RelativeToolTip": "God.Support.mode\\App.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2026-03-10T13:51:22.685Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "VisibilityConverters.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Converters\\VisibilityConverters.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Converters\\VisibilityConverters.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Converters\\VisibilityConverters.cs",
+              "RelativeToolTip": "God.Support.mode\\Converters\\VisibilityConverters.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:52:24.279Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "NotificationService.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Services\\NotificationService.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Services\\NotificationService.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Services\\NotificationService.cs",
+              "RelativeToolTip": "God.Support.mode\\Services\\NotificationService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:52:13.946Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "SettingsService.cs",
+              "DocumentMoniker": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Services\\SettingsService.cs",
+              "RelativeDocumentMoniker": "God.Support.mode\\Services\\SettingsService.cs",
+              "ToolTip": "D:\\School\\Desktop\\God.Support.mode\\God.Support.mode\\Services\\SettingsService.cs",
+              "RelativeToolTip": "God.Support.mode\\Services\\SettingsService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T13:52:13.842Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

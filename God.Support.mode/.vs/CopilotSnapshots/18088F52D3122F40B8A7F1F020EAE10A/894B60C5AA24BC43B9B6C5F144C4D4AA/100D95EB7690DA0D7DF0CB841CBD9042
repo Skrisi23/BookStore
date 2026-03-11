@@ -1,0 +1,33 @@
+﻿using Newtonsoft.Json;
+
+namespace God.Support.mode.Models;
+
+public class UserDto
+{
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    [JsonProperty("name")]
+    public string? Name { get; set; }
+
+    [JsonProperty("last_name")]
+    public string? LastName { get; set; }
+
+    [JsonProperty("first_name")]
+    public string? FirstName { get; set; }
+
+    [JsonProperty("email")]
+    public string? Email { get; set; }
+
+    [JsonProperty("password_hash")]
+    public string? PasswordHash { get; set; }
+
+    [JsonProperty("is_verified")]
+    public bool IsVerified { get; set; }
+
+    [JsonProperty("created")]
+    public DateTime? Created { get; set; }
+
+    [JsonProperty("default_address")]
+    public string? DefaultAddress { get; set; }
+}
