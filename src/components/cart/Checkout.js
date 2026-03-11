@@ -24,6 +24,7 @@ function Checkout({ onSuccess, onCancel }) {
   const { currentUser } = useAuth();
   const { success, error } = useToast();
   const [loading, setLoading] = useState(false);
+  const [rentalDays, setRentalDays] = useState(14);
   // Parse user's saved address (format: "1234 Budapest, Fő utca 1.")
   const parseAddress = (addr) => {
     if (!addr) return { zipCode: '', city: '', address: '' };
@@ -63,7 +64,7 @@ function Checkout({ onSuccess, onCancel }) {
 
     try {
       setLoading(true);
-      const result = await checkout(currentUser.id, formData.paymentMethod);
+      const result = await checkout(currentUser.id, formData.paymentMethod, rentalDays);
       if (result.success) {
         await refreshCart();
         success(result.message || 'Sikeres fizetés! Köszönjük a vásárlást!');
@@ -81,6 +82,37 @@ function Checkout({ onSuccess, onCancel }) {
 
   const rentalItems = cartItems.filter(i => i.order_type !== 'purchase');
   const purchaseItems = cartItems.filter(i => i.order_type === 'purchase');
+
+  // Kölcsönzési ár kiszámítása az időtartam alapján
+  const getRentalPrice = (basePrice, days) => {
+    const baseRate = 0.05; // 14 nap = 5%
+    const extraWeeks = Math.max(0, Math.floor((days - 14) / 7));
+    const extraRate = extraWeeks * 0.03; // +3% per extra hét
+    return Math.round(basePrice * (baseRate + extraRate));
+  };
+
+  // Kölcsönzési tételek összege az aktuális időtartammal
+  const rentalTotal = rentalItems.reduce((sum, item) => {
+    // A book ár a purchase áron van tárolva a copy.book.ar-ból
+    // A rental item.price = book.ar * 0.05 (14 napos alap)
+    // Tehát a book ár = item.price / 0.05
+    const estimatedBookPrice = item.price / 0.05;
+    return sum + getRentalPrice(estimatedBookPrice, rentalDays) * item.quantity;
+  }, 0);
+
+  const purchaseTotal = purchaseItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const calculatedTotal = rentalTotal + purchaseTotal;
+
+  // Elérhető kölcsönzési időtartamok
+  const rentalOptions = [
+    { days: 14, label: '14 nap (alap)' },
+    { days: 21, label: '21 nap (+3%)' },
+    { days: 28, label: '28 nap (+6%)' },
+    { days: 35, label: '35 nap (+9%)' },
+    { days: 42, label: '42 nap (+12%)' },
+    { days: 56, label: '56 nap (+18%)' },
+    { days: 90, label: '90 nap (+33%)' },
+  ];
 
   return (
     <div className="row g-4">
@@ -130,6 +162,48 @@ function Checkout({ onSuccess, onCancel }) {
                 </select>
               </div>
 
+              {rentalItems.length > 0 && (
+                <div className="mb-4" style={{ border: '1px solid #e8e8e8', padding: '1.2rem' }}>
+                  <label style={{ ...labelStyle, marginBottom: '0.8rem' }}>
+                    <i className="bi bi-clock me-1"></i>
+                    Kölcsönzési időtartam
+                  </label>
+                  <div className="row g-2">
+                    {rentalOptions.map(opt => (
+                      <div className="col-6 col-md-4" key={opt.days}>
+                        <button
+                          type="button"
+                          onClick={() => setRentalDays(opt.days)}
+                          style={{
+                            width: '100%',
+                            padding: '0.6rem 0.5rem',
+                            border: rentalDays === opt.days ? '2px solid #1a1a1a' : '1px solid #ccc',
+                            backgroundColor: rentalDays === opt.days ? '#1a1a1a' : 'transparent',
+                            color: rentalDays === opt.days ? '#fff' : '#333',
+                            fontSize: '0.78rem',
+                            fontWeight: rentalDays === opt.days ? 600 : 400,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            borderRadius: 0,
+                          }}
+                        >
+                          {opt.label}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: '0.8rem', fontSize: '0.75rem', color: '#888' }}>
+                    <i className="bi bi-info-circle me-1"></i>
+                    Minimum kölcsönzési idő: 14 nap. Hosszabb időtartam esetén a kölcsönzési díj emelkedik.
+                    {rentalDays > 14 && (
+                      <span style={{ display: 'block', marginTop: '0.3rem', color: '#c9302c' }}>
+                        A(z) {rentalDays} napos kölcsönzés extra díja: +{((Math.floor((rentalDays - 14) / 7)) * 3)}% a könyv árára vetítve
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="d-flex gap-2 justify-content-end">
                 <button
                   type="button"
@@ -173,7 +247,13 @@ function Checkout({ onSuccess, onCancel }) {
             </h6>
           </div>
           <div style={{ padding: '1.5rem' }}>
-            {cartItems.map((item, idx) => (
+            {cartItems.map((item, idx) => {
+              const isRental = item.order_type !== 'purchase';
+              const displayPrice = isRental
+                ? getRentalPrice(item.price / 0.05, rentalDays) * item.quantity
+                : item.price * item.quantity;
+
+              return (
               <div key={item.id} style={{ paddingBottom: '0.8rem', marginBottom: '0.8rem', borderBottom: idx < cartItems.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -188,26 +268,27 @@ function Checkout({ onSuccess, onCancel }) {
                       color: item.order_type === 'purchase' ? '#333' : '#fff',
                       textTransform: 'uppercase'
                     }}>
-                      {item.order_type === 'purchase' ? 'Vásárlás' : 'Kölcsönzés'}
+                      {item.order_type === 'purchase' ? 'Vásárlás' : `Kölcsönzés (${rentalDays} nap)`}
                     </span>
                     <span style={{ fontSize: '0.75rem', color: '#aaa', marginLeft: '0.5rem' }}>{item.quantity} db</span>
                   </div>
                   <span style={{ fontWeight: 600, fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
-                    {(item.price * item.quantity).toLocaleString()} Ft
+                    {displayPrice.toLocaleString()} Ft
                   </span>
                 </div>
               </div>
-            ))}
+              );
+            })}
 
             {rentalItems.length > 0 && purchaseItems.length > 0 && (
               <div style={{ marginBottom: '0.8rem' }}>
                 <div className="d-flex justify-content-between" style={{ marginBottom: '0.3rem' }}>
-                  <span style={{ color: '#888', fontSize: '0.8rem' }}>Kölcsönzés</span>
-                  <span style={{ fontSize: '0.8rem' }}>{rentalItems.reduce((s, i) => s + i.price * i.quantity, 0).toLocaleString()} Ft</span>
+                  <span style={{ color: '#888', fontSize: '0.8rem' }}>Kölcsönzés ({rentalDays} nap)</span>
+                  <span style={{ fontSize: '0.8rem' }}>{rentalTotal.toLocaleString()} Ft</span>
                 </div>
                 <div className="d-flex justify-content-between">
                   <span style={{ color: '#888', fontSize: '0.8rem' }}>Vásárlás</span>
-                  <span style={{ fontSize: '0.8rem' }}>{purchaseItems.reduce((s, i) => s + i.price * i.quantity, 0).toLocaleString()} Ft</span>
+                  <span style={{ fontSize: '0.8rem' }}>{purchaseTotal.toLocaleString()} Ft</span>
                 </div>
               </div>
             )}
@@ -215,7 +296,7 @@ function Checkout({ onSuccess, onCancel }) {
             <div style={{ borderTop: '1px solid #e8e8e8', paddingTop: '1rem', marginTop: '0.5rem' }}>
               <div className="d-flex justify-content-between align-items-center">
                 <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>Összesen</span>
-                <span style={{ fontWeight: 700, fontSize: '1.3rem', color: '#1a1a1a' }}>{getTotalPrice().toLocaleString()} Ft</span>
+                <span style={{ fontWeight: 700, fontSize: '1.3rem', color: '#1a1a1a' }}>{calculatedTotal.toLocaleString()} Ft</span>
               </div>
             </div>
           </div>
