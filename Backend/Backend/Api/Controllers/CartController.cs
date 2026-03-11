@@ -384,7 +384,19 @@ namespace Backend.Api.Controllers
                             message = $"Nincs elég készlet a(z) \"{purchaseItem.copy.book.cim}\" könyvből. Elérhető: {availableCount} db, kért: {purchaseItem.quantity} db"
                         });
                     }
-                }                // 3. Összeg számítása
+                }                // 3. Összeg számítása - kölcsönzéseknél az ár az időtartamtól függ
+                // Alap 14 nap = könyv ár * 5%, minden további 7 nap = +3%
+                foreach (var rentalItem in rentalItems)
+                {
+                    var bookPrice = rentalItem.copy.book.ar;
+                    var baseRate = 0.05m; // 14 nap = 5%
+                    var extraWeeks = Math.Max(0, (checkoutDto.rental_days - 14) / 7);
+                    var extraRate = extraWeeks * 0.03m; // +3% per extra hét
+                    var rentalPrice = Math.Round(bookPrice * (baseRate + extraRate), 0);
+                    rentalItem.price = rentalPrice;
+                }
+                await _context.SaveChangesAsync();
+
                 decimal totalAmount = cart.cart_items.Sum(ci => ci.price * ci.quantity);
 
                 // 4. Payment létrehozása

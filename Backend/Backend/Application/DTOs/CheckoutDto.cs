@@ -10,8 +10,8 @@ namespace Backend.Application.DTOs
         [StringLength(50)]
         public string payment_method { get; set; } = null!;
 
-        // Opcionális: hány napra kölcsönzik (default: 14)
-        [Range(1, 90, ErrorMessage = "A kölcsönzési időszak 1 és 90 nap között lehet")]
+        // Hány napra kölcsönzik (default: 14, minimum: 14, maximum: 90)
+        [Range(14, 90, ErrorMessage = "A kölcsönzési időszak 14 és 90 nap között lehet")]
         public int rental_days { get; set; } = 14;
     }
 
