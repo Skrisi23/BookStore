@@ -1,0 +1,79 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MaterialDesignThemes.Wpf;
+using Microsoft.Extensions.DependencyInjection;
+using God.Support.mode.Services;
+
+namespace God.Support.mode.ViewModels;
+
+public partial class MainViewModel : ObservableObject
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly INotificationService _notificationService;
+    private readonly LocalizationService _localization;
+
+    [ObservableProperty]
+    private object? currentViewModel;
+
+    [ObservableProperty]
+    private int selectedNavIndex;
+
+    public SnackbarMessageQueue MessageQueue => _notificationService.MessageQueue;
+
+    public string[] NavKeys { get; } =
+    [
+        "Nav_Dashboard",
+        "Nav_Users",
+        "Nav_Books",
+        "Nav_Rentals",
+        "Nav_Orders",
+        "Nav_Carts",
+        "Nav_Settings"
+    ];
+
+    public string[] NavIcons { get; } =
+    [
+        "ViewDashboard",
+        "AccountGroup",
+        "BookMultiple",
+        "SwapHorizontal",
+        "CreditCard",
+        "Cart",
+        "Cog"
+    ];
+
+    public MainViewModel(IServiceProvider serviceProvider, INotificationService notificationService, LocalizationService localization)
+    {
+        _serviceProvider = serviceProvider;
+        _notificationService = notificationService;
+        _localization = localization;
+        SelectedNavIndex = 0;
+        NavigateToPage(0);
+    }
+
+    partial void OnSelectedNavIndexChanged(int value)
+    {
+        NavigateToPage(value);
+    }
+
+    [RelayCommand]
+    private void ToggleLanguage()
+    {
+        _localization.ToggleLanguage();
+    }
+
+    private void NavigateToPage(int index)
+    {
+        CurrentViewModel = index switch
+        {
+            0 => _serviceProvider.GetRequiredService<DashboardViewModel>(),
+            1 => _serviceProvider.GetRequiredService<UsersViewModel>(),
+            2 => _serviceProvider.GetRequiredService<BooksViewModel>(),
+            3 => _serviceProvider.GetRequiredService<RentalsViewModel>(),
+            4 => _serviceProvider.GetRequiredService<OrdersViewModel>(),
+            5 => _serviceProvider.GetRequiredService<CartsViewModel>(),
+            6 => _serviceProvider.GetRequiredService<SettingsViewModel>(),
+            _ => CurrentViewModel
+        };
+    }
+}

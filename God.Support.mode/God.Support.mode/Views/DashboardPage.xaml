@@ -11,12 +11,12 @@
         <DockPanel>
             <!-- Header -->
             <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
-                <TextBlock Text="Dashboard" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                <TextBlock Text="Attekintes" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                            VerticalAlignment="Center"/>
                 <Button Content="{materialDesign:PackIcon Kind=Refresh}" 
                         Command="{Binding RefreshCommand}"
                         Style="{StaticResource MaterialDesignIconButton}"
-                        HorizontalAlignment="Right" ToolTip="Refresh"/>
+                        HorizontalAlignment="Right" ToolTip="Frissites"/>
             </DockPanel>
 
             <!-- Content -->
@@ -24,42 +24,42 @@
                 <StackPanel>
                     <!-- Summary Cards -->
                     <WrapPanel>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" Width="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
                             <StackPanel>
-                                <TextBlock Text="Total Users" Opacity="0.6" FontSize="13"/>
+                                <TextBlock Text="Osszes felhasznalo" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding TotalUsers}" FontSize="32" FontWeight="Bold"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" Width="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
                             <StackPanel>
-                                <TextBlock Text="Active Rentals" Opacity="0.6" FontSize="13"/>
+                                <TextBlock Text="Aktiv kolcsonzesek" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding ActiveRentals}" FontSize="32" FontWeight="Bold"
                                            Foreground="#4CAF50"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" Width="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
                             <StackPanel>
-                                <TextBlock Text="Overdue Rentals" Opacity="0.6" FontSize="13"/>
+                                <TextBlock Text="Lejart kolcsonzesek" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding OverdueRentals}" FontSize="32" FontWeight="Bold"
                                            Foreground="#F44336"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" Width="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
                             <StackPanel>
-                                <TextBlock Text="Total Books" Opacity="0.6" FontSize="13"/>
+                                <TextBlock Text="Osszes konyv" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding TotalBooks}" FontSize="32" FontWeight="Bold"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" Width="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
                             <StackPanel>
-                                <TextBlock Text="Total Revenue" Opacity="0.6" FontSize="13"/>
+                                <TextBlock Text="Osszes bevetel" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding TotalRevenue, StringFormat='{}{0:N0} Ft'}" 
                                            FontSize="32" FontWeight="Bold" Foreground="#FF9800"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" Width="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
                             <StackPanel>
-                                <TextBlock Text="Total Orders" Opacity="0.6" FontSize="13"/>
+                                <TextBlock Text="Osszes rendeles" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding TotalOrders}" FontSize="32" FontWeight="Bold"/>
                             </StackPanel>
                         </materialDesign:Card>
@@ -68,7 +68,7 @@
                     <!-- Chart -->
                     <materialDesign:Card Padding="16" Margin="0,8,0,0">
                         <StackPanel>
-                            <TextBlock Text="Rentals Per Day (Last 30 Days)" 
+                            <TextBlock Text="Kolcsonzesek naponta (utolso 30 nap)" 
                                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Margin="0,0,0,8"/>
                             <ContentControl x:Name="ChartHost" Height="300"/>
                         </StackPanel>

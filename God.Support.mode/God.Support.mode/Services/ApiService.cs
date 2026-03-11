@@ -30,7 +30,11 @@ public class ApiService : IApiService
     {
         var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
         var response = await _http.PostAsync($"{Base}{url}", content);
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorBody = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException($"HTTP {(int)response.StatusCode}: {errorBody}");
+        }
         var json = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<T>(json);
     }
@@ -48,7 +52,11 @@ public class ApiService : IApiService
     {
         var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
         var response = await _http.PutAsync($"{Base}{url}", content);
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorBody = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException($"HTTP {(int)response.StatusCode}: {errorBody}");
+        }
     }
 
     private async Task PatchAsync(string url)
@@ -61,7 +69,11 @@ public class ApiService : IApiService
     private async Task DeleteAsync(string url)
     {
         var response = await _http.DeleteAsync($"{Base}{url}");
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorBody = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException($"HTTP {(int)response.StatusCode}: {errorBody}");
+        }
     }
 
     // Users
@@ -70,8 +82,8 @@ public class ApiService : IApiService
 
     // Books
     public Task<List<BookDto>> GetBooksAsync() => GetAsync<List<BookDto>>("/api/Books");
-    public Task<BookDto?> CreateBookAsync(BookDto book) => PostAsync<BookDto>("/api/Books", book);
-    public Task UpdateBookAsync(int id, BookDto book) => PutAsync($"/api/Books/{id}", book);
+    public Task<BookDto?> CreateBookAsync(CreateBookDto book) => PostAsync<BookDto>("/api/Books", book);
+    public Task UpdateBookAsync(int id, UpdateBookDto book) => PutAsync($"/api/Books/{id}", book);
     public Task DeleteBookAsync(int id) => DeleteAsync($"/api/Books/{id}");
 
     // Authors

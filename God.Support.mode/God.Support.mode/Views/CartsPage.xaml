@@ -17,12 +17,12 @@
         <DockPanel Grid.Column="0">
             <!-- Header -->
             <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
-                <TextBlock Text="Carts" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                <TextBlock Text="Kosarak" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                            VerticalAlignment="Center"/>
                 <Button Content="{materialDesign:PackIcon Kind=Refresh}"
                         Command="{Binding LoadCartsCommand}"
                         Style="{StaticResource MaterialDesignIconButton}"
-                        HorizontalAlignment="Right" ToolTip="Refresh"/>
+                        HorizontalAlignment="Right" ToolTip="Frissites"/>
             </DockPanel>
 
             <!-- DataGrid -->
@@ -34,10 +34,10 @@
                       AlternatingRowBackground="#1E1E1E"
                       materialDesign:DataGridAssist.CellPadding="12 8">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Cart ID" Binding="{Binding Id}" Width="80"/>
-                    <DataGridTextColumn Header="User Name" Binding="{Binding UserName}" Width="*"/>
-                    <DataGridTextColumn Header="User Email" Binding="{Binding UserEmail}" Width="*"/>
-                    <DataGridTextColumn Header="Items Count" Binding="{Binding Items.Count}" Width="100"/>
+                    <DataGridTextColumn Header="Kosar azon." Binding="{Binding Id}" Width="100"/>
+                    <DataGridTextColumn Header="Felhasznalo" Binding="{Binding UserName}" Width="*"/>
+                    <DataGridTextColumn Header="Email" Binding="{Binding UserEmail}" Width="*"/>
+                    <DataGridTextColumn Header="Tetelek szama" Binding="{Binding Items.Count}" Width="110"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
@@ -48,11 +48,11 @@
                 BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1,0,0,0">
             <DockPanel>
                 <DockPanel DockPanel.Dock="Top" Margin="16,12">
-                    <TextBlock Text="Cart Items" Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                    <TextBlock Text="Kosar tartalma" Style="{StaticResource MaterialDesignHeadline6TextBlock}"
                                VerticalAlignment="Center"/>
                 </DockPanel>
 
-                <Button DockPanel.Dock="Bottom" Content="Clear Cart" 
+                <Button DockPanel.Dock="Bottom" Content="Kosar uritese" 
                         Command="{Binding ClearCartCommand}"
                         Style="{StaticResource MaterialDesignFlatButton}"
                         Foreground="#F44336" Margin="16,8,16,16" HorizontalAlignment="Stretch"/>
@@ -61,20 +61,20 @@
                     <ItemsControl ItemsSource="{Binding CartItems}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <materialDesign:Card Padding="12" Margin="0,0,0,8">
+                                <materialDesign:Card Padding="12" Margin="0,0,0,10">
                                     <StackPanel>
-                                        <TextBlock Text="{Binding BookCim}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding BookCim}" FontWeight="SemiBold" Margin="0,0,0,6"/>
                                         <DockPanel Margin="0,4,0,0">
                                             <TextBlock Opacity="0.7">
-                                                <Run Text="Qty:"/>
+                                                <Run Text="Db: "/>
                                                 <Run Text="{Binding Quantity, Mode=OneWay}"/>
                                             </TextBlock>
                                             <TextBlock HorizontalAlignment="Right" Opacity="0.7">
-                                                <Run Text="Unit:"/>
+                                                <Run Text="Egysegar: "/>
                                                 <Run Text="{Binding Price, StringFormat='{}{0:N0} Ft', Mode=OneWay}"/>
                                             </TextBlock>
                                         </DockPanel>
-                                        <TextBlock HorizontalAlignment="Right" FontWeight="Bold" Margin="0,4,0,0">
+                                        <TextBlock HorizontalAlignment="Right" FontWeight="Bold" Margin="0,6,0,0">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0:N0} Ft">
                                                     <Binding Path="Price"/>

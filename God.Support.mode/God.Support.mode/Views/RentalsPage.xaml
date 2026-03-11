@@ -11,27 +11,27 @@
     <DockPanel>
         <!-- Header -->
         <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
-            <TextBlock Text="Rentals" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+            <TextBlock Text="Kolcsonzesek" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                        VerticalAlignment="Center"/>
             <Button Content="{materialDesign:PackIcon Kind=Refresh}"
                     Command="{Binding LoadRentalsCommand}"
                     Style="{StaticResource MaterialDesignIconButton}"
-                    HorizontalAlignment="Right" ToolTip="Refresh"/>
+                    HorizontalAlignment="Right" ToolTip="Frissites"/>
         </DockPanel>
 
         <!-- Filter Bar -->
-        <materialDesign:Card DockPanel.Dock="Top" Margin="24,12,24,0" Padding="8">
+        <materialDesign:Card DockPanel.Dock="Top" Margin="24,12,24,0" Padding="12">
             <StackPanel Orientation="Horizontal">
                 <ComboBox ItemsSource="{Binding StatusFilters}"
                           SelectedItem="{Binding SelectedStatusFilter}"
-                          materialDesign:HintAssist.Hint="Status"
+                          materialDesign:HintAssist.Hint="Allapot"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}"
                           Width="160" Margin="4"/>
                 <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                         materialDesign:HintAssist.Hint="Search by user or book..."
+                         materialDesign:HintAssist.Hint="Kereses felhasznalo vagy konyv szerint..."
                          materialDesign:TextFieldAssist.HasClearButton="True"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Width="300" Margin="8,4,4,4"/>
+                         Width="300" Margin="12,4,4,4"/>
             </StackPanel>
         </materialDesign:Card>
 
@@ -39,23 +39,23 @@
         <materialDesign:Card DockPanel.Dock="Bottom" Margin="24,0,24,16" Padding="16,12">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Margin="0,0,32,0">
-                    <Ellipse Width="12" Height="12" Fill="#4CAF50" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <Ellipse Width="12" Height="12" Fill="#4CAF50" Margin="0,0,8,0" VerticalAlignment="Center"/>
                     <TextBlock VerticalAlignment="Center">
-                        <Run Text="Active:"/>
+                        <Run Text="Aktiv: "/>
                         <Run Text="{Binding TotalActive, Mode=OneWay}" FontWeight="Bold"/>
                     </TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,32,0">
-                    <Ellipse Width="12" Height="12" Fill="#F44336" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <Ellipse Width="12" Height="12" Fill="#F44336" Margin="0,0,8,0" VerticalAlignment="Center"/>
                     <TextBlock VerticalAlignment="Center">
-                        <Run Text="Overdue:"/>
+                        <Run Text="Lejart: "/>
                         <Run Text="{Binding TotalOverdue, Mode=OneWay}" FontWeight="Bold"/>
                     </TextBlock>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Ellipse Width="12" Height="12" Fill="#9E9E9E" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <Ellipse Width="12" Height="12" Fill="#9E9E9E" Margin="0,0,8,0" VerticalAlignment="Center"/>
                     <TextBlock VerticalAlignment="Center">
-                        <Run Text="Returned:"/>
+                        <Run Text="Visszahozva: "/>
                         <Run Text="{Binding TotalReturned, Mode=OneWay}" FontWeight="Bold"/>
                     </TextBlock>
                 </StackPanel>
@@ -71,14 +71,14 @@
                       AlternatingRowBackground="#1E1E1E"
                       materialDesign:DataGridAssist.CellPadding="12 8">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Rental.Id}" Width="60"/>
-                    <DataGridTextColumn Header="Book Title" Binding="{Binding Rental.BookTitle}" Width="*"/>
-                    <DataGridTextColumn Header="User Name" Binding="{Binding Rental.UserName}" Width="*"/>
-                    <DataGridTextColumn Header="User Email" Binding="{Binding Rental.UserEmail}" Width="*"/>
-                    <DataGridTextColumn Header="Rented Date" Binding="{Binding Rental.KolcsonzesDatuma, StringFormat=yyyy-MM-dd}" Width="110"/>
-                    <DataGridTextColumn Header="Due Date" Binding="{Binding Rental.LejaratDatum, StringFormat=yyyy-MM-dd}" Width="100"/>
-                    <DataGridTextColumn Header="Returned" Binding="{Binding Rental.VisszahozvaDatuma, StringFormat=yyyy-MM-dd}" Width="100"/>
-                    <DataGridTemplateColumn Header="Status" Width="110">
+                    <DataGridTextColumn Header="Azon." Binding="{Binding Rental.Id}" Width="60"/>
+                    <DataGridTextColumn Header="Konyv cime" Binding="{Binding Rental.BookTitle}" Width="*"/>
+                    <DataGridTextColumn Header="Felhasznalo" Binding="{Binding Rental.UserName}" Width="*"/>
+                    <DataGridTextColumn Header="Email" Binding="{Binding Rental.UserEmail}" Width="*"/>
+                    <DataGridTextColumn Header="Kolcsonzes" Binding="{Binding Rental.KolcsonzesDatuma, StringFormat=yyyy-MM-dd}" Width="110"/>
+                    <DataGridTextColumn Header="Hatarido" Binding="{Binding Rental.LejaratDatum, StringFormat=yyyy-MM-dd}" Width="100"/>
+                    <DataGridTextColumn Header="Visszahozva" Binding="{Binding Rental.VisszahozvaDatuma, StringFormat=yyyy-MM-dd}" Width="100"/>
+                    <DataGridTemplateColumn Header="Allapot" Width="110">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Background="{Binding Status, Converter={StaticResource StatusToBrush}}"
@@ -88,21 +88,21 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Days Left/Overdue" Binding="{Binding DaysInfo}" Width="130"/>
-                    <DataGridTemplateColumn Header="Actions" Width="200">
+                    <DataGridTextColumn Header="Napok" Binding="{Binding DaysInfo}" Width="130"/>
+                    <DataGridTemplateColumn Header="Muveletek" Width="220">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="Return" 
+                                    <Button Content="Visszavetel" 
                                             Command="{Binding DataContext.MarkReturnedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"
                                             Style="{StaticResource MaterialDesignOutlinedButton}"
-                                            Padding="6,2" Margin="0,0,4,0" FontSize="11"/>
-                                    <Button Content="Remind"
+                                            Padding="8,2" Margin="0,0,8,0" FontSize="11"/>
+                                    <Button Content="Emlekezteto"
                                             Command="{Binding DataContext.SendReminderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"
                                             Style="{StaticResource MaterialDesignOutlinedButton}"
-                                            Padding="6,2" FontSize="11"/>
+                                            Padding="8,2" FontSize="11"/>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

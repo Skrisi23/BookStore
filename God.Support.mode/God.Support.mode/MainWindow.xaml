@@ -1,4 +1,4 @@
-﻿<Window x:Class="God.Support.mode.MainWindow"
+<Window x:Class="God.Support.mode.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -18,7 +18,7 @@
     <materialDesign:DialogHost>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="260"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -26,65 +26,80 @@
             <Border Grid.Column="0" Background="#1a1a1a">
                 <DockPanel>
                     <!-- App Title -->
-                    <Border DockPanel.Dock="Top" Padding="20,24,20,20">
+                    <Border DockPanel.Dock="Top" Padding="20,24,20,16">
                         <StackPanel>
-                            <materialDesign:PackIcon Kind="BookOpenPageVariant" Width="36" Height="36"
-                                                     Foreground="#FF5722" HorizontalAlignment="Left"/>
-                            <TextBlock FontSize="22" FontWeight="Bold" Margin="0,8,0,0"><Run Language="hu-hu" Text="AlkotásokTára"/><LineBreak/><Run Language="hu-hu"/></TextBlock>
-                            <TextBlock Text="God Mode" FontSize="13" Opacity="0.5"/>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="BookOpenPageVariant" Width="32" Height="32"
+                                                         Foreground="#FF5722" VerticalAlignment="Center"/>
+                                <TextBlock Text="AlkotasokTara" FontSize="20" FontWeight="Bold" 
+                                           Margin="10,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Text="God Mode" FontSize="12" Opacity="0.5" Margin="42,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Separator DockPanel.Dock="Top" Background="#333"/>
 
                     <!-- Navigation -->
-                    <ListBox ItemsSource="{Binding NavItems}"
-                             SelectedIndex="{Binding SelectedNavIndex}"
-                             Margin="0,8,0,0"
-                             Background="Transparent"
-                             BorderThickness="0">
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="Padding" Value="20,14"/>
+                    <StackPanel Margin="0,8,0,0">
+                        <StackPanel.Resources>
+                            <Style x:Key="NavBtn" TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignTabRadioButtonBottom}">
+                                <Setter Property="Height" Value="48"/>
+                                <Setter Property="Padding" Value="20,0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
                                 <Setter Property="FontSize" Value="14"/>
                                 <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="#CCC"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Margin" Value="0,2"/>
                             </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,14,0">
-                                        <materialDesign:PackIcon.Style>
-                                            <Style TargetType="materialDesign:PackIcon">
-                                                <Setter Property="Kind" Value="ViewDashboard"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding}" Value="Users">
-                                                        <Setter Property="Kind" Value="AccountGroup"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding}" Value="Books">
-                                                        <Setter Property="Kind" Value="BookMultiple"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding}" Value="Rentals">
-                                                        <Setter Property="Kind" Value="SwapHorizontal"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding}" Value="Orders / Payments">
-                                                        <Setter Property="Kind" Value="CreditCard"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding}" Value="Carts">
-                                                        <Setter Property="Kind" Value="Cart"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding}" Value="Settings">
-                                                        <Setter Property="Kind" Value="Cog"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </materialDesign:PackIcon.Style>
-                                    </materialDesign:PackIcon>
-                                    <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                        </StackPanel.Resources>
+
+                        <RadioButton Style="{StaticResource NavBtn}" IsChecked="True"
+                                     Click="NavButton_Click" Tag="0">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ViewDashboard" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <TextBlock Text="Attekintes" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource NavBtn}" Click="NavButton_Click" Tag="1">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="AccountGroup" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <TextBlock Text="Felhasznalok" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource NavBtn}" Click="NavButton_Click" Tag="2">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="BookMultiple" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <TextBlock Text="Konyvek" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource NavBtn}" Click="NavButton_Click" Tag="3">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="SwapHorizontal" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <TextBlock Text="Kolcsonzesek" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource NavBtn}" Click="NavButton_Click" Tag="4">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CreditCard" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <TextBlock Text="Rendelesek" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource NavBtn}" Click="NavButton_Click" Tag="5">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Cart" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <TextBlock Text="Kosarak" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource NavBtn}" Click="NavButton_Click" Tag="6">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Cog" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                                <TextBlock Text="Beallitasok" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </RadioButton>
+                    </StackPanel>
                 </DockPanel>
             </Border>
 

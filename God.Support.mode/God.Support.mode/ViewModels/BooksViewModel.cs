@@ -131,7 +131,17 @@ public partial class BooksViewModel : ObservableObject
         if (SelectedBook == null) return;
         try
         {
-            await _apiService.UpdateBookAsync(SelectedBook.Id, SelectedBook);
+            var updateDto = new UpdateBookDto
+            {
+                Cim = SelectedBook.Cim,
+                AuthorId = SelectedBook.AuthorId,
+                Kategoria = SelectedBook.Kategoria,
+                Ar = SelectedBook.Ar,
+                Boritokep = SelectedBook.Boritokep,
+                Tartalom = SelectedBook.Tartalom,
+                KiadasiDatum = SelectedBook.KiadasiDatum
+            };
+            await _apiService.UpdateBookAsync(SelectedBook.Id, updateDto);
             _notification.Show("Book saved");
             await LoadDataAsync();
         }
@@ -214,14 +224,15 @@ public partial class BooksViewModel : ObservableObject
     {
         try
         {
-            var newBook = new BookDto
+            var newBook = new CreateBookDto
             {
                 Cim = NewBookCim,
                 AuthorId = NewBookAuthorId,
                 Kategoria = NewBookKategoria,
                 Ar = NewBookAr,
                 Boritokep = NewBookBoritokep,
-                Tartalom = NewBookTartalom
+                Tartalom = NewBookTartalom,
+                KiadasiDatum = DateTime.Now
             };
             await _apiService.CreateBookAsync(newBook);
             _notification.Show("Book created");

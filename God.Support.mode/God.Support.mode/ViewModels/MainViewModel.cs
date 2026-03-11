@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 using God.Support.mode.Services;
@@ -17,17 +18,6 @@ public partial class MainViewModel : ObservableObject
     private int selectedNavIndex;
 
     public SnackbarMessageQueue MessageQueue => _notificationService.MessageQueue;
-
-    public string[] NavItems { get; } =
-    [
-        "Dashboard",
-        "Users",
-        "Books",
-        "Rentals",
-        "Orders / Payments",
-        "Carts",
-        "Settings"
-    ];
 
     public MainViewModel(IServiceProvider serviceProvider, INotificationService notificationService)
     {

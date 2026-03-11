@@ -10,8 +10,8 @@ public interface IApiService
 
     // Books
     Task<List<BookDto>> GetBooksAsync();
-    Task<BookDto?> CreateBookAsync(BookDto book);
-    Task UpdateBookAsync(int id, BookDto book);
+    Task<BookDto?> CreateBookAsync(CreateBookDto book);
+    Task UpdateBookAsync(int id, UpdateBookDto book);
     Task DeleteBookAsync(int id);
 
     // Authors

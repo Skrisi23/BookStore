@@ -18,18 +18,18 @@
         <DockPanel Grid.Column="0">
             <!-- Header -->
             <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
-                <TextBlock Text="Users" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                <TextBlock Text="Felhasznalok" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                            VerticalAlignment="Center"/>
                 <Button Content="{materialDesign:PackIcon Kind=Refresh}"
                         Command="{Binding LoadUsersCommand}"
                         Style="{StaticResource MaterialDesignIconButton}"
-                        HorizontalAlignment="Right" ToolTip="Refresh"/>
+                        HorizontalAlignment="Right" ToolTip="Frissites"/>
             </DockPanel>
 
             <!-- Search Bar -->
-            <materialDesign:Card DockPanel.Dock="Top" Margin="24,12,24,0" Padding="8">
+            <materialDesign:Card DockPanel.Dock="Top" Margin="24,12,24,0" Padding="12">
                 <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                         materialDesign:HintAssist.Hint="Search by name or email..."
+                         materialDesign:HintAssist.Hint="Kereses nev vagy email szerint..."
                          materialDesign:TextFieldAssist.HasClearButton="True"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Margin="4"/>
@@ -44,12 +44,12 @@
                       AlternatingRowBackground="#1E1E1E"
                       materialDesign:DataGridAssist.CellPadding="12 8">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Nev}" Width="*"/>
-                    <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" Width="*"/>
-                    <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="*"/>
+                    <DataGridTextColumn Header="Azon." Binding="{Binding Id}" Width="60"/>
+                    <DataGridTextColumn Header="Nev" Binding="{Binding Nev}" Width="*"/>
+                    <DataGridTextColumn Header="Vezeteknev" Binding="{Binding LastName}" Width="*"/>
+                    <DataGridTextColumn Header="Keresztnev" Binding="{Binding FirstName}" Width="*"/>
                     <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
-                    <DataGridTextColumn Header="Address" Binding="{Binding DefaultAddress}" Width="140"/>
+                    <DataGridTextColumn Header="Cim" Binding="{Binding DefaultAddress}" Width="140"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
@@ -60,7 +60,7 @@
                 BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1,0,0,0">
             <DockPanel>
                 <DockPanel DockPanel.Dock="Top" Margin="16,12">
-                    <TextBlock Text="User Details" Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                    <TextBlock Text="Felhasznalo reszletei" Style="{StaticResource MaterialDesignHeadline6TextBlock}"
                                VerticalAlignment="Center"/>
                     <Button Content="{materialDesign:PackIcon Kind=Close}"
                             Command="{Binding CloseDetailCommand}"
@@ -72,29 +72,29 @@
                     <StackPanel DataContext="{Binding}">
                         <!-- User Info -->
                         <TextBlock Text="{Binding SelectedUser.Nev}" FontSize="18" FontWeight="Bold" Margin="0,0,0,4"/>
-                        <TextBlock Text="{Binding SelectedUser.Email}" Opacity="0.7" Margin="0,0,0,12"/>
+                        <TextBlock Text="{Binding SelectedUser.Email}" Opacity="0.7" Margin="0,0,0,16"/>
 
-                        <TextBlock Text="ID:" Opacity="0.6"/>
-                        <TextBlock Text="{Binding SelectedUser.Id}" Margin="0,0,0,8"/>
-                        <TextBlock Text="Last Name:" Opacity="0.6"/>
-                        <TextBlock Text="{Binding SelectedUser.LastName}" Margin="0,0,0,8"/>
-                        <TextBlock Text="First Name:" Opacity="0.6"/>
-                        <TextBlock Text="{Binding SelectedUser.FirstName}" Margin="0,0,0,8"/>
-                        <TextBlock Text="Address:" Opacity="0.6"/>
-                        <TextBlock Text="{Binding SelectedUser.DefaultAddress}" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                        <TextBlock Text="Azonosito:" Opacity="0.6"/>
+                        <TextBlock Text="{Binding SelectedUser.Id}" Margin="0,4,0,12"/>
+                        <TextBlock Text="Vezeteknev:" Opacity="0.6"/>
+                        <TextBlock Text="{Binding SelectedUser.LastName}" Margin="0,4,0,12"/>
+                        <TextBlock Text="Keresztnev:" Opacity="0.6"/>
+                        <TextBlock Text="{Binding SelectedUser.FirstName}" Margin="0,4,0,12"/>
+                        <TextBlock Text="Lakcim:" Opacity="0.6"/>
+                        <TextBlock Text="{Binding SelectedUser.DefaultAddress}" TextWrapping="Wrap" Margin="0,4,0,16"/>
 
-                        <Separator Margin="0,0,0,12"/>
+                        <Separator Margin="0,0,0,16"/>
 
                         <!-- Active Rentals -->
-                        <TextBlock Text="Active Rentals" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <TextBlock Text="Aktiv kolcsonzesek" FontWeight="Bold" Margin="0,0,0,10"/>
                         <ItemsControl ItemsSource="{Binding UserRentals}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="10" Margin="0,0,0,6">
                                         <StackPanel>
                                             <TextBlock Text="{Binding BookTitle}" FontWeight="SemiBold"/>
-                                            <TextBlock Opacity="0.6">
-                                                <Run Text="Due:"/>
+                                            <TextBlock Opacity="0.6" Margin="0,4,0,0">
+                                                <Run Text="Hatarido:"/>
                                                 <Run Text="{Binding LejaratDatum, StringFormat=yyyy-MM-dd, Mode=OneWay}"/>
                                             </TextBlock>
                                         </StackPanel>
@@ -103,14 +103,14 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <Separator Margin="0,12"/>
+                        <Separator Margin="0,16"/>
 
                         <!-- Cart Contents -->
-                        <TextBlock Text="Cart Contents" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <TextBlock Text="Kosar tartalma" FontWeight="Bold" Margin="0,0,0,10"/>
                         <ItemsControl ItemsSource="{Binding UserCartItems}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="10" Margin="0,0,0,6">
                                         <DockPanel>
                                             <TextBlock Text="{Binding BookCim}" FontWeight="SemiBold"/>
                                             <TextBlock Text="{Binding Price, StringFormat='{}{0:N0} Ft'}"
@@ -121,14 +121,14 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <Separator Margin="0,12"/>
+                        <Separator Margin="0,16"/>
 
                         <!-- Payment History -->
-                        <TextBlock Text="Payment History" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <TextBlock Text="Fizetesi elozmenyek" FontWeight="Bold" Margin="0,0,0,10"/>
                         <ItemsControl ItemsSource="{Binding UserPayments}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="10" Margin="0,0,0,6">
                                         <DockPanel>
                                             <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} Ft'}" FontWeight="SemiBold"/>
                                              <TextBlock Text="{Binding PaymentDate, StringFormat=yyyy-MM-dd}"
@@ -139,10 +139,10 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <Separator Margin="0,12"/>
+                        <Separator Margin="0,16"/>
 
                         <!-- Actions -->
-                        <Button Content="Delete User" Command="{Binding DeleteUserCommand}"
+                        <Button Content="Felhasznalo torlese" Command="{Binding DeleteUserCommand}"
                                 Style="{StaticResource MaterialDesignFlatButton}"
                                 Foreground="#F44336" HorizontalAlignment="Stretch"/>
                     </StackPanel>

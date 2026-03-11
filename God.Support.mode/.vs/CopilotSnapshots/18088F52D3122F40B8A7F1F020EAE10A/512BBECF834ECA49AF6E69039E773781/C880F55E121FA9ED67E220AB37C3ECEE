@@ -1,0 +1,237 @@
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using God.Support.mode.Models;
+using God.Support.mode.Services;
+
+namespace God.Support.mode.ViewModels;
+
+public partial class BooksViewModel : ObservableObject
+{
+    private readonly IApiService _apiService;
+    private readonly INotificationService _notification;
+    private List<BookDto> _allBooks = [];
+
+    [ObservableProperty] private ObservableCollection<BookDto> books = [];
+    [ObservableProperty] private ObservableCollection<AuthorDto> authors = [];
+    [ObservableProperty] private ObservableCollection<string> categories = [];
+    [ObservableProperty] private string searchText = string.Empty;
+    [ObservableProperty] private string? selectedCategory;
+    [ObservableProperty] private BookDto? selectedBook;
+    [ObservableProperty] private bool isDetailOpen;
+    [ObservableProperty] private bool isLoading;
+    [ObservableProperty] private ObservableCollection<CopyDto> bookCopies = [];
+
+    // Add Book dialog fields
+    [ObservableProperty] private bool isAddDialogOpen;
+    [ObservableProperty] private string newBookCim = string.Empty;
+    [ObservableProperty] private int newBookAuthorId;
+    [ObservableProperty] private string newBookKategoria = string.Empty;
+    [ObservableProperty] private decimal newBookAr;
+    [ObservableProperty] private string newBookBoritokep = string.Empty;
+    [ObservableProperty] private string newBookTartalom = string.Empty;
+
+    public BooksViewModel(IApiService apiService, INotificationService notification)
+    {
+        _apiService = apiService;
+        _notification = notification;
+        _ = LoadDataAsync();
+    }
+
+    partial void OnSearchTextChanged(string value) => FilterBooks();
+    partial void OnSelectedCategoryChanged(string? value) => FilterBooks();
+
+    partial void OnSelectedBookChanged(BookDto? value)
+    {
+        if (value != null)
+        {
+            IsDetailOpen = true;
+            _ = LoadBookCopiesAsync(value.Id);
+        }
+        else
+        {
+            IsDetailOpen = false;
+        }
+    }
+
+    [RelayCommand]
+    private void CloseDetail()
+    {
+        SelectedBook = null;
+        IsDetailOpen = false;
+    }
+
+    [RelayCommand]
+    private async Task LoadDataAsync()
+    {
+        IsLoading = true;
+        try
+        {
+            var booksTask = _apiService.GetBooksAsync();
+            var authorsTask = _apiService.GetAuthorsAsync();
+            await Task.WhenAll(booksTask, authorsTask);
+
+            _allBooks = booksTask.Result;
+            Authors = new ObservableCollection<AuthorDto>(authorsTask.Result);
+
+            var cats = _allBooks.Select(b => b.Kategoria ?? "Unknown").Distinct().OrderBy(c => c).ToList();
+            cats.Insert(0, "All");
+            Categories = new ObservableCollection<string>(cats);
+            SelectedCategory = "All";
+
+            FilterBooks();
+            _notification.Show("Books loaded");
+        }
+        catch (Exception ex)
+        {
+            _notification.ShowError($"Failed to load books: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private void FilterBooks()
+    {
+        var filtered = _allBooks.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            filtered = filtered.Where(b =>
+                (b.Cim?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (b.AuthorNev?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+
+        if (!string.IsNullOrWhiteSpace(SelectedCategory) && SelectedCategory != "All")
+        {
+            filtered = filtered.Where(b =>
+                string.Equals(b.Kategoria, SelectedCategory, StringComparison.OrdinalIgnoreCase));
+        }
+
+        Books = new ObservableCollection<BookDto>(filtered);
+    }
+
+    private async Task LoadBookCopiesAsync(int bookId)
+    {
+        try
+        {
+            var copies = await _apiService.GetCopiesByBookAsync(bookId);
+            BookCopies = new ObservableCollection<CopyDto>(copies);
+        }
+        catch (Exception ex)
+        {
+            _notification.ShowError($"Failed to load copies: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task SaveBookAsync()
+    {
+        if (SelectedBook == null) return;
+        try
+        {
+            await _apiService.UpdateBookAsync(SelectedBook.Id, SelectedBook);
+            _notification.Show("Book saved");
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            _notification.ShowError($"Failed to save book: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeleteBookAsync()
+    {
+        if (SelectedBook == null) return;
+        try
+        {
+            await _apiService.DeleteBookAsync(SelectedBook.Id);
+            _notification.Show("Book deleted");
+            CloseDetail();
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            _notification.ShowError($"Failed to delete book: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddCopyAsync()
+    {
+        if (SelectedBook == null) return;
+        try
+        {
+            var leltariSzam = $"COPY-{SelectedBook.Id}-{DateTime.Now:yyyyMMddHHmmss}";
+            await _apiService.CreateCopyAsync(new CopyDto { BookId = SelectedBook.Id, LeltariSzam = leltariSzam, Elerheto = true });
+            _notification.Show("Copy added");
+            await LoadBookCopiesAsync(SelectedBook.Id);
+        }
+        catch (Exception ex)
+        {
+            _notification.ShowError($"Failed to add copy: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeleteCopyAsync(CopyDto copy)
+    {
+        try
+        {
+            await _apiService.DeleteCopyAsync(copy.Id);
+            _notification.Show("Copy deleted");
+            if (SelectedBook != null)
+                await LoadBookCopiesAsync(SelectedBook.Id);
+        }
+        catch (Exception ex)
+        {
+            _notification.ShowError($"Failed to delete copy: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private void OpenAddDialog()
+    {
+        NewBookCim = string.Empty;
+        NewBookAuthorId = 0;
+        NewBookKategoria = string.Empty;
+        NewBookAr = 0;
+        NewBookBoritokep = string.Empty;
+        NewBookTartalom = string.Empty;
+        IsAddDialogOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseAddDialog()
+    {
+        IsAddDialogOpen = false;
+    }
+
+    [RelayCommand]
+    private async Task ConfirmAddBookAsync()
+    {
+        try
+        {
+            var newBook = new CreateBookDto
+            {
+                Cim = NewBookCim,
+                AuthorId = NewBookAuthorId,
+                Kategoria = NewBookKategoria,
+                Ar = NewBookAr,
+                Boritokep = NewBookBoritokep,
+                Tartalom = NewBookTartalom,
+                KiadasiDatum = DateTime.Now
+            };
+            await _apiService.CreateBookAsync(newBook);
+            _notification.Show("Book created");
+            IsAddDialogOpen = false;
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            _notification.ShowError($"Failed to create book: {ex.Message}");
+        }
+    }
+}

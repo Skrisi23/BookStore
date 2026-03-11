@@ -9,36 +9,36 @@
 
     <DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
-            <TextBlock Text="Settings" Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
+            <TextBlock Text="Beallitasok" Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
         </DockPanel>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24,16">
             <StackPanel MaxWidth="500" HorizontalAlignment="Left">
                 <!-- API Base URL -->
                 <TextBox Text="{Binding ApiBaseUrl, UpdateSourceTrigger=PropertyChanged}"
-                         materialDesign:HintAssist.Hint="API Base URL"
+                         materialDesign:HintAssist.Hint="API cim"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Margin="0,0,0,16"/>
+                         Margin="0,0,0,20"/>
 
                 <!-- Admin User ID -->
                 <TextBox Text="{Binding AdminUserId, UpdateSourceTrigger=PropertyChanged}"
-                         materialDesign:HintAssist.Hint="Admin User ID"
+                         materialDesign:HintAssist.Hint="Admin felhasznalo ID"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Margin="0,0,0,16"/>
+                         Margin="0,0,0,20"/>
 
                 <!-- Theme -->
-                <TextBlock Text="Theme" FontWeight="Bold" Margin="0,0,0,8"/>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                    <RadioButton Content="Dark" IsChecked="{Binding IsDarkTheme}" Margin="0,0,24,0"
+                <TextBlock Text="Tema" FontWeight="Bold" Margin="0,0,0,10"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                    <RadioButton Content="Sotet" IsChecked="{Binding IsDarkTheme}" Margin="0,0,24,0"
                                  Style="{StaticResource MaterialDesignRadioButton}"/>
-                    <RadioButton Content="Light" 
+                    <RadioButton Content="Vilagos" 
                                  Style="{StaticResource MaterialDesignRadioButton}"/>
                 </StackPanel>
 
                 <!-- Test Connection -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <Button Content="Test Connection" Command="{Binding TestConnectionCommand}"
-                            Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,12,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                    <Button Content="Kapcsolat tesztelese" Command="{Binding TestConnectionCommand}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,16,0"/>
                     <Border CornerRadius="10" Padding="10,4" VerticalAlignment="Center"
                             Visibility="{Binding HasTestedConnection, Converter={StaticResource BoolToVis}}">
                         <Border.Style>
@@ -54,10 +54,10 @@
                         <TextBlock Foreground="White" FontSize="12" FontWeight="SemiBold">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="Failed"/>
+                                    <Setter Property="Text" Value="Sikertelen"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsConnectionOk}" Value="True">
-                                            <Setter Property="Text" Value="Connected"/>
+                                            <Setter Property="Text" Value="Kapcsolodva"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -69,13 +69,13 @@
                 <Separator Margin="0,16"/>
 
                 <!-- Save -->
-                <Button Content="Save Settings" Command="{Binding SaveSettingsCommand}"
+                <Button Content="Beallitasok mentese" Command="{Binding SaveSettingsCommand}"
                         Style="{StaticResource MaterialDesignRaisedButton}"
                         HorizontalAlignment="Left" Margin="0,16,0,0"/>
 
                 <!-- Version -->
                 <TextBlock Opacity="0.5" Margin="0,24,0,0" FontSize="12">
-                    <Run Text="App Version:"/>
+                    <Run Text="Alkalmazas verzio: "/>
                     <Run Text="{Binding AppVersion, Mode=OneWay}"/>
                 </TextBlock>
             </StackPanel>

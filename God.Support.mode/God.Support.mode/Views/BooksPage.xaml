@@ -9,25 +9,25 @@
 
     <materialDesign:DialogHost IsOpen="{Binding IsAddDialogOpen}" CloseOnClickAway="False">
         <materialDesign:DialogHost.DialogContent>
-            <StackPanel Width="400" Margin="24">
-                <TextBlock Text="Add New Book" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,16"/>
-                <TextBox Text="{Binding NewBookCim}" materialDesign:HintAssist.Hint="Title (cim)"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
-                <TextBox Text="{Binding NewBookAuthorId}" materialDesign:HintAssist.Hint="Author ID"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
-                <TextBox Text="{Binding NewBookKategoria}" materialDesign:HintAssist.Hint="Category"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
-                <TextBox Text="{Binding NewBookAr}" materialDesign:HintAssist.Hint="Price (ar)"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
-                <TextBox Text="{Binding NewBookBoritokep}" materialDesign:HintAssist.Hint="Cover URL"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
-                <TextBox Text="{Binding NewBookTartalom}" materialDesign:HintAssist.Hint="Content / Description"
+            <StackPanel Width="420" Margin="24">
+                <TextBlock Text="Uj konyv" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,16"/>
+                <TextBox Text="{Binding NewBookCim}" materialDesign:HintAssist.Hint="Cim"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
+                <TextBox Text="{Binding NewBookAuthorId}" materialDesign:HintAssist.Hint="Szerzo azonosito"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
+                <TextBox Text="{Binding NewBookKategoria}" materialDesign:HintAssist.Hint="Kategoria"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
+                <TextBox Text="{Binding NewBookAr}" materialDesign:HintAssist.Hint="Ar"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
+                <TextBox Text="{Binding NewBookBoritokep}" materialDesign:HintAssist.Hint="Boritokep URL"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
+                <TextBox Text="{Binding NewBookTartalom}" materialDesign:HintAssist.Hint="Tartalom / Leiras"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,16"
                          AcceptsReturn="True" Height="80" TextWrapping="Wrap"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Cancel" Command="{Binding CloseAddDialogCommand}"
-                            Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,8,0"/>
-                    <Button Content="Create" Command="{Binding ConfirmAddBookCommand}"
+                    <Button Content="Megse" Command="{Binding CloseAddDialogCommand}"
+                            Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,12,0"/>
+                    <Button Content="Letrehozas" Command="{Binding ConfirmAddBookCommand}"
                             Style="{StaticResource MaterialDesignRaisedButton}"/>
                 </StackPanel>
             </StackPanel>
@@ -42,30 +42,30 @@
             <DockPanel Grid.Column="0">
                 <!-- Header -->
                 <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
-                    <TextBlock Text="Books" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                    <TextBlock Text="Konyvek" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                                VerticalAlignment="Center"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Add New Book" Command="{Binding OpenAddDialogCommand}"
-                                Style="{StaticResource MaterialDesignRaisedButton}" Margin="0,0,8,0"/>
+                        <Button Content="Uj konyv" Command="{Binding OpenAddDialogCommand}"
+                                Style="{StaticResource MaterialDesignRaisedButton}" Margin="0,0,12,0"/>
                         <Button Content="{materialDesign:PackIcon Kind=Refresh}"
                                 Command="{Binding LoadDataCommand}"
-                                Style="{StaticResource MaterialDesignIconButton}" ToolTip="Refresh"/>
+                                Style="{StaticResource MaterialDesignIconButton}" ToolTip="Frissites"/>
                     </StackPanel>
                 </DockPanel>
 
                 <!-- Filter Bar -->
-                <materialDesign:Card DockPanel.Dock="Top" Margin="24,12,24,0" Padding="8">
+                <materialDesign:Card DockPanel.Dock="Top" Margin="24,12,24,0" Padding="12">
                     <StackPanel Orientation="Horizontal">
                         <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                 materialDesign:HintAssist.Hint="Search by title/author..."
+                                 materialDesign:HintAssist.Hint="Kereses cim vagy szerzo szerint..."
                                  materialDesign:TextFieldAssist.HasClearButton="True"
                                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                  Width="300" Margin="4"/>
                         <ComboBox ItemsSource="{Binding Categories}"
                                   SelectedItem="{Binding SelectedCategory}"
-                                  materialDesign:HintAssist.Hint="Category"
+                                  materialDesign:HintAssist.Hint="Kategoria"
                                   Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                                  Width="200" Margin="8,4,4,4"/>
+                                  Width="200" Margin="12,4,4,4"/>
                     </StackPanel>
                 </materialDesign:Card>
 
@@ -78,13 +78,13 @@
                           AlternatingRowBackground="#1E1E1E"
                           materialDesign:DataGridAssist.CellPadding="12 8">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                        <DataGridTextColumn Header="Title" Binding="{Binding Cim}" Width="*"/>
-                        <DataGridTextColumn Header="Author" Binding="{Binding AuthorNev}" Width="*"/>
-                        <DataGridTextColumn Header="Category" Binding="{Binding Kategoria}" Width="120"/>
-                        <DataGridTextColumn Header="Price" Binding="{Binding Ar, StringFormat=N0}" Width="90"/>
-                        <DataGridTextColumn Header="Available" Binding="{Binding Elerheto}" Width="80"/>
-                        <DataGridTextColumn Header="Cover URL" Binding="{Binding Boritokep}" Width="140"/>
+                        <DataGridTextColumn Header="Azon." Binding="{Binding Id}" Width="60"/>
+                        <DataGridTextColumn Header="Cim" Binding="{Binding Cim}" Width="*"/>
+                        <DataGridTextColumn Header="Szerzo" Binding="{Binding AuthorNev}" Width="*"/>
+                        <DataGridTextColumn Header="Kategoria" Binding="{Binding Kategoria}" Width="120"/>
+                        <DataGridTextColumn Header="Ar" Binding="{Binding Ar, StringFormat=N0}" Width="90"/>
+                        <DataGridTextColumn Header="Elerheto" Binding="{Binding Elerheto}" Width="80"/>
+                        <DataGridTextColumn Header="Boritokep URL" Binding="{Binding Boritokep}" Width="140"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </DockPanel>
@@ -95,7 +95,7 @@
                     BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1,0,0,0">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="16,12">
-                        <TextBlock Text="Book Details" Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                        <TextBlock Text="Konyv reszletei" Style="{StaticResource MaterialDesignHeadline6TextBlock}"
                                    VerticalAlignment="Center"/>
                         <Button Content="{materialDesign:PackIcon Kind=Close}"
                                 Command="{Binding CloseDetailCommand}"
@@ -106,49 +106,49 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16,0,16,16">
                         <StackPanel>
                             <TextBox Text="{Binding SelectedBook.Cim, UpdateSourceTrigger=PropertyChanged}"
-                                     materialDesign:HintAssist.Hint="Title"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
+                                     materialDesign:HintAssist.Hint="Cim"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
                             <TextBox Text="{Binding SelectedBook.AuthorId, UpdateSourceTrigger=PropertyChanged}"
-                                     materialDesign:HintAssist.Hint="Author ID"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
+                                     materialDesign:HintAssist.Hint="Szerzo azonosito"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
                             <TextBox Text="{Binding SelectedBook.Kategoria, UpdateSourceTrigger=PropertyChanged}"
-                                     materialDesign:HintAssist.Hint="Category"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
+                                     materialDesign:HintAssist.Hint="Kategoria"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
                             <TextBox Text="{Binding SelectedBook.Ar, UpdateSourceTrigger=PropertyChanged}"
-                                     materialDesign:HintAssist.Hint="Price"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
+                                     materialDesign:HintAssist.Hint="Ar"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
                             <TextBox Text="{Binding SelectedBook.Boritokep, UpdateSourceTrigger=PropertyChanged}"
-                                     materialDesign:HintAssist.Hint="Cover URL"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,8"/>
+                                     materialDesign:HintAssist.Hint="Boritokep URL"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
                             <TextBox Text="{Binding SelectedBook.Tartalom, UpdateSourceTrigger=PropertyChanged}"
-                                     materialDesign:HintAssist.Hint="Content"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"
+                                     materialDesign:HintAssist.Hint="Tartalom / Leiras"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,16"
                                      AcceptsReturn="True" Height="80" TextWrapping="Wrap"/>
 
-                            <Button Content="Save Changes" Command="{Binding SaveBookCommand}"
+                            <Button Content="Modositasok mentese" Command="{Binding SaveBookCommand}"
                                     Style="{StaticResource MaterialDesignRaisedButton}"
-                                    HorizontalAlignment="Stretch" Margin="0,0,0,12"/>
+                                    HorizontalAlignment="Stretch" Margin="0,0,0,16"/>
 
-                            <Separator Margin="0,0,0,12"/>
+                            <Separator Margin="0,0,0,16"/>
 
                             <!-- Copies -->
-                            <DockPanel Margin="0,0,0,8">
-                                <TextBlock Text="Copies" FontWeight="Bold" VerticalAlignment="Center"/>
-                                <Button Content="Add Copy" Command="{Binding AddCopyCommand}"
+                            <DockPanel Margin="0,0,0,12">
+                                <TextBlock Text="Peldanyok" FontWeight="Bold" VerticalAlignment="Center"/>
+                                <Button Content="Peldany hozzaadasa" Command="{Binding AddCopyCommand}"
                                         Style="{StaticResource MaterialDesignOutlinedButton}"
                                         HorizontalAlignment="Right" Padding="8,4"/>
                             </DockPanel>
                             <ItemsControl ItemsSource="{Binding BookCopies}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,0,0,4">
+                                        <Border Background="#2A2A2A" CornerRadius="4" Padding="10" Margin="0,0,0,6">
                                             <DockPanel>
                                                 <StackPanel>
                                                     <TextBlock>
-                                                        <Run Text="Copy #"/><Run Text="{Binding Id, Mode=OneWay}"/>
+                                                        <Run Text="Peldany #"/><Run Text="{Binding Id, Mode=OneWay}"/>
                                                     </TextBlock>
-                                                    <TextBlock Opacity="0.6">
-                                                         <Run Text="Available:"/>
+                                                    <TextBlock Opacity="0.6" Margin="0,4,0,0">
+                                                         <Run Text="Elerheto:"/>
                                                          <Run Text="{Binding Elerheto, Mode=OneWay}"/>
                                                      </TextBlock>
                                                 </StackPanel>
@@ -164,9 +164,9 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <Separator Margin="0,12"/>
+                            <Separator Margin="0,16"/>
 
-                            <Button Content="Delete Book" Command="{Binding DeleteBookCommand}"
+                            <Button Content="Konyv torlese" Command="{Binding DeleteBookCommand}"
                                     Style="{StaticResource MaterialDesignFlatButton}"
                                     Foreground="#F44336" HorizontalAlignment="Stretch"/>
                         </StackPanel>
