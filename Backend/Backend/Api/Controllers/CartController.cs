@@ -105,6 +105,15 @@ namespace Backend.Api.Controllers
                 quantity = 1;
             }
 
+            // Aktív kosár keresése vagy létrehozása (előre kell, hogy a copy választásnál szűrhessünk)
+            var cart = await _context.carts
+                .Include(c => c.cart_items)
+                    .ThenInclude(ci => ci.copy)
+                .FirstOrDefaultAsync(c => c.user_id == userId && c.status == "active");
+
+            // Kosárban lévő copy_id-k listája (a unique constraint miatt fontos)
+            var copyIdsInCart = cart?.cart_items.Select(ci => ci.copy_id).ToList() ?? new List<int>();
+
             copy? copy = null;
 
             // 1a. Ha copy_id meg van adva, azt használjuk
@@ -118,18 +127,58 @@ namespace Backend.Api.Controllers
                 {
                     return NotFound(new { message = $"Nem található könyvpéldány ezzel az ID-vel: {addToCartDto.copy_id}" });
                 }
+
+                // Ellenőrizzük, hogy ez a copy már benne van-e a kosárban (bármilyen típussal)
+                if (copyIdsInCart.Contains(copy.id))
+                {
+                    var existingType = cart!.cart_items.First(ci => ci.copy_id == copy.id).order_type;
+                    if (existingType == orderType)
+                    {
+                        var typeLabel = orderType == "rental" ? "kölcsönzésre" : "megvásárolásra";
+                        return BadRequest(new { message = $"Ez a könyv már a kosárban van {typeLabel}" });
+                    }
+                    else
+                    {
+                        var existingLabel = existingType == "rental" ? "kölcsönzésre" : "megvásárolásra";
+                        var requestedLabel = orderType == "rental" ? "kölcsönözni" : "megvásárolni";
+                        return BadRequest(new { message = $"Ez a könyv már a kosárban van {existingLabel}. Nem lehet ugyanazt a példányt {requestedLabel} is." });
+                    }
+                }
             }
-            // 1b. Ha book_id van megadva, automatikusan választunk egy példányt (bármilyen állapotban)
+            // 1b. Ha book_id van megadva, automatikusan választunk egy elérhető példányt
             else if (addToCartDto.book_id.HasValue)
             {
+                // Elérhető példányt keresünk, ami nincs még a kosárban
                 copy = await _context.copies
                     .Include(c => c.book)
-                    .Where(c => c.book_id == addToCartDto.book_id.Value)
+                    .Where(c => c.book_id == addToCartDto.book_id.Value
+                                && c.elerheto == true
+                                && !copyIdsInCart.Contains(c.id))
                     .FirstOrDefaultAsync();
 
                 if (copy == null)
                 {
-                    return NotFound(new { message = $"Nincs példány ehhez a könyvhöz (book_id: {addToCartDto.book_id})" });
+                    // Ellenőrizzük miért nem találtunk: nincs példány, vagy mind foglalt, vagy mind kosárban van?
+                    var anyExists = await _context.copies
+                        .AnyAsync(c => c.book_id == addToCartDto.book_id.Value);
+
+                    if (!anyExists)
+                    {
+                        return NotFound(new { message = $"Nincs példány ehhez a könyvhöz (book_id: {addToCartDto.book_id})" });
+                    }
+
+                    // Van-e olyan példány ami a kosárban van már (bármilyen típussal)?
+                    var alreadyInCartForThisBook = cart?.cart_items
+                        .Any(ci => ci.copy != null && ci.copy.book_id == addToCartDto.book_id.Value) ?? false;
+
+                    if (alreadyInCartForThisBook)
+                    {
+                        var cartItemForBook = cart!.cart_items.First(ci => ci.copy != null && ci.copy.book_id == addToCartDto.book_id.Value);
+                        var existingLabel = cartItemForBook.order_type == "rental" ? "kölcsönzésre" : "megvásárolásra";
+                        return BadRequest(new { message = $"Ez a könyv már a kosárban van {existingLabel}." });
+                    }
+
+                    return BadRequest(new { message = "Jelenleg nincs elérhető példány ebből a könyvből." });
                 }
             }
 
@@ -137,11 +186,7 @@ namespace Backend.Api.Controllers
             if (copy == null)
             {
                 return NotFound(new { message = "Könyvpéldány nem található" });
-            }            // 3. Aktív kosár keresése vagy létrehozása
-            var cart = await _context.carts
-                .Include(c => c.cart_items)
-                    .ThenInclude(ci => ci.copy)
-                .FirstOrDefaultAsync(c => c.user_id == userId && c.status == "active");
+            }
 
             if (cart == null)
             {
@@ -384,13 +429,22 @@ namespace Backend.Api.Controllers
                             message = $"Nincs elég készlet a(z) \"{purchaseItem.copy.book.cim}\" könyvből. Elérhető: {availableCount} db, kért: {purchaseItem.quantity} db"
                         });
                     }
-                }                // 3. Összeg számítása - kölcsönzéseknél az ár az időtartamtól függ
+                }                // 3. Összeg számítása - kölcsönzéseknél az ár az időtartamtól függ (tételenként)
                 // Alap 14 nap = könyv ár * 5%, minden további 7 nap = +3%
                 foreach (var rentalItem in rentalItems)
                 {
+                    // Tételenkénti napok lekérdezése, vagy fallback az alapértelmezettre
+                    var itemDays = checkoutDto.rental_days; // alapértelmezett
+                    if (checkoutDto.rental_days_per_item != null
+                        && checkoutDto.rental_days_per_item.TryGetValue(rentalItem.id.ToString(), out var perItemDays))
+                    {
+                        // Validáció: 14-90 nap között
+                        itemDays = Math.Clamp(perItemDays, 14, 90);
+                    }
+
                     var bookPrice = rentalItem.copy.book.ar;
                     var baseRate = 0.05m; // 14 nap = 5%
-                    var extraWeeks = Math.Max(0, (checkoutDto.rental_days - 14) / 7);
+                    var extraWeeks = Math.Max(0, (itemDays - 14) / 7);
                     var extraRate = extraWeeks * 0.03m; // +3% per extra hét
                     var rentalPrice = Math.Round(bookPrice * (baseRate + extraRate), 0);
                     rentalItem.price = rentalPrice;
@@ -418,10 +472,19 @@ namespace Backend.Api.Controllers
                 // 5. Kölcsönzések létrehozása (csak rental típusú itemekhez)
                 var rentals = new List<rental>();
                 var kolcsonzesDatum = DateOnly.FromDateTime(DateTime.Now);
-                var lejaratDatum = DateOnly.FromDateTime(DateTime.Now.AddDays(checkoutDto.rental_days));
                 
                 foreach (var cartItem in rentalItems)
                 {
+                    // Tételenkénti napok
+                    var itemDays = checkoutDto.rental_days;
+                    if (checkoutDto.rental_days_per_item != null
+                        && checkoutDto.rental_days_per_item.TryGetValue(cartItem.id.ToString(), out var perItemDays))
+                    {
+                        itemDays = Math.Clamp(perItemDays, 14, 90);
+                    }
+
+                    var lejaratDatum = DateOnly.FromDateTime(DateTime.Now.AddDays(itemDays));
+
                     var rental = new rental
                     {
                         user_id = checkoutDto.user_id,
@@ -485,7 +548,7 @@ namespace Backend.Api.Controllers
                     .ToListAsync();                var rentalCount = rentalsList.Count;
                 var purchaseCount = purchaseItems.Sum(ci => ci.quantity);
                 var messageParts = new List<string>();
-                if (rentalCount > 0) messageParts.Add($"{rentalCount} könyv kölcsönözve {checkoutDto.rental_days} napra");
+                if (rentalCount > 0) messageParts.Add($"{rentalCount} könyv kölcsönözve");
                 if (purchaseCount > 0) messageParts.Add($"{purchaseCount} könyv megvásárolva");
 
                 var response = new CheckoutResponseDto
