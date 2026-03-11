@@ -95,13 +95,27 @@ function BookDetails({ bookId, onClose, book: initialBook }) {
     }
     if (!book) return;
 
+    // Ellenőrizzük, van-e elérhető példány
+    if (!isAvailable) {
+      warning('Jelenleg nincs elérhető példány ebből a könyvből.');
+      return;
+    }
+
     const orderType = type === 'purchase' ? 'purchase' : 'rental';
     const result = await addToCart(book.id, orderType, 1);
     if (result.success) {
       const label = orderType === 'purchase' ? 'megvásárolásra' : 'kölcsönzésre';
       success(`${book.title} hozzáadva a kosárhoz (${label})`);
     } else {
-      warning(result.message || 'Hiba történt a kosárba helyezésnél');
+      // Specifikusabb hibaüzenet a készlet elfogyásáról
+      const msg = result.message || '';
+      if (msg.toLowerCase().includes('nincs') || msg.toLowerCase().includes('nem található') || msg.toLowerCase().includes('nem elérhető') || msg.toLowerCase().includes('készlet')) {
+        warning(`Nincs elérhető példány a "${book.title}" könyvből.`);
+      } else if (msg.toLowerCase().includes('már a kosárban')) {
+        warning(msg);
+      } else {
+        warning(msg || 'Nem sikerült a kosárba helyezni a könyvet.');
+      }
     }
   };
 
@@ -194,7 +208,7 @@ function BookDetails({ bookId, onClose, book: initialBook }) {
 
               <div className="meta-item">
                 <span className="meta-label">Kölcsönzési díj:</span>
-                <span className="meta-value">{Number(rentalPrice).toLocaleString()} Ft/hó</span>
+                <span className="meta-value">{Number(rentalPrice).toLocaleString()} Ft/14 nap</span>
               </div>
 
               <div className="meta-item">

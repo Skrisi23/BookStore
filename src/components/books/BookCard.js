@@ -213,24 +213,43 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
           />
         </div>
         <div className="card-body d-flex flex-column">
-          <h6 className="card-title" onClick={() => setShowDetails(true)} style={{ cursor: 'pointer', fontWeight: 600 }}>
+          {/* Cím - fix magasság, max 2 sor */}
+          <h6 
+            className="card-title" 
+            onClick={() => setShowDetails(true)} 
+            style={{ 
+              cursor: 'pointer', 
+              fontWeight: 600, 
+              minHeight: '2.6em', 
+              overflow: 'hidden', 
+              display: '-webkit-box', 
+              WebkitLineClamp: 2, 
+              WebkitBoxOrient: 'vertical' 
+            }}
+          >
             {book.title}
           </h6>
-          <p className="card-text small mb-1" style={{ color: '#888' }}>
+          {/* Szerző */}
+          <p className="card-text small mb-1" style={{ color: '#888', minHeight: '1.3em', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
             {book.author}
           </p>
-          <p className="card-text small mb-2" style={{ color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '0.7rem' }}>
+          {/* Kategória */}
+          <p className="card-text small mb-2" style={{ color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '0.7rem', minHeight: '1.2em', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
             {book.category}
           </p>
-          <p className="card-text">
+          {/* Ár */}
+          <p className="card-text mb-2">
             <strong style={{ color: '#1a1a1a', fontSize: '1.05rem' }}>{Number(book.price).toLocaleString()} Ft</strong>
             <br />
-            <small style={{ color: '#999' }}>Kölcsönzés: {Number(book.rentalPrice).toLocaleString()} Ft/hó</small>
+            <small style={{ color: '#999' }}>Kölcsönzés: {Number(book.rentalPrice).toLocaleString()} Ft/14 nap</small>
           </p>
 
-          {!book.available && (
-            <span className="badge bg-danger mb-2">Jelenleg nem elérhető</span>
-          )}
+          {/* Elérhetőség badge - fix helyet foglal, akkor is ha elérhető */}
+          <div style={{ minHeight: '1.8em', marginBottom: '0.5rem' }}>
+            {!book.available && (
+              <span className="badge bg-danger">Jelenleg nem elérhető</span>
+            )}
+          </div>
 
           <div className="mt-auto">
             <button

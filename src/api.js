@@ -639,20 +639,32 @@ export async function clearCart(userId, signal) {
 
 /**
  * Checkout - Fizetés és kölcsönzés létrehozása
+ * @param {number} userId
+ * @param {string} paymentMethod
+ * @param {number} rentalDays - Alapértelmezett kölcsönzési napok
+ * @param {Object} rentalDaysPerItem - Tételenkénti napok: { cart_item_id: days }
+ * @param {AbortSignal} signal
  */
-export async function checkout(userId, paymentMethod, rentalDays = 14, signal) {
+export async function checkout(userId, paymentMethod, rentalDays = 14, rentalDaysPerItem = null, signal) {
   try {
+    const body = {
+      user_id: userId,
+      payment_method: paymentMethod,
+      rental_days: rentalDays
+    };
+
+    // Ha van tételenkénti beállítás, hozzáadjuk
+    if (rentalDaysPerItem && Object.keys(rentalDaysPerItem).length > 0) {
+      body.rental_days_per_item = rentalDaysPerItem;
+    }
+
     const response = await fetch(ENDPOINTS.cartCheckout, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({
-        user_id: userId,
-        payment_method: paymentMethod,
-        rental_days: rentalDays
-      }),
+      body: JSON.stringify(body),
       signal
     });
 
