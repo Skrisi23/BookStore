@@ -15,6 +15,10 @@ import CartPage from './pages/CartPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
 import EmailVerification from './components/auth/EmailVerification';
+import AszfPage from './pages/AszfPage';
+import AdatvedelemPage from './pages/AdatvedelemPage';
+import SutikPage from './pages/SutikPage';
+import CookieBanner from './components/common/CookieBanner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -38,10 +42,14 @@ function App() {
                   <Route path="/admin" element={<AdminPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/verify" element={<EmailVerification />} />
+                  <Route path="/aszf" element={<AszfPage />} />
+                  <Route path="/adatvedelem" element={<AdatvedelemPage />} />
+                  <Route path="/sutik" element={<SutikPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </main>
               <Footer />
+              <CookieBanner />
               <ToastContainer />
             </div>
           </Router>

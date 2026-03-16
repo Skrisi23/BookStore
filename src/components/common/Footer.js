@@ -43,10 +43,21 @@ function Footer() {
           </div>
         </div>
         <hr className="bg-light" />
-        <div className="text-center text-light">
-          <p className="mb-0">
+        <div className="d-flex flex-column flex-md-row align-items-center justify-content-between text-light gap-2">
+          <p className="mb-0 text-muted" style={{ fontSize: '0.85rem' }}>
             &copy; 2026 Alkotások Tára. Minden jog fenntartva.
           </p>
+          <ul className="list-unstyled d-flex gap-3 mb-0" style={{ fontSize: '0.85rem' }}>
+            <li>
+              <Link to="/aszf" className="text-decoration-none" style={{ color: '#aaa' }}>ÁSZF</Link>
+            </li>
+            <li>
+              <Link to="/adatvedelem" className="text-decoration-none" style={{ color: '#aaa' }}>Adatvédelem</Link>
+            </li>
+            <li>
+              <Link to="/sutik" className="text-decoration-none" style={{ color: '#aaa' }}>Sütik</Link>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>
