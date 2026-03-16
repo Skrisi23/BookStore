@@ -45,7 +45,7 @@ function Footer() {
         <hr className="bg-light" />
         <div className="text-center text-light">
           <p className="mb-0">
-            &copy; 2025 Alkotások Tára. Minden jog fenntartva.
+            &copy; 2026 Alkotások Tára. Minden jog fenntartva.
           </p>
         </div>
       </div>
