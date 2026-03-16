@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -28,10 +28,29 @@ function mapApiBookToUi(apiBook = {}, authorName = null) {
 }
 
 
-function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
+function BookCard({ book: initialBook, bookId, apiBaseUrl, animationDelay = 0 }) {
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
   const { warning, success } = useToast();
+
+  const cardRef = useRef(null);
+  const [cardVisible, setCardVisible] = useState(false);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCardVisible(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.08 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const [book, setBook] = useState(() => {
     
@@ -183,8 +202,12 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
   }
 
   return (
-    <div className="col-md-3 mb-4">
-      <div className="card h-100" style={{ cursor: 'pointer', border: '1px solid #e8e8e8', transition: 'box-shadow 0.25s ease' }}>
+    <div
+      ref={cardRef}
+      className={`col-md-3 mb-4 book-card-wrapper${cardVisible ? ' card-visible' : ''}`}
+      style={{ transitionDelay: `${animationDelay}s` }}
+    >
+      <div className="card h-100" style={{ cursor: 'pointer', border: '1px solid #e8e8e8' }}>
         <div 
           style={{ 
             height: '300px', 
@@ -208,8 +231,8 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
               padding: '10px',
               transition: 'transform 0.3s ease'
             }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.06)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           />
         </div>
         <div className="card-body d-flex flex-column">
@@ -275,10 +298,10 @@ function BookCard({ book: initialBook, bookId, apiBaseUrl }) {
       </div>
 
       {showDetails && (
-        <BookDetails 
-          bookId={book.id} 
+        <BookDetails
+          bookId={book.id}
           book={book}
-          onClose={() => setShowDetails(false)} 
+          onClose={() => setShowDetails(false)}
         />
       )}
     </div>

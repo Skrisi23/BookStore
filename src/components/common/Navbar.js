@@ -8,6 +8,13 @@ function Navbar() {
   const { getItemCount } = useCart();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Bezárja a dropdown-ot ha máshova kattintunk
   useEffect(() => {
@@ -31,7 +38,18 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#fff', borderBottom: '1px solid #e8e8e8', padding: '1rem 0' }}>
+    <nav
+      className={`navbar navbar-expand-lg${scrolled ? ' navbar-scrolled' : ''}`}
+      style={{
+        backgroundColor: '#fff',
+        borderBottom: '1px solid #e8e8e8',
+        padding: '1rem 0',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+        transition: 'box-shadow 0.3s ease',
+      }}
+    >
       <div className="container-fluid">
         <Link className="navbar-brand" to="/" style={{ color: '#1a1a1a', fontWeight: 700, fontSize: '1.25rem', letterSpacing: '0.5px' }}>
           <i className="bi bi-book me-2"></i>

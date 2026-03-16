@@ -54,14 +54,14 @@ function BooksPage() {
   }, []);
 
   return (
-    <div>
+    <div className="page-enter">
       {/* Hero header */}
       <div style={{ backgroundColor: '#1a1a1a', color: '#fff', padding: '3rem 0 2.5rem' }}>
         <div className="container">
-          <p style={{ textTransform: 'uppercase', letterSpacing: '6px', fontSize: '0.62rem', color: '#555', marginBottom: '0.6rem' }}>
+          <p className="hero-label" style={{ textTransform: 'uppercase', letterSpacing: '6px', fontSize: '0.62rem', color: '#555', marginBottom: '0.6rem' }}>
             Könyvtár
           </p>
-          <h1 style={{ fontWeight: 700, fontSize: '2.4rem', letterSpacing: '-1px', marginBottom: '0.4rem' }}>
+          <h1 className="hero-title-1" style={{ fontWeight: 700, fontSize: '2.4rem', letterSpacing: '-1px', marginBottom: '0.4rem' }}>
             {selectedCategory === 'Minden' ? 'Összes könyv' : selectedCategory}
           </h1>
           <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '2rem', maxWidth: '460px' }}>

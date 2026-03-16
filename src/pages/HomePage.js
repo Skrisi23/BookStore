@@ -5,12 +5,19 @@ import { getBooks } from '../api';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import BookCard from '../components/books/BookCard';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 function HomePage() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Scroll-reveal refs
+  const [featuresRef, featuresVisible] = useScrollAnimation(0.1);
+  const [booksRef, booksVisible] = useScrollAnimation(0.05);
+  const [ctaRef, ctaVisible] = useScrollAnimation(0.2);
+  const [registerRef, registerVisible] = useScrollAnimation(0.15);
 
   useEffect(() => {
     const ac = new AbortController();
@@ -33,8 +40,8 @@ function HomePage() {
   }, []);
 
   return (
-    <div>
-      {/* Hero section — full viewport height minus navbar */}
+    <div className="page-enter">
+      {/* ── HERO ── */}
       <div style={{
         backgroundColor: '#1a1a1a',
         color: '#fff',
@@ -44,25 +51,31 @@ function HomePage() {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Decorative background elements */}
-        <div style={{ position: 'absolute', top: '10%', right: '5%', opacity: 0.03, fontSize: '22rem', lineHeight: 1 }}>
+        {/* Floating decorative icons */}
+        <div className="float-box" style={{
+          position: 'absolute', top: '10%', right: '5%',
+          opacity: 0.03, fontSize: '22rem', lineHeight: 1, pointerEvents: 'none'
+        }}>
           <i className="bi bi-book"></i>
         </div>
-        <div style={{ position: 'absolute', bottom: '8%', left: '3%', opacity: 0.03, fontSize: '12rem', lineHeight: 1 }}>
+        <div className="float-box-inner" style={{
+          position: 'absolute', bottom: '8%', left: '3%',
+          opacity: 0.03, fontSize: '12rem', lineHeight: 1, pointerEvents: 'none'
+        }}>
           <i className="bi bi-journal-text"></i>
         </div>
 
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-7">
-              <p style={{
+              <p className="hero-label" style={{
                 textTransform: 'uppercase',
                 letterSpacing: '6px',
                 fontSize: '0.7rem',
                 color: '#666',
                 marginBottom: '2rem'
               }}>
-                Könyvesbolt & Kölcsönző
+                Könyvesbolt &amp; Kölcsönző
               </p>
               <h1 style={{
                 fontSize: 'clamp(2.8rem, 6vw, 5rem)',
@@ -71,10 +84,10 @@ function HomePage() {
                 marginBottom: '2rem',
                 letterSpacing: '-1px'
               }}>
-                Alkotások<br/>
-                <span style={{ color: '#555' }}>Tára</span>
+                <span className="hero-title-1" style={{ display: 'block' }}>Alkotások</span>
+                <span className="hero-title-2" style={{ display: 'block', color: '#555' }}>Tára</span>
               </h1>
-              <p style={{
+              <p className="hero-subtitle" style={{
                 fontSize: '1.15rem',
                 color: '#999',
                 maxWidth: '500px',
@@ -83,7 +96,7 @@ function HomePage() {
               }}>
                 Fedezd fel könyveink széles választékát. Vásárolj vagy kölcsönözz könyveket kényelmesen otthonról.
               </p>
-              <div className="d-flex flex-wrap gap-3">
+              <div className="hero-buttons d-flex flex-wrap gap-3">
                 <button
                   className="btn btn-light btn-lg px-4"
                   style={{ fontWeight: 600, borderRadius: 0, letterSpacing: '0.5px' }}
@@ -101,9 +114,11 @@ function HomePage() {
                 </button>
               </div>
             </div>
-            <div className="col-lg-5 d-none d-lg-flex justify-content-center align-items-center">
+
+            {/* Floating graphic */}
+            <div className="col-lg-5 d-none d-lg-flex justify-content-center align-items-center hero-graphic">
               <div style={{ position: 'relative' }}>
-                <div style={{
+                <div className="float-box" style={{
                   width: '280px',
                   height: '280px',
                   border: '1px solid #333',
@@ -113,7 +128,7 @@ function HomePage() {
                   position: 'relative'
                 }}>
                   <i className="bi bi-book" style={{ fontSize: '6rem', opacity: 0.2 }}></i>
-                  <div style={{
+                  <div className="float-box-inner" style={{
                     position: 'absolute',
                     top: '-15px',
                     right: '-15px',
@@ -126,19 +141,20 @@ function HomePage() {
             </div>
           </div>
 
-          {/* Scroll down indicator */}
-          <div className="text-center" style={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)' }}>
-            <div style={{ animation: 'bounce 2s infinite', opacity: 0.4 }}>
-              <i className="bi bi-chevron-down" style={{ fontSize: '1.5rem' }}></i>
-            </div>
+          {/* Scroll indicator */}
+          <div className="scroll-indicator">
+            <i className="bi bi-chevron-down" style={{ fontSize: '1.5rem' }}></i>
           </div>
         </div>
       </div>
 
-      {/* Features section */}
+      {/* ── FEATURES ── */}
       <div style={{ backgroundColor: '#fff', padding: '6rem 0' }}>
         <div className="container">
-          <div className="text-center mb-5">
+          <div
+            ref={featuresRef}
+            className={`text-center mb-5 reveal${featuresVisible ? ' visible' : ''}`}
+          >
             <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.7rem', color: '#888', marginBottom: '0.8rem' }}>
               Miért válassz minket?
             </p>
@@ -146,78 +162,65 @@ function HomePage() {
               Minden, amire szükséged van
             </h2>
           </div>
+
           <div className="row text-center g-4">
-            <div className="col-md-4">
-              <div className="h-100 p-5" style={{ border: '1px solid #e8e8e8', transition: 'all 0.3s' }}>
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  backgroundColor: '#1a1a1a',
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1.5rem',
-                  fontSize: '1.4rem'
-                }}>
-                  <i className="bi bi-cart-check"></i>
+            {[
+              {
+                icon: 'bi-cart-check',
+                bg: '#1a1a1a',
+                title: 'Egyszerű vásárlás',
+                text: 'Rendelj online, és akár 24 órán belül kézhez kapod a könyvet!',
+                delay: 'stagger-1',
+              },
+              {
+                icon: 'bi-bookmark-heart',
+                bg: '#333',
+                title: 'Kölcsönzési lehetőség',
+                text: 'Nincs szükséged megvenni? Kölcsönözd ki kedvező áron!',
+                delay: 'stagger-2',
+              },
+              {
+                icon: 'bi-search',
+                bg: '#555',
+                title: 'Könnyű keresés',
+                text: 'Szűrj kategóriák szerint vagy keress címre, szerzőre!',
+                delay: 'stagger-3',
+              },
+            ].map((item, i) => (
+              <div className={`col-md-4 reveal${featuresVisible ? ' visible' : ''} ${item.delay}`} key={i}>
+                <div className="feature-card h-100 p-5" style={{ border: '1px solid #e8e8e8' }}>
+                  <div
+                    className="feature-icon"
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      backgroundColor: item.bg,
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 1.5rem',
+                      fontSize: '1.4rem'
+                    }}
+                  >
+                    <i className={`bi ${item.icon}`}></i>
+                  </div>
+                  <h5 style={{ fontWeight: 600, marginBottom: '0.8rem' }}>{item.title}</h5>
+                  <p style={{ color: '#888', fontSize: '0.92rem', lineHeight: 1.7, marginBottom: 0 }}>{item.text}</p>
                 </div>
-                <h5 style={{ fontWeight: 600, marginBottom: '0.8rem' }}>Egyszerű vásárlás</h5>
-                <p style={{ color: '#888', fontSize: '0.92rem', lineHeight: 1.7, marginBottom: 0 }}>
-                  Rendelj online, és akár 24 órán belül kézhez kapod a könyvet!
-                </p>
               </div>
-            </div>
-            <div className="col-md-4">
-              <div className="h-100 p-5" style={{ border: '1px solid #e8e8e8', transition: 'all 0.3s' }}>
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  backgroundColor: '#333',
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1.5rem',
-                  fontSize: '1.4rem'
-                }}>
-                  <i className="bi bi-bookmark-heart"></i>
-                </div>
-                <h5 style={{ fontWeight: 600, marginBottom: '0.8rem' }}>Kölcsönzési lehetőség</h5>
-                <p style={{ color: '#888', fontSize: '0.92rem', lineHeight: 1.7, marginBottom: 0 }}>
-                  Nincs szükséged megvenni? Kölcsönözd ki kedvező áron!
-                </p>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="h-100 p-5" style={{ border: '1px solid #e8e8e8', transition: 'all 0.3s' }}>
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  backgroundColor: '#555',
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1.5rem',
-                  fontSize: '1.4rem'
-                }}>
-                  <i className="bi bi-search"></i>
-                </div>
-                <h5 style={{ fontWeight: 600, marginBottom: '0.8rem' }}>Könnyű keresés</h5>
-                <p style={{ color: '#888', fontSize: '0.92rem', lineHeight: 1.7, marginBottom: 0 }}>
-                  Szűrj kategóriák szerint vagy keress címre, szerzőre!
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Featured books section */}
+      {/* ── FEATURED BOOKS ── */}
       <div style={{ backgroundColor: '#f5f5f5', padding: '6rem 0', borderTop: '1px solid #e8e8e8' }}>
         <div className="container">
-          <div className="d-flex justify-content-between align-items-end mb-5">
+          <div
+            ref={booksRef}
+            className={`d-flex justify-content-between align-items-end mb-5 reveal${booksVisible ? ' visible' : ''}`}
+          >
             <div>
               <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.7rem', color: '#888', marginBottom: '0.5rem' }}>
                 Válogatás
@@ -235,24 +238,28 @@ function HomePage() {
               <i className="bi bi-arrow-right ms-2"></i>
             </button>
           </div>
+
           {loading || featuredBooks.length === 0 ? (
             <LoadingSpinner fullPage text="Kiemelt könyvek betöltése..." />
           ) : (
             <div className="row">
-              {featuredBooks.map(book => (
-                <BookCard key={book.id} book={book} />
+              {featuredBooks.map((book, idx) => (
+                <BookCard key={book.id} book={book} animationDelay={idx * 0.12} />
               ))}
             </div>
           )}
         </div>
       </div>
 
-      {/* Guest: registration prompt / Logged in: personalized section */}
+      {/* ── REGISTER PROMPT / LOGGED IN ── */}
       {!currentUser ? (
         <div style={{ backgroundColor: '#fff', padding: '5rem 0', borderTop: '1px solid #e8e8e8' }}>
           <div className="container">
             <div className="row align-items-center">
-              <div className="col-lg-7">
+              <div
+                ref={registerRef}
+                className={`col-lg-7 reveal-left${registerVisible ? ' visible' : ''}`}
+              >
                 <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.7rem', color: '#888', marginBottom: '0.8rem' }}>
                   Még nincs fiókod?
                 </p>
@@ -280,14 +287,15 @@ function HomePage() {
                   </button>
                 </div>
               </div>
-              <div className="col-lg-5 d-none d-lg-flex justify-content-center">
+              <div className={`col-lg-5 d-none d-lg-flex justify-content-center reveal-right${registerVisible ? ' visible' : ''}`}>
                 <div style={{
                   width: '200px',
                   height: '200px',
                   backgroundColor: '#f5f5f5',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  animation: registerVisible ? 'pulse 3s ease-in-out infinite' : 'none'
                 }}>
                   <i className="bi bi-person-plus" style={{ fontSize: '4rem', color: '#ccc' }}></i>
                 </div>
@@ -299,7 +307,10 @@ function HomePage() {
         <div style={{ backgroundColor: '#fff', padding: '5rem 0', borderTop: '1px solid #e8e8e8' }}>
           <div className="container">
             <div className="row align-items-center">
-              <div className="col-lg-7">
+              <div
+                ref={registerRef}
+                className={`col-lg-7 reveal-left${registerVisible ? ' visible' : ''}`}
+              >
                 <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.7rem', color: '#888', marginBottom: '0.8rem' }}>
                   Üdv újra, {currentUser?.nev || 'Felhasználó'}!
                 </p>
@@ -328,7 +339,7 @@ function HomePage() {
                   </button>
                 </div>
               </div>
-              <div className="col-lg-5 d-none d-lg-flex justify-content-center">
+              <div className={`col-lg-5 d-none d-lg-flex justify-content-center reveal-right${registerVisible ? ' visible' : ''}`}>
                 <div style={{
                   width: '200px',
                   height: '200px',
@@ -339,7 +350,8 @@ function HomePage() {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.5rem'
+                  gap: '0.5rem',
+                  animation: registerVisible ? 'pulse 3s ease-in-out infinite' : 'none'
                 }}>
                   <span style={{ fontSize: '4rem', fontWeight: 700, lineHeight: 1 }}>
                     {currentUser?.nev?.charAt(0).toUpperCase() || currentUser?.email?.charAt(0).toUpperCase() || '?'}
@@ -354,18 +366,21 @@ function HomePage() {
         </div>
       )}
 
-      {/* Call to action */}
-      <div style={{
-        backgroundColor: '#1a1a1a',
-        color: '#fff',
-        padding: '7rem 0',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{ position: 'absolute', top: '-20%', right: '-5%', opacity: 0.03, fontSize: '20rem' }}>
+      {/* ── CTA ── */}
+      <div
+        ref={ctaRef}
+        style={{
+          backgroundColor: '#1a1a1a',
+          color: '#fff',
+          padding: '7rem 0',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <div style={{ position: 'absolute', top: '-20%', right: '-5%', opacity: 0.03, fontSize: '20rem', pointerEvents: 'none' }}>
           <i className="bi bi-stars"></i>
         </div>
-        <div className="container text-center" style={{ position: 'relative', zIndex: 1 }}>
+        <div className={`container text-center reveal${ctaVisible ? ' visible' : ''}`} style={{ position: 'relative', zIndex: 1 }}>
           <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.7rem', color: '#666', marginBottom: '1.5rem' }}>
             Ne maradj le
           </p>

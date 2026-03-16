@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { getBookById, getCopiesByBook } from '../../api';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -134,23 +135,25 @@ function BookDetails({ bookId, onClose, book: initialBook }) {
   }, [onClose]);
 
   if (loading) {
-    return (
+    return ReactDOM.createPortal(
       <div className="book-details-backdrop" onClick={handleBackdropClick}>
         <div className="book-details-modal">
           <LoadingSpinner />
         </div>
-      </div>
+      </div>,
+      document.body
     );
   }
 
   if (error) {
-    return (
+    return ReactDOM.createPortal(
       <div className="book-details-backdrop" onClick={handleBackdropClick}>
         <div className="book-details-modal">
           <button className="close-button" onClick={onClose}>✕</button>
           <div className="error-message">{error}</div>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   }
 
@@ -161,11 +164,11 @@ function BookDetails({ bookId, onClose, book: initialBook }) {
   const rentalPrice = book.rentalPrice || Math.round((book.price || 0) * 0.05);
   const isAvailable = copiesInfo.available > 0;
 
-  return (
+  return ReactDOM.createPortal(
     <div className="book-details-backdrop" onClick={handleBackdropClick}>
       <div className="book-details-modal">
         <button className="close-button" onClick={onClose} title="Bezárás (ESC)">✕</button>
-        
+
         <div className="book-details-content">
           <div className="book-details-image-section">
             <img 
@@ -284,7 +287,8 @@ function BookDetails({ bookId, onClose, book: initialBook }) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
