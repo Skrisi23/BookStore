@@ -43,11 +43,6 @@ public class VerifyEmailResponse
     public string? Message { get; set; }
 }
 
-public class ResendVerificationRequest
-{
-    public string Email { get; set; } = null!;
-}
-
 public class UserDto
 {
     public int Id { get; set; }
@@ -74,4 +69,9 @@ public class UpdateProfileDto
     public string? LastName { get; set; }
     public string? FirstName { get; set; }
     public string? DefaultAddress { get; set; }
+}
+
+public class ResendVerificationRequest
+{
+    public string Email { get; set; } = null!;
 }
