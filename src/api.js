@@ -24,7 +24,8 @@ const ENDPOINTS = {
   authLogin: `${defaultBaseUrl}/api/Auth/login`,
   authRegister: `${defaultBaseUrl}/api/Auth/register`,
   authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,
-  authResendVerification: `${defaultBaseUrl}/api/Auth/resend-verification`,  authChangePassword: (userId) => `${defaultBaseUrl}/api/Auth/${userId}/change-password`,
+  authResendVerification: `${defaultBaseUrl}/api/Auth/resend-verification`,
+  authChangePassword: (userId) => `${defaultBaseUrl}/api/Auth/${userId}/change-password`,
   userUpdateProfile: (userId) => `${defaultBaseUrl}/api/Users/${userId}/profile`,
   // Cart endpoints
   cartMyCart: (userId) => `${defaultBaseUrl}/api/Cart/my-cart?userId=${userId}`,
@@ -161,12 +162,9 @@ export async function getRentalsByUser(userId, signal) {
 /**
  * Könyv visszahozása (kölcsönzés lezárása)
  */
-export async function returnRental(rentalId, userId, signal) {
+export async function returnRental(rentalId, signal) {
   try {
-    const url = userId
-      ? `${ENDPOINTS.rentalReturn(rentalId)}?userId=${userId}`
-      : ENDPOINTS.rentalReturn(rentalId);
-    const response = await fetch(url, {
+    const response = await fetch(ENDPOINTS.rentalReturn(rentalId), {
       method: 'PATCH',
       headers: {
         'Accept': 'application/json',
@@ -639,32 +637,20 @@ export async function clearCart(userId, signal) {
 
 /**
  * Checkout - Fizetés és kölcsönzés létrehozása
- * @param {number} userId
- * @param {string} paymentMethod
- * @param {number} rentalDays - Alapértelmezett kölcsönzési napok
- * @param {Object} rentalDaysPerItem - Tételenkénti napok: { cart_item_id: days }
- * @param {AbortSignal} signal
  */
-export async function checkout(userId, paymentMethod, rentalDays = 14, rentalDaysPerItem = null, signal) {
+export async function checkout(userId, paymentMethod, rentalDays = 14, signal) {
   try {
-    const body = {
-      user_id: userId,
-      payment_method: paymentMethod,
-      rental_days: rentalDays
-    };
-
-    // Ha van tételenkénti beállítás, hozzáadjuk
-    if (rentalDaysPerItem && Object.keys(rentalDaysPerItem).length > 0) {
-      body.rental_days_per_item = rentalDaysPerItem;
-    }
-
     const response = await fetch(ENDPOINTS.cartCheckout, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        user_id: userId,
+        payment_method: paymentMethod,
+        rental_days: rentalDays
+      }),
       signal
     });
 
@@ -721,25 +707,44 @@ export async function verifyEmail(token, signal) {
       message: data.message || 'Email sikeresen verifikálva'
     };
   } catch (e) {
-    console.error('Email verifikációs hiba:', e);
-    return {
+    console.error('Email verifikációs hiba:', e);    return {
       success: false,
       message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Email verifikáció során hiba történt'
     };
   }
 }
 
-export async function resendVerificationEmail(email) {
+export async function resendVerificationEmail(email, signal) {
   try {
     const response = await fetch(ENDPOINTS.authResendVerification, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ Email: email })
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ Email: email }),
+      signal
     });
+
     const data = await response.json();
-    return { success: response.ok && (data.success ?? true), message: data.message };
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || 'Email újraküldése sikertelen'
+      };
+    }
+
+    return {
+      success: data.success,
+      message: data.message || 'Verifikációs email elküldve!'
+    };
   } catch (e) {
-    return { success: false, message: 'Hiba történt az email küldés során' };
+    console.error('Resend verification hiba:', e);
+    return {
+      success: false,
+      message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Hiba történt az email újraküldése során'
+    };
   }
 }
 
