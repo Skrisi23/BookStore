@@ -9,9 +9,30 @@ function Navbar() {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [navbarHidden, setNavbarHidden] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    let lastScrollY = window.scrollY;
+
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 20);
+
+      if (currentScrollY > 80) {
+        if (currentScrollY > lastScrollY && currentScrollY - lastScrollY > 5) {
+          // Scrolling down
+          setNavbarHidden(true);
+        } else if (lastScrollY > currentScrollY && lastScrollY - currentScrollY > 5) {
+          // Scrolling up
+          setNavbarHidden(false);
+        }
+      } else {
+        setNavbarHidden(false);
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -39,7 +60,7 @@ function Navbar() {
 
   return (
     <nav
-      className={`navbar navbar-expand-lg${scrolled ? ' navbar-scrolled' : ''}`}
+      className={`navbar navbar-expand-lg${scrolled ? ' navbar-scrolled' : ''}${navbarHidden ? ' navbar-hidden' : ''}`}
       style={{
         backgroundColor: '#fff',
         borderBottom: '1px solid #e8e8e8',
@@ -47,7 +68,8 @@ function Navbar() {
         position: 'sticky',
         top: 0,
         zIndex: 1000,
-        transition: 'box-shadow 0.3s ease',
+        transition: 'box-shadow 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+        transform: navbarHidden ? 'translateY(-100%)' : 'translateY(0)',
       }}
     >
       <div className="container-fluid">

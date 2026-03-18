@@ -19,6 +19,7 @@ import AszfPage from './pages/AszfPage';
 import AdatvedelemPage from './pages/AdatvedelemPage';
 import SutikPage from './pages/SutikPage';
 import CookieBanner from './components/common/CookieBanner';
+import ScrollToTop from './components/common/ScrollToTop';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -49,6 +50,7 @@ function App() {
                 </Routes>
               </main>
               <Footer />
+              <ScrollToTop />
               <CookieBanner />
               <ToastContainer />
             </div>
