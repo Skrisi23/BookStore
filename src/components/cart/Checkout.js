@@ -24,6 +24,25 @@ function Checkout({ onSuccess, onCancel }) {
   const { currentUser } = useAuth();
   const { success, error } = useToast();
   const [loading, setLoading] = useState(false);
+
+  // Kölcsönzési időtartamok tételenként (cart_item_id -> napok)
+  const rentalItems = cartItems.filter(i => i.order_type !== 'purchase');
+  const purchaseItems = cartItems.filter(i => i.order_type === 'purchase');
+
+  const [rentalDaysPerItem, setRentalDaysPerItem] = useState(() => {
+    const initial = {};
+    rentalItems.forEach(item => {
+      initial[item.id] = 14; // alapértelmezett 14 nap
+    });
+    return initial;
+  });
+
+  const handleRentalDaysChange = (itemId, days) => {
+    setRentalDaysPerItem(prev => ({
+      ...prev,
+      [itemId]: parseInt(days, 10)
+    }));
+  };
   // Parse user's saved address (format: "1234 Budapest, Fő utca 1.")
   const parseAddress = (addr) => {
     if (!addr) return { zipCode: '', city: '', address: '' };
@@ -63,7 +82,12 @@ function Checkout({ onSuccess, onCancel }) {
 
     try {
       setLoading(true);
-      const result = await checkout(currentUser.id, formData.paymentMethod);
+      // rentalDaysPerItem-et string kulcsokkal kell küldeni a backendnek
+      const daysMap = {};
+      Object.entries(rentalDaysPerItem).forEach(([key, val]) => {
+        daysMap[String(key)] = val;
+      });
+      const result = await checkout(currentUser.id, formData.paymentMethod, 14, daysMap);
       if (result.success) {
         await refreshCart();
         success(result.message || 'Sikeres fizetés! Köszönjük a vásárlást!');
@@ -78,9 +102,6 @@ function Checkout({ onSuccess, onCancel }) {
       setLoading(false);
     }
   };
-
-  const rentalItems = cartItems.filter(i => i.order_type !== 'purchase');
-  const purchaseItems = cartItems.filter(i => i.order_type === 'purchase');
 
   return (
     <div className="row g-4">
@@ -129,6 +150,60 @@ function Checkout({ onSuccess, onCancel }) {
                   <option value="transfer">Átutalás</option>
                 </select>
               </div>
+
+              {/* Kölcsönzési időtartam választó */}
+              {rentalItems.length > 0 && (
+                <div style={{ border: '1px solid #e8e8e8', marginBottom: '1.5rem' }}>
+                  <div style={{ padding: '1rem 1.2rem', borderBottom: '1px solid #e8e8e8', backgroundColor: '#fafafa' }}>
+                    <h6 style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.7rem', color: '#888', marginBottom: 0 }}>
+                      <i className="bi bi-clock-history me-2"></i>
+                      Kölcsönzési időtartam
+                    </h6>
+                  </div>
+                  <div style={{ padding: '1rem 1.2rem' }}>
+                    {rentalItems.map((item, idx) => (
+                      <div
+                        key={item.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '1rem',
+                          paddingBottom: idx < rentalItems.length - 1 ? '0.8rem' : 0,
+                          marginBottom: idx < rentalItems.length - 1 ? '0.8rem' : 0,
+                          borderBottom: idx < rentalItems.length - 1 ? '1px solid #f0f0f0' : 'none',
+                          flexWrap: 'wrap'
+                        }}
+                      >
+                        <div style={{ flex: 1, minWidth: '150px' }}>
+                          <p style={{ fontWeight: 500, fontSize: '0.88rem', marginBottom: '0.15rem' }}>{item.book_cim}</p>
+                          <span style={{ color: '#aaa', fontSize: '0.75rem' }}>{item.author_nev}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                          <select
+                            className="form-select"
+                            style={{
+                              ...inputStyle,
+                              width: 'auto',
+                              minWidth: '140px',
+                              fontSize: '0.82rem',
+                              padding: '0.35rem 2rem 0.35rem 0.6rem'
+                            }}
+                            value={rentalDaysPerItem[item.id] || 14}
+                            onChange={(e) => handleRentalDaysChange(item.id, e.target.value)}
+                          >
+                            <option value={14}>14 nap (2 hét)</option>
+                            <option value={21}>21 nap (3 hét)</option>
+                            <option value={30}>30 nap (1 hónap)</option>
+                            <option value={60}>60 nap (2 hónap)</option>
+                            <option value={90}>90 nap (3 hónap)</option>
+                          </select>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="d-flex gap-2 justify-content-end">
                 <button
