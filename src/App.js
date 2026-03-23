@@ -15,9 +15,9 @@ import CartPage from './pages/CartPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
 import EmailVerification from './components/auth/EmailVerification';
-import AszfPage from './pages/AszfPage';
-import AdatvedelemPage from './pages/AdatvedelemPage';
-import SutikPage from './pages/SutikPage';
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
+import CookiePolicyPage from './pages/CookiePolicyPage';
 import CookieBanner from './components/common/CookieBanner';
 import ScrollToTop from './components/common/ScrollToTop';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -43,9 +43,9 @@ function App() {
                   <Route path="/admin" element={<AdminPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/verify" element={<EmailVerification />} />
-                  <Route path="/aszf" element={<AszfPage />} />
-                  <Route path="/adatvedelem" element={<AdatvedelemPage />} />
-                  <Route path="/sutik" element={<SutikPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/cookies" element={<CookiePolicyPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </main>

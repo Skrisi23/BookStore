@@ -49,13 +49,13 @@ function Footer() {
           </p>
           <ul className="list-unstyled d-flex gap-3 mb-0" style={{ fontSize: '0.85rem' }}>
             <li>
-              <Link to="/aszf" className="text-decoration-none" style={{ color: '#aaa' }}>ÁSZF</Link>
+              <Link to="/terms" className="text-decoration-none" style={{ color: '#aaa' }}>ÁSZF</Link>
             </li>
             <li>
-              <Link to="/adatvedelem" className="text-decoration-none" style={{ color: '#aaa' }}>Adatvédelem</Link>
+              <Link to="/privacy" className="text-decoration-none" style={{ color: '#aaa' }}>Adatvédelem</Link>
             </li>
             <li>
-              <Link to="/sutik" className="text-decoration-none" style={{ color: '#aaa' }}>Sütik</Link>
+              <Link to="/cookies" className="text-decoration-none" style={{ color: '#aaa' }}>Sütik</Link>
             </li>
           </ul>
         </div>

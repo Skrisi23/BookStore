@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function AszfPage() {
+function TermsPage() {
   return (
     <div className="container py-5" style={{ maxWidth: '860px' }}>
       <nav aria-label="breadcrumb" className="mb-4">
@@ -232,13 +232,13 @@ function AszfPage() {
       <div className="alert" style={{ background: '#f5f5f5', border: '1px solid #e0e0e0', borderRadius: 0 }}>
         <small className="text-muted">
           <strong>Egyéb jogi dokumentumok:</strong>{' '}
-          <Link to="/adatvedelem" style={{ color: '#1a1a1a' }}>Adatvédelmi tájékoztató</Link>
+          <Link to="/privacy" style={{ color: '#1a1a1a' }}>Adatvédelmi tájékoztató</Link>
           {' · '}
-          <Link to="/sutik" style={{ color: '#1a1a1a' }}>Cookie tájékoztató</Link>
+          <Link to="/cookies" style={{ color: '#1a1a1a' }}>Cookie tájékoztató</Link>
         </small>
       </div>
     </div>
   );
 }
 
-export default AszfPage;
+export default TermsPage;

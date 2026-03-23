@@ -43,11 +43,11 @@ function CookieBanner() {
             <i className="bi bi-shield-check me-2"></i>
             Ez a weboldal sütiket (cookie-kat) használ a megfelelő működés érdekében. A szükséges sütik
             mindig aktívak. Az opcionális sütik elfogadásával segíti a jobb felhasználói élményt.{' '}
-            <Link to="/sutik" style={{ color: '#ddd', textDecoration: 'underline' }}>
+            <Link to="/cookies" style={{ color: '#ddd', textDecoration: 'underline' }}>
               Részletek
             </Link>
             {' · '}
-            <Link to="/adatvedelem" style={{ color: '#ddd', textDecoration: 'underline' }}>
+            <Link to="/privacy" style={{ color: '#ddd', textDecoration: 'underline' }}>
               Adatvédelem
             </Link>
           </p>

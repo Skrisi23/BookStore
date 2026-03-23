@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function SutikPage() {
+function CookiePolicyPage() {
   const [consent, setConsent] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('cookieConsent') || 'null');
@@ -209,13 +209,13 @@ function SutikPage() {
       <div className="alert" style={{ background: '#f5f5f5', border: '1px solid #e0e0e0', borderRadius: 0 }}>
         <small className="text-muted">
           <strong>Kapcsolódó dokumentumok:</strong>{' '}
-          <Link to="/aszf" style={{ color: '#1a1a1a' }}>ÁSZF</Link>
+          <Link to="/terms" style={{ color: '#1a1a1a' }}>ÁSZF</Link>
           {' · '}
-          <Link to="/adatvedelem" style={{ color: '#1a1a1a' }}>Adatvédelmi tájékoztató</Link>
+          <Link to="/privacy" style={{ color: '#1a1a1a' }}>Adatvédelmi tájékoztató</Link>
         </small>
       </div>
     </div>
   );
 }
 
-export default SutikPage;
+export default CookiePolicyPage;

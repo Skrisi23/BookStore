@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function AdatvedelemPage() {
+function PrivacyPage() {
   return (
     <div className="container py-5" style={{ maxWidth: '860px' }}>
       <nav aria-label="breadcrumb" className="mb-4">
@@ -210,20 +210,20 @@ function AdatvedelemPage() {
         <p>
           A Weboldal sütifájlokat használ a működéshez és a felhasználói élmény javításához.
           Részletes tájékoztatásért kérjük, olvassa el a{' '}
-          <Link to="/sutik" style={{ color: '#1a1a1a' }}>Cookie tájékoztatót</Link>.
+          <Link to="/cookies" style={{ color: '#1a1a1a' }}>Cookie tájékoztatót</Link>.
         </p>
       </section>
 
       <div className="alert" style={{ background: '#f5f5f5', border: '1px solid #e0e0e0', borderRadius: 0 }}>
         <small className="text-muted">
           <strong>Kapcsolódó dokumentumok:</strong>{' '}
-          <Link to="/aszf" style={{ color: '#1a1a1a' }}>ÁSZF</Link>
+          <Link to="/terms" style={{ color: '#1a1a1a' }}>ÁSZF</Link>
           {' · '}
-          <Link to="/sutik" style={{ color: '#1a1a1a' }}>Cookie tájékoztató</Link>
+          <Link to="/cookies" style={{ color: '#1a1a1a' }}>Cookie tájékoztató</Link>
         </small>
       </div>
     </div>
   );
 }
 
-export default AdatvedelemPage;
+export default PrivacyPage;
