@@ -274,9 +274,7 @@ public class AuthController : ControllerBase
         user.verification_token = null;
         user.token_expires = null;
 
-        await _context.SaveChangesAsync();
-
-        return Ok(new VerifyEmailResponse
+        await _context.SaveChangesAsync();        return Ok(new VerifyEmailResponse
         {
             Success = true,
             Message = "Email cím sikeresen verifikálva"
@@ -284,36 +282,48 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Verifikációs email újraküldése lejárt vagy nem kapott token esetén
+    /// Verifikációs email újraküldése
     /// </summary>
     [HttpPost("resend-verification")]
-    public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationRequest request)
+    public async Task<ActionResult> ResendVerification([FromBody] ResendVerificationRequest request)
     {
         if (string.IsNullOrEmpty(request.Email))
+        {
             return BadRequest(new { success = false, message = "Email cím megadása kötelező" });
+        }
 
-        var user = await _context.users.FirstOrDefaultAsync(u => u.email == request.Email);
+        var user = await _context.users
+            .FirstOrDefaultAsync(u => u.email == request.Email);
 
         if (user == null)
-            return BadRequest(new { success = false, message = "Nem találunk ilyen email címmel felhasználót" });
+        {
+            // Biztonsági okokból nem mondjuk meg, hogy nem létezik
+            return Ok(new { success = true, message = "Ha a cím regisztrálva van, elküldtük az emailt." });
+        }
 
         if (user.is_verified)
-            return BadRequest(new { success = false, message = "Ez az email cím már verifikálva van, jelentkezz be!" });
+        {
+            return Ok(new { success = true, message = "Az email cím már verifikálva van. Jelentkezz be!" });
+        }
 
+        // Új token generálás
         user.verification_token = Guid.NewGuid().ToString();
         user.token_expires = DateTime.Now.AddHours(24);
         await _context.SaveChangesAsync();
 
         try
         {
-            await _emailService.SendVerificationEmailAsync(user.email, user.nev, user.verification_token);
+            await _emailService.SendVerificationEmailAsync(
+                user.email,
+                user.nev,
+                user.verification_token
+            );
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Failed to resend verification email: {ex.Message}");
-            return StatusCode(500, new { success = false, message = "Email küldés sikertelen, próbáld újra később!" });
         }
 
-        return Ok(new { success = true, message = "Verifikációs email újra elküldve! Ellenőrizd a postafládádat (spam mappát is)." });
+        return Ok(new { success = true, message = "Verifikációs email elküldve!" });
     }
 }
