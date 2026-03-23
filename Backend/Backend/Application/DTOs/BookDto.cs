@@ -8,6 +8,7 @@ public class BookDto
     public DateOnly? KiadasiDatum { get; set; }
     public string? Tartalom { get; set; }
     public decimal Ar { get; set; }
+    public int CategoryId { get; set; }
     public string Kategoria { get; set; } = null!;
     public string AuthorNev { get; set; } = null!;
     public int author_id { get; set; }  // Szerző ID a szerkesztéshez

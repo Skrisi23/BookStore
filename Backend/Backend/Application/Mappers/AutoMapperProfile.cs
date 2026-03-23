@@ -44,7 +44,7 @@ namespace Backend.Application.Mappers
                 .ForMember(dest => dest.book_id, opt => opt.MapFrom(src => src.copy.book.id))
                 .ForMember(dest => dest.book_cim, opt => opt.MapFrom(src => src.copy.book.cim))
                 .ForMember(dest => dest.book_boritokep, opt => opt.MapFrom(src => src.copy.book.boritokep))
-                .ForMember(dest => dest.book_kategoria, opt => opt.MapFrom(src => src.copy.book.kategoria))
+                .ForMember(dest => dest.book_kategoria, opt => opt.MapFrom(src => src.copy.book.category.name))
                 .ForMember(dest => dest.author_nev, opt => opt.MapFrom(src => src.copy.book.author.nev));
             CreateMap<AddToCartDto, cart_item>()
                 .ForMember(dest => dest.added_at, opt => opt.MapFrom(src => DateTime.Now))

@@ -25,6 +25,7 @@ public class BooksController : ControllerBase
     {
         var books = await _context.books
             .Include(b => b.author)
+            .Include(b => b.category)
             .Include(b => b.copies)
             .OrderBy(b => b.id)
             .Select(b => new BookDto
@@ -35,7 +36,8 @@ public class BooksController : ControllerBase
                 KiadasiDatum = b.kiadasi_datum,
                 Tartalom = b.tartalom,
                 Ar = b.ar,
-                Kategoria = b.kategoria,
+                CategoryId = b.category_id,
+                Kategoria = b.category.name,
                 AuthorNev = b.author.nev,
                 author_id = b.author_id,
                 Elerheto = b.copies.Any(c => c.elerheto == true)
@@ -55,6 +57,7 @@ public class BooksController : ControllerBase
     {
         var books = await _context.books
             .Include(b => b.author)
+            .Include(b => b.category)
             .Where(b => b.ar >= minAr && b.ar <= maxAr)
             .Select(b => new BookDto
             {
@@ -64,7 +67,8 @@ public class BooksController : ControllerBase
                 KiadasiDatum = b.kiadasi_datum,
                 Tartalom = b.tartalom,
                 Ar = b.ar,
-                Kategoria = b.kategoria,
+                CategoryId = b.category_id,
+                Kategoria = b.category.name,
                 AuthorNev = b.author.nev,
                 author_id = b.author_id
             })
@@ -81,7 +85,8 @@ public class BooksController : ControllerBase
     {
         var books = await _context.books
             .Include(b => b.author)
-            .Where(b => b.kategoria == kategoria)
+            .Include(b => b.category)
+            .Where(b => b.category.name == kategoria)
             .Select(b => new BookDto
             {
                 Id = b.id,
@@ -90,7 +95,8 @@ public class BooksController : ControllerBase
                 KiadasiDatum = b.kiadasi_datum,
                 Tartalom = b.tartalom,
                 Ar = b.ar,
-                Kategoria = b.kategoria,
+                CategoryId = b.category_id,
+                Kategoria = b.category.name,
                 AuthorNev = b.author.nev,
                 author_id = b.author_id
             })
@@ -105,9 +111,9 @@ public class BooksController : ControllerBase
     [HttpGet("categories")]
     public async Task<ActionResult<IEnumerable<string>>> GetAllCategories()
     {
-        var categories = await _context.books
-            .Select(b => b.kategoria)
-            .Distinct()
+        var categories = await _context.categories
+            .Select(c => c.name)
+            .OrderBy(n => n)
             .ToListAsync();
 
         return Ok(categories);
@@ -140,6 +146,7 @@ public class BooksController : ControllerBase
     {
         var book = await _context.books
             .Include(b => b.author)
+            .Include(b => b.category)
             .Where(b => b.id == id)
             .Select(b => new BookDto
             {
@@ -149,7 +156,8 @@ public class BooksController : ControllerBase
                 KiadasiDatum = b.kiadasi_datum,
                 Tartalom = b.tartalom,
                 Ar = b.ar,
-                Kategoria = b.kategoria,
+                CategoryId = b.category_id,
+                Kategoria = b.category.name,
                 AuthorNev = b.author.nev,
                 author_id = b.author_id
             })
@@ -176,6 +184,15 @@ public class BooksController : ControllerBase
             return BadRequest(new { message = $"Nem található szerző ezzel az ID-vel: {createBookDto.author_id}" });
         }
 
+        // Kategória keresése név alapján, ha nem létezik, létrehozzuk
+        var cat = await _context.categories.FirstOrDefaultAsync(c => c.name == createBookDto.kategoria);
+        if (cat == null)
+        {
+            cat = new category { name = createBookDto.kategoria };
+            _context.categories.Add(cat);
+            await _context.SaveChangesAsync();
+        }
+
         var book = new book
         {
             cim = createBookDto.cim,
@@ -183,16 +200,17 @@ public class BooksController : ControllerBase
             kiadasi_datum = createBookDto.kiadasi_datum,
             tartalom = createBookDto.tartalom,
             ar = createBookDto.ar,
-            kategoria = createBookDto.kategoria,
+            category_id = cat.id,
             author_id = createBookDto.author_id
         };
 
         _context.books.Add(book);
         await _context.SaveChangesAsync();
 
-        // Reload with author
+        // Reload with author and category
         book = await _context.books
             .Include(b => b.author)
+            .Include(b => b.category)
             .FirstOrDefaultAsync(b => b.id == book.id);
 
         var bookDto = new BookDto
@@ -203,7 +221,8 @@ public class BooksController : ControllerBase
             KiadasiDatum = book.kiadasi_datum,
             Tartalom = book.tartalom,
             Ar = book.ar,
-            Kategoria = book.kategoria,
+            CategoryId = book.category_id,
+            Kategoria = book.category.name,
             AuthorNev = book.author.nev,
             author_id = book.author_id
         };
@@ -219,6 +238,7 @@ public class BooksController : ControllerBase
     {
         var book = await _context.books
             .Include(b => b.author)
+            .Include(b => b.category)
             .FirstOrDefaultAsync(b => b.id == id);
 
         if (book == null)
@@ -243,13 +263,24 @@ public class BooksController : ControllerBase
         if (updateBookDto.kiadasi_datum.HasValue) book.kiadasi_datum = updateBookDto.kiadasi_datum;
         if (updateBookDto.tartalom != null) book.tartalom = updateBookDto.tartalom;
         if (updateBookDto.ar.HasValue) book.ar = updateBookDto.ar.Value;
-        if (!string.IsNullOrEmpty(updateBookDto.kategoria)) book.kategoria = updateBookDto.kategoria;
+        if (!string.IsNullOrEmpty(updateBookDto.kategoria))
+        {
+            var cat = await _context.categories.FirstOrDefaultAsync(c => c.name == updateBookDto.kategoria);
+            if (cat == null)
+            {
+                cat = new category { name = updateBookDto.kategoria };
+                _context.categories.Add(cat);
+                await _context.SaveChangesAsync();
+            }
+            book.category_id = cat.id;
+        }
 
         await _context.SaveChangesAsync();
 
-        // Reload with author
+        // Reload with author and category
         book = await _context.books
             .Include(b => b.author)
+            .Include(b => b.category)
             .FirstOrDefaultAsync(b => b.id == id);
 
         var bookDto = new BookDto
@@ -260,7 +291,8 @@ public class BooksController : ControllerBase
             KiadasiDatum = book.kiadasi_datum,
             Tartalom = book.tartalom,
             Ar = book.ar,
-            Kategoria = book.kategoria,
+            CategoryId = book.category_id,
+            Kategoria = book.category.name,
             AuthorNev = book.author.nev,
             author_id = book.author_id
         };

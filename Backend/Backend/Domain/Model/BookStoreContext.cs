@@ -15,6 +15,10 @@ public partial class BookStoreContext : DbContext
 
     public virtual DbSet<book> books { get; set; }
 
+    public virtual DbSet<category> categories { get; set; }
+
+    public virtual DbSet<book_author> book_authors { get; set; }
+
     public virtual DbSet<copy> copies { get; set; }
 
     public virtual DbSet<rental> rentals { get; set; }
@@ -40,6 +44,11 @@ public partial class BookStoreContext : DbContext
             entity.HasKey(e => e.id).HasName("PRIMARY");
         });
 
+        modelBuilder.Entity<category>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+        });
+
         modelBuilder.Entity<book>(entity =>
         {
             entity.HasKey(e => e.id).HasName("PRIMARY");
@@ -47,6 +56,23 @@ public partial class BookStoreContext : DbContext
             entity.HasOne(d => d.author).WithMany(p => p.books)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_books_author");
+
+            entity.HasOne(d => d.category).WithMany(p => p.books)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_books_category");
+        });
+
+        modelBuilder.Entity<book_author>(entity =>
+        {
+            entity.HasKey(e => new { e.book_id, e.author_id }).HasName("PRIMARY");
+
+            entity.HasOne(d => d.book).WithMany(p => p.book_authors)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_ba_book");
+
+            entity.HasOne(d => d.author).WithMany(p => p.book_authors)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_ba_author");
         });
 
         modelBuilder.Entity<copy>(entity =>

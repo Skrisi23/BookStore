@@ -32,6 +32,10 @@ namespace Backend.Api.Controllers
                     .ThenInclude(ci => ci.copy)
                         .ThenInclude(cp => cp.book)
                             .ThenInclude(b => b.author)
+                .Include(c => c.cart_items)
+                    .ThenInclude(ci => ci.copy)
+                        .ThenInclude(cp => cp.book)
+                            .ThenInclude(b => b.category)
                 .FirstOrDefaultAsync(c => c.user_id == userId && c.status == "active");
 
             // Ha nincs kosár, létrehozunk egyet
@@ -70,6 +74,10 @@ namespace Backend.Api.Controllers
                     .ThenInclude(ci => ci.copy)
                         .ThenInclude(cp => cp.book)
                             .ThenInclude(b => b.author)
+                .Include(c => c.cart_items)
+                    .ThenInclude(ci => ci.copy)
+                        .ThenInclude(cp => cp.book)
+                            .ThenInclude(b => b.category)
                 .FirstOrDefaultAsync(c => c.id == id);
 
             if (cart == null)
@@ -275,6 +283,10 @@ namespace Backend.Api.Controllers
                     .ThenInclude(ci => ci.copy)
                         .ThenInclude(cp => cp.book)
                             .ThenInclude(b => b.author)
+                .Include(c => c.cart_items)
+                    .ThenInclude(ci => ci.copy)
+                        .ThenInclude(cp => cp.book)
+                            .ThenInclude(b => b.category)
                 .FirstOrDefaultAsync(c => c.id == cart.id);
 
             var cartDto = _mapper.Map<CartDto>(cart);
@@ -321,6 +333,10 @@ namespace Backend.Api.Controllers
                     .ThenInclude(ci => ci.copy)
                         .ThenInclude(cp => cp.book)
                             .ThenInclude(b => b.author)
+                .Include(c => c.cart_items)
+                    .ThenInclude(ci => ci.copy)
+                        .ThenInclude(cp => cp.book)
+                            .ThenInclude(b => b.category)
                 .FirstOrDefaultAsync(c => c.id == cartId);
 
             var cartDto = _mapper.Map<CartDto>(cart!);
@@ -368,6 +384,10 @@ namespace Backend.Api.Controllers
                     .ThenInclude(ci => ci.copy)
                         .ThenInclude(cp => cp.book)
                             .ThenInclude(b => b.author)
+                .Include(c => c.cart_items)
+                    .ThenInclude(ci => ci.copy)
+                        .ThenInclude(cp => cp.book)
+                            .ThenInclude(b => b.category)
                 .OrderByDescending(c => c.created_at)
                 .ToListAsync();
 
@@ -389,6 +409,10 @@ namespace Backend.Api.Controllers
                         .ThenInclude(ci => ci.copy)
                             .ThenInclude(cp => cp.book)
                                 .ThenInclude(b => b.author)
+                    .Include(c => c.cart_items)
+                        .ThenInclude(ci => ci.copy)
+                            .ThenInclude(cp => cp.book)
+                                .ThenInclude(b => b.category)
                     .FirstOrDefaultAsync(c => c.user_id == checkoutDto.user_id && c.status == "active");
 
                 if (cart == null)
