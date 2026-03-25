@@ -36,7 +36,8 @@ namespace Backend.Api.Controllers
 
         /// <summary>
         /// Egy fizetés lekérdezése ID alapján
-        /// </summary>        [HttpGet("{id:int}")]
+        /// </summary>
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<PaymentDto>> GetPaymentById(int id)
         {
             var payment = await _context.payments
@@ -119,7 +120,8 @@ namespace Backend.Api.Controllers
 
         /// <summary>
         /// Fizetés státuszának frissítése
-        /// </summary>        [HttpPut("{id:int}/status")]
+        /// </summary>
+        [HttpPut("{id:int}/status")]
         public async Task<ActionResult<PaymentDto>> UpdatePaymentStatus(int id, [FromBody] UpdatePaymentStatusDto updateDto)
         {
             var payment = await _context.payments
@@ -136,7 +138,9 @@ namespace Backend.Api.Controllers
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
             return Ok(paymentDto);
-        }        /// <summary>
+        }
+
+        /// <summary>
         /// Mai bevétel lekérdezése
         /// </summary>
         [HttpGet("today-revenue")]
@@ -159,7 +163,9 @@ namespace Backend.Api.Controllers
                 total_revenue = totalRevenue,
                 payments_count = paymentsCount
             });
-        }        /// <summary>
+        }
+               
+        /// <summary>
         /// Vásárlások lekérdezése (purchase_items táblából)
         /// </summary>
         [HttpGet("purchases")]
@@ -202,7 +208,8 @@ namespace Backend.Api.Controllers
 
         /// <summary>
         /// Fizetés törlése (opcionális - ha szükséges)
-        /// </summary>        [HttpDelete("{id:int}")]
+        /// </summary>
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePayment(int id)
         {
             var payment = await _context.payments.FindAsync(id);
