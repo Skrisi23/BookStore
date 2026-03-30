@@ -2,14 +2,16 @@
 using Backend.Application.DTOs;
 using Backend.Application.Mappers;
 using Backend.Domain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.Intrinsics.X86;
+using System.Security.Claims;
 
 namespace Backend.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
 
@@ -24,6 +26,7 @@ namespace Backend.Api.Controllers
 
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -61,6 +64,7 @@ namespace Backend.Api.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult Create(users user)
         {
@@ -78,7 +82,8 @@ namespace Backend.Api.Controllers
                 return Problem(ex.Message);
             }
 
-        }        [HttpPut("{id}")]
+        }        [Authorize(Roles = "admin")]
+        [HttpPut("{id}")]
         public IActionResult Update(int id, users user)
         {
 
@@ -152,6 +157,7 @@ namespace Backend.Api.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

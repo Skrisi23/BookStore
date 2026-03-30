@@ -2,6 +2,7 @@
 using Backend.Application.DTOs;
 using Backend.Domain.Model;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ namespace Backend.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class RentalsController : ControllerBase
     {        private readonly BookStoreContext _context;
         private readonly IMapper _mapper;
@@ -26,6 +28,7 @@ namespace Backend.Api.Controllers
         /// <summary>
         /// Összes kölcsönzés lekérdezése (admin) - enriched adatokkal
         /// </summary>
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -82,23 +85,10 @@ namespace Backend.Api.Controllers
         /// <summary>
         /// Könyv visszahozása (csak admin)
         /// </summary>
+        [Authorize(Roles = "admin")]
         [HttpPatch("{id}/return")]
         public async Task<IActionResult> ReturnBook(int id, [FromQuery] int? userId = null)
         {
-            // Admin jogosultság ellenőrzése
-            if (!userId.HasValue)
-            {
-                return Forbid();
-            }
-
-            var requestingUser = await _context.users.FindAsync(userId.Value);
-            if (requestingUser == null ||
-                (!requestingUser.nev.ToLower().Contains("admin") &&
-                 !requestingUser.email.ToLower().Contains("admin")))
-            {
-                return StatusCode(403, new { message = "Csak admin végezhet visszahozást" });
-            }
-
             var rental = await _context.rentals
                 .Include(r => r.copy)
                     .ThenInclude(c => c.book)
@@ -144,6 +134,7 @@ namespace Backend.Api.Controllers
         /// <summary>
         /// Értesítő emailek manuális küldése (admin)
         /// </summary>
+        [Authorize(Roles = "admin")]
         [HttpPost("send-notifications")]
         public async Task<IActionResult> SendNotifications()
         {
@@ -166,6 +157,7 @@ namespace Backend.Api.Controllers
         /// <summary>
         /// Felszólító email küldése egy konkrét kölcsönzéshez (admin)
         /// </summary>
+        [Authorize(Roles = "admin")]
         [HttpPost("{id}/send-reminder")]
         public async Task<IActionResult> SendReminderForRental(int id)
         {
@@ -214,6 +206,7 @@ namespace Backend.Api.Controllers
         /// <summary>
         /// Custom email küldése egy felhasználónak (admin)
         /// </summary>
+        [Authorize(Roles = "admin")]
         [HttpPost("send-custom-email")]
         public async Task<IActionResult> SendCustomEmail([FromBody] CustomEmailRequest request)
         {
@@ -242,6 +235,7 @@ namespace Backend.Api.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult Create([FromBody] rental rental)
         {
@@ -250,6 +244,7 @@ namespace Backend.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = rental.id }, rental);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] rental rental)
         {
@@ -258,6 +253,7 @@ namespace Backend.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -12,6 +12,8 @@ public class LoginResponse
 {
     public bool Success { get; set; }
     public string? Message { get; set; }
+    public string? Token { get; set; }
+    public string? RefreshToken { get; set; }
     public UserDto? User { get; set; }
 }
 
@@ -43,6 +45,21 @@ public class VerifyEmailResponse
     public string? Message { get; set; }
 }
 
+public class RefreshTokenRequest
+{
+    public string Token { get; set; } = null!;
+    public string RefreshToken { get; set; } = null!;
+}
+
+public class TokenResponse
+{
+    public bool Success { get; set; }
+    public string? Message { get; set; }
+    public string? Token { get; set; }
+    public string? RefreshToken { get; set; }
+    public UserDto? User { get; set; }
+}
+
 public class UserDto
 {
     public int Id { get; set; }
@@ -51,6 +68,7 @@ public class UserDto
     public string? FirstName { get; set; }
     public string? DefaultAddress { get; set; }
     public string Email { get; set; } = null!;
+    public string? Role { get; set; }
     public DateTime? Letrehozva { get; set; }
 }
 

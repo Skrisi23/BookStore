@@ -29,6 +29,17 @@ public partial class users
     [StringLength(500)]
     public string? default_address { get; set; }
 
+    [Column("role")]
+    [StringLength(50)]
+    public string role { get; set; } = "user";
+
+    [Column("refresh_token")]
+    [StringLength(500)]
+    public string? refresh_token { get; set; }
+
+    [Column("refresh_token_expires", TypeName = "datetime")]
+    public DateTime? refresh_token_expires { get; set; }
+
     public string email { get; set; } = null!;
 
     [Column("password_hash")]

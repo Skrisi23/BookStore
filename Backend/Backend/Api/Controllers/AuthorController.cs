@@ -1,4 +1,5 @@
 ﻿using Backend.Domain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace Backend.Api.Controllers
@@ -27,6 +28,7 @@ namespace Backend.Api.Controllers
             var author = _context.authors.Find(id);
             return Ok(author);
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult Create(author author) 
         { 
@@ -34,6 +36,7 @@ namespace Backend.Api.Controllers
             _context.SaveChanges();
             return CreatedAtAction(nameof(GetById), new {id = author.id}, author);
         }
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public IActionResult Update(int id, author author)
         {
@@ -41,6 +44,7 @@ namespace Backend.Api.Controllers
             _context.SaveChanges();
             return NoContent();
         }
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

@@ -18,8 +18,9 @@ public partial class payment
     [Column(TypeName = "int(11)")]
     public int user_id { get; set; }
 
+    [Required]
     [StringLength(50)]
-    public string order_type { get; set; } = null!;
+    public string order_type { get; set; } = "purchase";
 
     [Column(TypeName = "decimal(10,2)")]
     public decimal amount { get; set; }

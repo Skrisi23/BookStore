@@ -1,6 +1,7 @@
 using AutoMapper;
 using Backend.Application.DTOs;
 using Backend.Domain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace Backend.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "admin")]
     public class PaymentsController : ControllerBase
     {
         private readonly BookStoreContext _context;

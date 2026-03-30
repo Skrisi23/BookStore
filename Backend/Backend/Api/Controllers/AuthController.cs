@@ -1,8 +1,10 @@
 using Backend.Application.DTOs;
 using Backend.Domain.Model;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Backend.Api.Controllers;
 
@@ -12,22 +14,27 @@ public class AuthController : ControllerBase
 {
     private readonly BookStoreContext _context;
     private readonly IEmailService _emailService;
+    private readonly IJwtService _jwtService;
+    private readonly IConfiguration _configuration;
 
-    public AuthController(BookStoreContext context, IEmailService emailService)
+    public AuthController(BookStoreContext context, IEmailService emailService, IJwtService jwtService, IConfiguration configuration)
     {
         _context = context;
         _emailService = emailService;
+        _jwtService = jwtService;
+        _configuration = configuration;
     }
 
     /// <summary>
     /// Felhasználó jelszavának módosítása
     /// </summary>
+    [Authorize]
     [HttpPatch("{id}/change-password")]
     public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto dto)
     {
-        // Ellenőrizzük, hogy a bejelentkezett user a saját jelszavát módosítja-e (ha van auth middleware)
-        var currentUserId = User.FindFirst("UserId")?.Value;
-        if (!string.IsNullOrEmpty(currentUserId) && currentUserId != id.ToString())
+        // JWT-ből kinyerjük a user ID-t
+        var currentUserId = User.FindFirst("UserId")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(currentUserId) || currentUserId != id.ToString())
         {
             return Forbid();
         }
@@ -70,6 +77,7 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Felhasználó bejelentkezés
     /// </summary>
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request)
     {
@@ -124,10 +132,25 @@ public class AuthController : ControllerBase
                 Success = false,
                 Message = "Kérlek, erősítsd meg az email címedet a bejelentkezéshez"
             });
-        }        return Ok(new LoginResponse
+        }
+
+        // JWT token generálás
+        var accessToken = _jwtService.GenerateAccessToken(user);
+        var refreshToken = _jwtService.GenerateRefreshToken();
+
+        // Refresh token mentése az adatbázisba
+        var refreshTokenDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? "7");
+        user.refresh_token = refreshToken;
+        user.refresh_token_expires = DateTime.UtcNow.AddDays(refreshTokenDays);
+        await _context.SaveChangesAsync();
+
+        return Ok(new LoginResponse
         {
             Success = true,
-            Message = "Sikeres bejelentkezés",            User = new UserDto
+            Message = "Sikeres bejelentkezés",
+            Token = accessToken,
+            RefreshToken = refreshToken,
+            User = new UserDto
             {
                 Id = user.id,
                 Nev = user.nev,
@@ -135,6 +158,7 @@ public class AuthController : ControllerBase
                 FirstName = user.first_name,
                 DefaultAddress = user.default_address,
                 Email = user.email,
+                Role = user.role,
                 Letrehozva = user.letrehozva
             }
         });
@@ -143,6 +167,7 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Új felhasználó regisztrálása
     /// </summary>
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<ActionResult<RegisterResponse>> Register([FromBody] RegisterRequest request)
     {
@@ -224,6 +249,7 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Email cím verifikálása token alapján
     /// </summary>
+    [AllowAnonymous]
     [HttpPost("verify-email")]
     public async Task<ActionResult<VerifyEmailResponse>> VerifyEmail([FromBody] VerifyEmailRequest request)
     {
@@ -284,6 +310,7 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Verifikációs email újraküldése
     /// </summary>
+    [AllowAnonymous]
     [HttpPost("resend-verification")]
     public async Task<ActionResult> ResendVerification([FromBody] ResendVerificationRequest request)
     {
@@ -325,5 +352,85 @@ public class AuthController : ControllerBase
         }
 
         return Ok(new { success = true, message = "Verifikációs email elküldve!" });
+    }
+
+    /// <summary>
+    /// Access token frissítése refresh token segítségével
+    /// </summary>
+    [AllowAnonymous]
+    [HttpPost("refresh-token")]
+    public async Task<ActionResult<TokenResponse>> RefreshToken([FromBody] RefreshTokenRequest request)
+    {
+        // Lejárt access tokenből kinyerjük a user adatokat
+        var principal = _jwtService.GetPrincipalFromExpiredToken(request.Token);
+        if (principal == null)
+        {
+            return Unauthorized(new TokenResponse { Success = false, Message = "Érvénytelen token" });
+        }
+
+        var userIdClaim = principal.FindFirst("UserId")?.Value ?? principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+        {
+            return Unauthorized(new TokenResponse { Success = false, Message = "Érvénytelen token" });
+        }
+
+        var user = await _context.users.FindAsync(userId);
+        if (user == null || user.refresh_token != request.RefreshToken || user.refresh_token_expires < DateTime.UtcNow)
+        {
+            return Unauthorized(new TokenResponse { Success = false, Message = "Érvénytelen vagy lejárt refresh token" });
+        }
+
+        // Új tokenek generálása
+        var newAccessToken = _jwtService.GenerateAccessToken(user);
+        var newRefreshToken = _jwtService.GenerateRefreshToken();
+
+        // Refresh token frissítése az adatbázisban
+        var refreshTokenDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? "7");
+        user.refresh_token = newRefreshToken;
+        user.refresh_token_expires = DateTime.UtcNow.AddDays(refreshTokenDays);
+        await _context.SaveChangesAsync();
+
+        return Ok(new TokenResponse
+        {
+            Success = true,
+            Message = "Token sikeresen frissítve",
+            Token = newAccessToken,
+            RefreshToken = newRefreshToken,
+            User = new UserDto
+            {
+                Id = user.id,
+                Nev = user.nev,
+                LastName = user.last_name,
+                FirstName = user.first_name,
+                DefaultAddress = user.default_address,
+                Email = user.email,
+                Role = user.role,
+                Letrehozva = user.letrehozva
+            }
+        });
+    }
+
+    /// <summary>
+    /// Kijelentkezés - refresh token törlése
+    /// </summary>
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<ActionResult> Logout()
+    {
+        var userIdClaim = User.FindFirst("UserId")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+        {
+            return BadRequest(new { message = "Érvénytelen token" });
+        }
+
+        var user = await _context.users.FindAsync(userId);
+        if (user != null)
+        {
+            user.refresh_token = null;
+            user.refresh_token_expires = null;
+            await _context.SaveChangesAsync();
+        }
+
+        return Ok(new { success = true, message = "Sikeres kijelentkezés" });
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Backend.Application.DTOs;
 using Backend.Domain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,9 @@ namespace Backend.Api.Controllers
         public IActionResult GetAll()
         {
             return Ok(_context.copies.ToList());
-        }        [HttpGet("{id}")]
+        }
+
+        [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
             var copy = _context.copies.Find(id);
@@ -43,7 +46,10 @@ namespace Backend.Api.Controllers
                 count = copies.Count,
                 copies = copies
             });
-        }[HttpPost]
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] CopiesDto dto)
         {
             // Ellenőrizzük hogy létezik-e a könyv
@@ -65,13 +71,17 @@ namespace Backend.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = newCopy.id }, newCopy);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public IActionResult Update(int id, copy copy)
         {
             _context.Entry(copy).State = EntityState.Modified;
             _context.SaveChanges();
             return NoContent();
-        }        [HttpDelete("{id}")]
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var copy = await _context.copies.FindAsync(id);
@@ -87,9 +97,8 @@ namespace Backend.Api.Controllers
 
         /// <summary>
         /// Toggles availability of all copies for a specific book
-        /// If any copy is available, sets all to unavailable
-        /// If all copies are unavailable, sets all to available
         /// </summary>
+        [Authorize(Roles = "admin")]
         [HttpPut("toggle-book-availability/{bookId}")]
         public async Task<IActionResult> ToggleBookAvailability(int bookId)
         {
@@ -102,8 +111,6 @@ namespace Backend.Api.Controllers
                 return NotFound(new { message = "Ennek a könyvnek nincs egyetlen példánya sem" });
             }
 
-            // Ha van legalább egy elérhető példány, akkor mindet elérhetetlenné tesszük
-            // Ha egyik sem elérhető, akkor mindet elérhetővé tesszük
             bool hasAvailable = copies.Any(c => c.elerheto == true);
             bool newAvailability = !hasAvailable;
 

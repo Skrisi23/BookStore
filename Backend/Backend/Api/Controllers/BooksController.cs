@@ -1,5 +1,6 @@
 ﻿using Backend.Application.DTOs;
 using Backend.Domain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -174,6 +175,7 @@ public class BooksController : ControllerBase
     /// <summary>
     /// Új könyv létrehozása
     /// </summary>
+    [Authorize(Roles = "admin")]
     [HttpPost]
     public async Task<ActionResult<BookDto>> CreateBook([FromBody] CreateBookDto createBookDto)
     {
@@ -207,6 +209,16 @@ public class BooksController : ControllerBase
         _context.books.Add(book);
         await _context.SaveChangesAsync();
 
+        // book_authors szinkronizáció - elsődleges szerző hozzáadása
+        var bookAuthor = new book_author
+        {
+            book_id = book.id,
+            author_id = book.author_id,
+            is_primary = true
+        };
+        _context.book_authors.Add(bookAuthor);
+        await _context.SaveChangesAsync();
+
         // Reload with author and category
         book = await _context.books
             .Include(b => b.author)
@@ -233,6 +245,7 @@ public class BooksController : ControllerBase
     /// <summary>
     /// Könyv módosítása
     /// </summary>
+    [Authorize(Roles = "admin")]
     [HttpPut("{id}")]
     public async Task<ActionResult<BookDto>> UpdateBook(int id, [FromBody] UpdateBookDto updateBookDto)
     {
@@ -254,7 +267,30 @@ public class BooksController : ControllerBase
             {
                 return BadRequest(new { message = $"Nem található szerző ezzel az ID-vel: {updateBookDto.author_id}" });
             }
+
+            var oldAuthorId = book.author_id;
             book.author_id = updateBookDto.author_id.Value;
+
+            // book_authors szinkronizáció - régi elsődleges szerző cseréje
+            var existingPrimary = await _context.book_authors
+                .FirstOrDefaultAsync(ba => ba.book_id == id && ba.author_id == oldAuthorId && ba.is_primary);
+            if (existingPrimary != null)
+            {
+                _context.book_authors.Remove(existingPrimary);
+            }
+
+            // Új elsődleges szerző hozzáadása (ha még nincs)
+            var alreadyExists = await _context.book_authors
+                .AnyAsync(ba => ba.book_id == id && ba.author_id == updateBookDto.author_id.Value);
+            if (!alreadyExists)
+            {
+                _context.book_authors.Add(new book_author
+                {
+                    book_id = id,
+                    author_id = updateBookDto.author_id.Value,
+                    is_primary = true
+                });
+            }
         }
 
         // Frissítjük a mezőket ha meg vannak adva
@@ -303,6 +339,7 @@ public class BooksController : ControllerBase
     /// <summary>
     /// Könyv törlése
     /// </summary>
+    [Authorize(Roles = "admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBook(int id)
     {
