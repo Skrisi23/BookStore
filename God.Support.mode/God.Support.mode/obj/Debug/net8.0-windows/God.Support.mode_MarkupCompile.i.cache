@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Alkotasok_Tara\Desktop\God.Support.mode\God.Support.mode\obj\Debug\net8.0-windows\
+C:\projekt\Desktop\God.Support.mode\God.Support.mode\obj\Debug\net8.0-windows\
 God.Support.mode
 none
 false
-TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-
-9-203648396
-
-36154973729
-2151911581205
-App.xaml;MainWindow.xaml;Views\BooksPage.xaml;Views\CartsPage.xaml;Views\DashboardPage.xaml;Views\OrdersPage.xaml;Views\RentalsPage.xaml;Views\SettingsPage.xaml;Views\UsersPage.xaml;
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP
+C:\projekt\Desktop\God.Support.mode\God.Support.mode\App.xaml
+9-1809311980
+22-252131957
+41635784767
+2151893956738
+MainWindow.xaml;Views\BooksPage.xaml;Views\CartsPage.xaml;Views\DashboardPage.xaml;Views\LoginWindow.xaml;Views\OrdersPage.xaml;Views\RentalsPage.xaml;Views\SettingsPage.xaml;Views\UsersPage.xaml;
 
 False
 

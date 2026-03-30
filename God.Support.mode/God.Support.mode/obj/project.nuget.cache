@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "tgmmnQq1sTc=",
+  "dgSpecHash": "VpigZbzQBlk=",
   "success": true,
-  "projectFilePath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
+  "projectFilePath": "C:\\projekt\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\tothkb\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "C:\\Users\\tothkb\\.nuget\\packages\\harfbuzzsharp\\8.3.1.1\\harfbuzzsharp.8.3.1.1.nupkg.sha512",
@@ -33,10 +33,8 @@
     {
       "code": "NU1603",
       "level": "Warning",
-      "message": "God.Support.mode depends on System.Configuration.ConfigurationManager (>= 8.0.2) but System.Configuration.ConfigurationManager 8.0.2 was not found. System.Configuration.ConfigurationManager 9.0.0 was resolved instead.",
-      "projectPath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
+      "message": "God.Support.mode depends on System.Configuration.ConfigurationManager (>= 8.0.2) but System.Configuration.ConfigurationManager 8.0.2 was not found. System.Configuration.ConfigurationManager 9.0.0 was resolved instead.",
       "libraryId": "System.Configuration.ConfigurationManager",
       "targetGraphs": [
         "net8.0-windows7.0"
@@ -45,10 +43,8 @@
     {
       "code": "NU1701",
       "level": "Warning",
-      "message": "Package 'LiveChartsCore.SkiaSharpView.WPF 2.0.0-rc6.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
-      "projectPath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
+      "message": "Package 'LiveChartsCore.SkiaSharpView.WPF 2.0.0-rc6.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
       "libraryId": "LiveChartsCore.SkiaSharpView.WPF",
       "targetGraphs": [
         "net8.0-windows7.0"
@@ -57,10 +53,8 @@
     {
       "code": "NU1701",
       "level": "Warning",
-      "message": "Package 'OpenTK 3.3.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
-      "projectPath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
+      "message": "Package 'OpenTK 3.3.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
       "libraryId": "OpenTK",
       "targetGraphs": [
         "net8.0-windows7.0"
@@ -69,10 +63,8 @@
     {
       "code": "NU1701",
       "level": "Warning",
-      "message": "Package 'OpenTK.GLWpfControl 3.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
-      "projectPath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
+      "message": "Package 'OpenTK.GLWpfControl 3.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
       "libraryId": "OpenTK.GLWpfControl",
       "targetGraphs": [
         "net8.0-windows7.0"
@@ -81,10 +73,8 @@
     {
       "code": "NU1701",
       "level": "Warning",
-      "message": "Package 'SkiaSharp.Views.WPF 3.119.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
-      "projectPath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Alkotasok_Tara\\Desktop\\God.Support.mode\\God.Support.mode\\God.Support.mode.csproj",
+      "message": "Package 'SkiaSharp.Views.WPF 3.119.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
       "libraryId": "SkiaSharp.Views.WPF",
       "targetGraphs": [
         "net8.0-windows7.0"

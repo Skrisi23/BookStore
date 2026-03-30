@@ -21,4 +21,7 @@ public class UserDto
 
     [JsonProperty("default_address")]
     public string? DefaultAddress { get; set; }
+
+    [JsonProperty("role")]
+    public string? Role { get; set; }
 }

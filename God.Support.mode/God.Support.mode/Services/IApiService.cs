@@ -7,6 +7,8 @@ public interface IApiService
     // Users
     Task<List<UserDto>> GetUsersAsync();
     Task DeleteUserAsync(int id);
+    Task AdminResetPasswordAsync(int userId, string newPassword);
+    Task UpdateUserRoleAsync(int userId, string role);
 
     // Books
     Task<List<BookDto>> GetBooksAsync();

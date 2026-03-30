@@ -48,4 +48,7 @@ public class PaymentItemDto
 
     [JsonProperty("unit_price")]
     public decimal UnitPrice { get; set; }
+
+    [JsonProperty("is_rental")]
+    public bool IsRental { get; set; }
 }

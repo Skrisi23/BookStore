@@ -10,11 +10,13 @@ public partial class CartsViewModel : ObservableObject
 {
     private readonly IApiService _apiService;
     private readonly INotificationService _notification;
+    private List<CartDto> _allCarts = [];
 
     [ObservableProperty] private ObservableCollection<CartDto> carts = [];
     [ObservableProperty] private CartDto? selectedCart;
     [ObservableProperty] private ObservableCollection<CartItemDto> cartItems = [];
     [ObservableProperty] private bool isLoading;
+    [ObservableProperty] private bool showOnlyActive = true;
 
     public CartsViewModel(IApiService apiService, INotificationService notification)
     {
@@ -28,19 +30,29 @@ public partial class CartsViewModel : ObservableObject
         CartItems = new ObservableCollection<CartItemDto>(value?.Items ?? []);
     }
 
+    partial void OnShowOnlyActiveChanged(bool value) => FilterCarts();
+
+    private void FilterCarts()
+    {
+        var filtered = ShowOnlyActive
+            ? _allCarts.Where(c => c.Status == "active" && (c.Items?.Count ?? 0) > 0).ToList()
+            : _allCarts;
+        Carts = new ObservableCollection<CartDto>(filtered);
+    }
+
     [RelayCommand]
     private async Task LoadCartsAsync()
     {
         IsLoading = true;
         try
         {
-            var carts = await _apiService.GetCartsAsync();
-            Carts = new ObservableCollection<CartDto>(carts);
-            _notification.Show("Carts loaded");
+            _allCarts = await _apiService.GetCartsAsync();
+            FilterCarts();
+            _notification.Show("Kosarak betoltve");
         }
         catch (Exception ex)
         {
-            _notification.ShowError($"Failed to load carts: {ex.Message}");
+            _notification.ShowError($"Kosarak betoltese sikertelen: {ex.Message}");
         }
         finally
         {
@@ -55,13 +67,13 @@ public partial class CartsViewModel : ObservableObject
         try
         {
             await _apiService.ClearCartAsync(SelectedCart.UserId);
-            _notification.Show("Cart cleared");
+            _notification.Show("Kosar uriteve");
             SelectedCart = null;
             await LoadCartsAsync();
         }
         catch (Exception ex)
         {
-            _notification.ShowError($"Failed to clear cart: {ex.Message}");
+            _notification.ShowError($"Kosar uritese sikertelen: {ex.Message}");
         }
     }
 }

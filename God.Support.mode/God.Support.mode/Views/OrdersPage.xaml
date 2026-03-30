@@ -6,6 +6,8 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <converters:NullToVisibilityConverter x:Key="NullToVis"/>
+        <converters:OrderTypeToColorConverter x:Key="OrderTypeToColor"/>
+        <converters:OrderTypeToHungarianConverter x:Key="OrderTypeToHungarian"/>
     </UserControl.Resources>
 
     <DockPanel>
@@ -33,6 +35,11 @@
                             materialDesign:HintAssist.Hint="Datum -ig"
                             Style="{StaticResource MaterialDesignOutlinedDatePicker}"
                             Width="160" Margin="12,4,4,4"/>
+                <ComboBox SelectedItem="{Binding SelectedOrderType}"
+                          ItemsSource="{Binding OrderTypeFilters}"
+                          materialDesign:HintAssist.Hint="Rendeles tipusa"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                          Width="160" Margin="12,4,4,4"/>
                 <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="Kereses email szerint..."
                          materialDesign:TextFieldAssist.HasClearButton="True"
@@ -59,6 +66,17 @@
                     <DataGridTextColumn Header="Fizetes azon." Binding="{Binding Id}" Width="100"/>
                     <DataGridTextColumn Header="Felhasznalo" Binding="{Binding UserName}" Width="*"/>
                     <DataGridTextColumn Header="Email" Binding="{Binding UserEmail}" Width="*"/>
+                    <DataGridTemplateColumn Header="Tipus" Width="110">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="4" Padding="6,3" HorizontalAlignment="Left"
+                                        Background="{Binding OrderType, Converter={StaticResource OrderTypeToColor}}">
+                                    <TextBlock Text="{Binding OrderType, Converter={StaticResource OrderTypeToHungarian}}"
+                                               Foreground="White" FontWeight="SemiBold" FontSize="11"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Osszeg" Binding="{Binding Amount, StringFormat='{}{0:N0} Ft'}" Width="110"/>
                     <DataGridTextColumn Header="Datum" Binding="{Binding PaymentDate, StringFormat=yyyy-MM-dd}" Width="110"/>
                     <DataGridTextColumn Header="Fizetes modja" Binding="{Binding PaymentMethod}" Width="120"/>
@@ -69,14 +87,41 @@
                     <DataTemplate>
                         <Border Background="#2A2A2A" Padding="24,12" Margin="0,4">
                             <StackPanel>
-                                <TextBlock Text="Vasarolt tetelek" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="Tetelek reszletei" FontWeight="Bold" Margin="0,0,0,10"/>
                                 <ItemsControl ItemsSource="{Binding Items}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <DockPanel Margin="0,4">
-                                                <TextBlock Text="{Binding BookTitle}" Width="250"/>
-                                                <TextBlock Text="{Binding Quantity, StringFormat='Db: {0}'}" Width="80" Margin="12,0,0,0"/>
-                                                <TextBlock Text="{Binding UnitPrice, StringFormat='{}{0:N0} Ft'}" Margin="12,0,0,0"/>
+                                                <Border CornerRadius="3" Padding="5,2" Width="85"
+                                                        Margin="0,0,10,0" HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="#4CAF50"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsRental}" Value="True">
+                                                                    <Setter Property="Background" Value="#2196F3"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <TextBlock Foreground="White" FontSize="10" FontWeight="SemiBold"
+                                                               HorizontalAlignment="Center">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Text" Value="Vásárlás"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsRental}" Value="True">
+                                                                        <Setter Property="Text" Value="Kölcsönzés"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <TextBlock Text="{Binding BookTitle}" Width="250" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Quantity, StringFormat='Db: {0}'}" Width="80" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding UnitPrice, StringFormat='{}{0:N0} Ft'}" Margin="12,0,0,0" VerticalAlignment="Center"/>
                                             </DockPanel>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>

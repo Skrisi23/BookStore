@@ -23,7 +23,7 @@ public partial class DashboardViewModel : ObservableObject
 
     [ObservableProperty] private ISeries[] rentalsSeries = [];
     [ObservableProperty] private Axis[] xAxes = [];
-    [ObservableProperty] private Axis[] yAxes = [new Axis { Name = "Rentals" }];
+    [ObservableProperty] private Axis[] yAxes = [new Axis { Name = "Kölcsönzések" }];
 
     public DashboardViewModel(IApiService apiService, INotificationService notification)
     {
@@ -77,7 +77,7 @@ public partial class DashboardViewModel : ObservableObject
                 new LineSeries<double>
                 {
                     Values = rentalsPerDay,
-                    Name = "Rentals",
+                    Name = "Kölcsönzések",
                     Stroke = new SolidColorPaint(SKColors.OrangeRed) { StrokeThickness = 2 },
                     GeometryStroke = new SolidColorPaint(SKColors.OrangeRed),
                     GeometrySize = 6,
@@ -95,11 +95,11 @@ public partial class DashboardViewModel : ObservableObject
                 }
             ];
 
-            _notification.Show("Dashboard refreshed");
+            _notification.Show("Adatok frissitve");
         }
         catch (Exception ex)
         {
-            _notification.ShowError($"Failed to load dashboard: {ex.Message}");
+            _notification.ShowError($"Adatok betoltese sikertelen: {ex.Message}");
         }
         finally
         {

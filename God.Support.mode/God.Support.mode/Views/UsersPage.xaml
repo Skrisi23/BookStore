@@ -6,6 +6,10 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <converters:NullToVisibilityConverter x:Key="NullToVis"/>
+        <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis"/>
+        <converters:RoleToColorConverter x:Key="RoleToColor"/>
+        <converters:OrderTypeToColorConverter x:Key="OrderTypeToColor"/>
+        <converters:OrderTypeToHungarianConverter x:Key="OrderTypeToHungarian"/>
     </UserControl.Resources>
 
     <Grid>
@@ -49,6 +53,14 @@
                     <DataGridTextColumn Header="Vezeteknev" Binding="{Binding LastName}" Width="*"/>
                     <DataGridTextColumn Header="Keresztnev" Binding="{Binding FirstName}" Width="*"/>
                     <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                    <DataGridTemplateColumn Header="Szerepkor" Width="90">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Role}" FontWeight="SemiBold"
+                                           Foreground="{Binding Role, Converter={StaticResource RoleToColor}}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Cim" Binding="{Binding DefaultAddress}" Width="140"/>
                 </DataGrid.Columns>
             </DataGrid>
@@ -72,7 +84,13 @@
                     <StackPanel DataContext="{Binding}">
                         <!-- User Info -->
                         <TextBlock Text="{Binding SelectedUser.Nev}" FontSize="18" FontWeight="Bold" Margin="0,0,0,4"/>
-                        <TextBlock Text="{Binding SelectedUser.Email}" Opacity="0.7" Margin="0,0,0,16"/>
+                        <TextBlock Text="{Binding SelectedUser.Email}" Opacity="0.7" Margin="0,0,0,8"/>
+
+                        <!-- Role badge -->
+                        <Border CornerRadius="4" Padding="8,4" HorizontalAlignment="Left" Margin="0,0,0,16"
+                                Background="{Binding SelectedUser.Role, Converter={StaticResource RoleToColor}}">
+                            <TextBlock Text="{Binding SelectedUser.Role}" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                        </Border>
 
                         <TextBlock Text="Azonosito:" Opacity="0.6"/>
                         <TextBlock Text="{Binding SelectedUser.Id}" Margin="0,4,0,12"/>
@@ -82,6 +100,69 @@
                         <TextBlock Text="{Binding SelectedUser.FirstName}" Margin="0,4,0,12"/>
                         <TextBlock Text="Lakcim:" Opacity="0.6"/>
                         <TextBlock Text="{Binding SelectedUser.DefaultAddress}" TextWrapping="Wrap" Margin="0,4,0,16"/>
+
+                        <Separator Margin="0,0,0,16"/>
+
+                        <!-- Role módosítás -->
+                        <TextBlock Text="Szerepkor modositasa" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <DockPanel Margin="0,0,0,16">
+                            <Button DockPanel.Dock="Right" Content="Mentes"
+                                    Command="{Binding SaveRoleCommand}"
+                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                    Foreground="#FF5722" Margin="8,0,0,0"/>
+                            <ComboBox ItemsSource="{Binding AvailableRoles}"
+                                      SelectedItem="{Binding SelectedRole}"
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                      materialDesign:HintAssist.Hint="Szerepkor"/>
+                        </DockPanel>
+
+                        <Separator Margin="0,0,0,16"/>
+
+                        <!-- Jelszó visszaállítás gomb -->
+                        <Button Content="Jelszo visszaallitasa"
+                                Command="{Binding OpenPasswordResetCommand}"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Foreground="#FF9800"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,0,0,8"
+                                Visibility="{Binding IsPasswordResetOpen, Converter={StaticResource InverseBoolToVis}}"/>
+
+                        <!-- Jelszó reset panel -->
+                        <Border Background="#2A2A2A" CornerRadius="8" Padding="16" Margin="0,0,0,16"
+                                Visibility="{Binding IsPasswordResetOpen, Converter={StaticResource BoolToVis}}">
+                            <StackPanel>
+                                <TextBlock Text="Uj jelszo beallitasa" FontWeight="Bold" Margin="0,0,0,12"/>
+
+                                <PasswordBox x:Name="NewPasswordBox"
+                                             materialDesign:HintAssist.Hint="Uj jelszo"
+                                             materialDesign:HintAssist.IsFloating="True"
+                                             Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                                             Margin="0,0,0,8"
+                                             PasswordChanged="NewPasswordBox_PasswordChanged"/>
+
+                                <PasswordBox x:Name="ConfirmPasswordBox"
+                                             materialDesign:HintAssist.Hint="Jelszo megerositese"
+                                             materialDesign:HintAssist.IsFloating="True"
+                                             Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                                             Margin="0,0,0,8"
+                                             PasswordChanged="ConfirmPasswordBox_PasswordChanged"/>
+
+                                <TextBlock Text="{Binding PasswordError}" Foreground="#F44336"
+                                           TextWrapping="Wrap" Margin="0,0,0,8"
+                                           Visibility="{Binding PasswordError, Converter={StaticResource NullToVis}}"/>
+
+                                <DockPanel>
+                                    <Button Content="Megse" DockPanel.Dock="Right"
+                                            Command="{Binding CancelPasswordResetCommand}"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            Margin="8,0,0,0"/>
+                                    <Button Content="Visszaallitas"
+                                            Command="{Binding ResetPasswordCommand}"
+                                            Style="{StaticResource MaterialDesignRaisedButton}"
+                                            Background="#FF9800" Foreground="White"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </Border>
 
                         <Separator Margin="0,0,0,16"/>
 
@@ -129,11 +210,21 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="#2A2A2A" CornerRadius="4" Padding="10" Margin="0,0,0,6">
-                                        <DockPanel>
-                                            <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} Ft'}" FontWeight="SemiBold"/>
-                                             <TextBlock Text="{Binding PaymentDate, StringFormat=yyyy-MM-dd}"
-                                                       HorizontalAlignment="Right" Opacity="0.7"/>
-                                        </DockPanel>
+                                        <StackPanel>
+                                            <DockPanel>
+                                                <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} Ft'}" FontWeight="SemiBold"/>
+                                                <Border CornerRadius="3" Padding="5,2" HorizontalAlignment="Right"
+                                                        Background="{Binding OrderType, Converter={StaticResource OrderTypeToColor}}">
+                                                    <TextBlock Text="{Binding OrderType, Converter={StaticResource OrderTypeToHungarian}}"
+                                                               Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                                                </Border>
+                                            </DockPanel>
+                                            <TextBlock Opacity="0.6" Margin="0,4,0,0">
+                                                <Run Text="{Binding PaymentDate, StringFormat=yyyy-MM-dd, Mode=OneWay}"/>
+                                                <Run Text=" • "/>
+                                                <Run Text="{Binding PaymentMethod, Mode=OneWay}"/>
+                                            </TextBlock>
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

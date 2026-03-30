@@ -6,6 +6,8 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <converters:NullToVisibilityConverter x:Key="NullToVis"/>
+        <converters:OrderTypeToColorConverter x:Key="OrderTypeToColor"/>
+        <converters:OrderTypeToHungarianConverter x:Key="OrderTypeToHungarian"/>
     </UserControl.Resources>
 
     <Grid>
@@ -19,10 +21,14 @@
             <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
                 <TextBlock Text="Kosarak" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                            VerticalAlignment="Center"/>
-                <Button Content="{materialDesign:PackIcon Kind=Refresh}"
-                        Command="{Binding LoadCartsCommand}"
-                        Style="{StaticResource MaterialDesignIconButton}"
-                        HorizontalAlignment="Right" ToolTip="Frissites"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <CheckBox Content="Csak aktiv kosarak"
+                              IsChecked="{Binding ShowOnlyActive}"
+                              VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <Button Content="{materialDesign:PackIcon Kind=Refresh}"
+                            Command="{Binding LoadCartsCommand}"
+                            Style="{StaticResource MaterialDesignIconButton}" ToolTip="Frissites"/>
+                </StackPanel>
             </DockPanel>
 
             <!-- DataGrid -->
@@ -37,7 +43,10 @@
                     <DataGridTextColumn Header="Kosar azon." Binding="{Binding Id}" Width="100"/>
                     <DataGridTextColumn Header="Felhasznalo" Binding="{Binding UserName}" Width="*"/>
                     <DataGridTextColumn Header="Email" Binding="{Binding UserEmail}" Width="*"/>
-                    <DataGridTextColumn Header="Tetelek szama" Binding="{Binding Items.Count}" Width="110"/>
+                    <DataGridTextColumn Header="Allapot" Binding="{Binding Status}" Width="90"/>
+                    <DataGridTextColumn Header="Tetelek" Binding="{Binding TotalItems}" Width="70"/>
+                    <DataGridTextColumn Header="Osszeg" Binding="{Binding TotalPrice, StringFormat='{}{0:N0} Ft'}" Width="110"/>
+                    <DataGridTextColumn Header="Letrehozva" Binding="{Binding CreatedAt, StringFormat=yyyy-MM-dd}" Width="110"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
@@ -63,24 +72,24 @@
                             <DataTemplate>
                                 <materialDesign:Card Padding="12" Margin="0,0,0,10">
                                     <StackPanel>
-                                        <TextBlock Text="{Binding BookCim}" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                        <DockPanel Margin="0,0,0,4">
+                                            <TextBlock Text="{Binding BookCim}" FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"/>
+                                            <Border CornerRadius="3" Padding="5,2" HorizontalAlignment="Right"
+                                                    Background="{Binding OrderType, Converter={StaticResource OrderTypeToColor}}">
+                                                <TextBlock Text="{Binding OrderType, Converter={StaticResource OrderTypeToHungarian}}"
+                                                           Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                                            </Border>
+                                        </DockPanel>
                                         <DockPanel Margin="0,4,0,0">
                                             <TextBlock Opacity="0.7">
                                                 <Run Text="Db: "/>
                                                 <Run Text="{Binding Quantity, Mode=OneWay}"/>
                                             </TextBlock>
-                                            <TextBlock HorizontalAlignment="Right" Opacity="0.7">
-                                                <Run Text="Egysegar: "/>
+                                            <TextBlock HorizontalAlignment="Right" FontWeight="Bold">
                                                 <Run Text="{Binding Price, StringFormat='{}{0:N0} Ft', Mode=OneWay}"/>
                                             </TextBlock>
                                         </DockPanel>
-                                        <TextBlock HorizontalAlignment="Right" FontWeight="Bold" Margin="0,6,0,0">
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="{}{0:N0} Ft">
-                                                    <Binding Path="Price"/>
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
                                     </StackPanel>
                                 </materialDesign:Card>
                             </DataTemplate>

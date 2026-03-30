@@ -3,13 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:vm="clr-namespace:God.Support.mode.ViewModels"
-             xmlns:views="clr-namespace:God.Support.mode.Views">
+             xmlns:views="clr-namespace:God.Support.mode.Views"
+             xmlns:converters="clr-namespace:God.Support.mode.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="DeepOrange" SecondaryColor="DeepOrange"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters -->
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <converters:RoleToColorConverter x:Key="RoleToColorConverter"/>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
 
             <!-- ViewModel DataTemplates -->
             <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
