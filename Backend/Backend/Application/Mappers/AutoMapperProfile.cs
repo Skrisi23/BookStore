@@ -14,7 +14,10 @@ namespace Backend.Application.Mappers
             // Payment mappings
             CreateMap<payment, PaymentDto>()
                 .ForMember(dest => dest.user_name, opt => opt.MapFrom(src => src.user.nev))
-                .ForMember(dest => dest.user_email, opt => opt.MapFrom(src => src.user.email));
+                .ForMember(dest => dest.user_email, opt => opt.MapFrom(src => src.user.email))
+                .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.purchase_items));
+            CreateMap<purchase_item, PurchaseItemDto>()
+                .ForMember(dest => dest.book_title, opt => opt.MapFrom(src => src.book != null ? src.book.cim : null));
             CreateMap<CreatePaymentDto, payment>()
                 .ForMember(dest => dest.payment_date, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.id, opt => opt.Ignore());            // Rental mappings

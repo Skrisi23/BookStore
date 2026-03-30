@@ -29,10 +29,59 @@ namespace Backend.Api.Controllers
         {
             var payments = await _context.payments
                 .Include(p => p.user)
+                .Include(p => p.purchase_items)
+                    .ThenInclude(pi => pi.book)
+                .Include(p => p.rentals)
+                    .ThenInclude(r => r.copy)
+                        .ThenInclude(c => c.book)
                 .OrderByDescending(p => p.payment_date)
                 .ToListAsync();
 
             var paymentDtos = _mapper.Map<List<PaymentDto>>(payments);
+
+            foreach (var dto in paymentDtos)
+            {
+                var payment = payments.First(p => p.id == dto.id);
+
+                // Üres order_type javítás
+                if (string.IsNullOrWhiteSpace(dto.order_type))
+                {
+                    if (payment.rentals.Any() && payment.purchase_items.Any())
+                        dto.order_type = "mixed";
+                    else if (payment.rentals.Any())
+                        dto.order_type = "rental";
+                    else
+                        dto.order_type = "purchase";
+                }
+
+                // is_rental meghatározása a purchase_items tételeknél
+                var rentalBookIds = payment.rentals
+                    .Where(r => r.copy != null)
+                    .Select(r => r.copy.book_id)
+                    .ToHashSet();
+
+                foreach (var item in dto.items)
+                {
+                    item.is_rental = payment.order_type == "rental" || rentalBookIds.Contains(item.book_id);
+                }
+
+                // Kölcsönzés tételek hozzáadása az items listához (ha nincsenek a purchase_items-ben)
+                foreach (var rental in payment.rentals)
+                {
+                    if (rental.copy?.book != null && !dto.items.Any(i => i.book_id == rental.copy.book_id))
+                    {
+                        dto.items.Add(new PurchaseItemDto
+                        {
+                            book_id = rental.copy.book_id,
+                            book_title = rental.copy.book.cim,
+                            quantity = 1,
+                            unit_price = 0,
+                            is_rental = true
+                        });
+                    }
+                }
+            }
+
             return Ok(paymentDtos);
         }
 
@@ -44,6 +93,11 @@ namespace Backend.Api.Controllers
         {
             var payment = await _context.payments
                 .Include(p => p.user)
+                .Include(p => p.purchase_items)
+                    .ThenInclude(pi => pi.book)
+                .Include(p => p.rentals)
+                    .ThenInclude(r => r.copy)
+                        .ThenInclude(c => c.book)
                 .FirstOrDefaultAsync(p => p.id == id);
 
             if (payment == null)
@@ -52,6 +106,44 @@ namespace Backend.Api.Controllers
             }
 
             var paymentDto = _mapper.Map<PaymentDto>(payment);
+
+            // Üres order_type javítás
+            if (string.IsNullOrWhiteSpace(paymentDto.order_type))
+            {
+                if (payment.rentals.Any() && payment.purchase_items.Any())
+                    paymentDto.order_type = "mixed";
+                else if (payment.rentals.Any())
+                    paymentDto.order_type = "rental";
+                else
+                    paymentDto.order_type = "purchase";
+            }
+
+            var rentalBookIds = payment.rentals
+                .Where(r => r.copy != null)
+                .Select(r => r.copy.book_id)
+                .ToHashSet();
+
+            foreach (var item in paymentDto.items)
+            {
+                item.is_rental = payment.order_type == "rental" || rentalBookIds.Contains(item.book_id);
+            }
+
+            // Kölcsönzés tételek hozzáadása
+            foreach (var rental in payment.rentals)
+            {
+                if (rental.copy?.book != null && !paymentDto.items.Any(i => i.book_id == rental.copy.book_id))
+                {
+                    paymentDto.items.Add(new PurchaseItemDto
+                    {
+                        book_id = rental.copy.book_id,
+                        book_title = rental.copy.book.cim,
+                        quantity = 1,
+                        unit_price = 0,
+                        is_rental = true
+                    });
+                }
+            }
+
             return Ok(paymentDto);
         }
 

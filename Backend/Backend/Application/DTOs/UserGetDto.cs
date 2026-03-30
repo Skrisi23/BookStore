@@ -13,5 +13,7 @@ namespace Backend.Application.DTOs
         public string? default_address { get; set; }
 
         public string email { get; set; } = null!;
+
+        public string role { get; set; } = "user";
     }
 }

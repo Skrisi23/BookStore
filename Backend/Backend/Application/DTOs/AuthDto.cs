@@ -93,3 +93,16 @@ public class ResendVerificationRequest
 {
     public string Email { get; set; } = null!;
 }
+
+public class AdminResetPasswordDto
+{
+    [Required(ErrorMessage = "Új jelszó megadása kötelező")]
+    [MinLength(6, ErrorMessage = "Az új jelszónak legalább 6 karakter hosszúnak kell lennie")]
+    public string NewPassword { get; set; } = null!;
+}
+
+public class UpdateRoleDto
+{
+    [Required(ErrorMessage = "Szerepkör megadása kötelező")]
+    public string Role { get; set; } = null!;
+}

@@ -104,6 +104,34 @@ namespace Backend.Api.Controllers
         }
 
         /// <summary>
+        /// Felhasználó szerepkörének módosítása (admin only)
+        /// </summary>
+        [Authorize(Roles = "admin")]
+        [HttpPatch("{id}/role")]
+        public async Task<IActionResult> UpdateRole(int id, [FromBody] UpdateRoleDto dto)
+        {
+            try
+            {
+                var user = await _context.users.FindAsync(id);
+                if (user == null)
+                    return NotFound(new { message = "Felhasználó nem található" });
+
+                if (dto.Role != "user" && dto.Role != "admin")
+                    return BadRequest(new { message = "Érvénytelen szerepkör. Csak 'user' vagy 'admin' lehetséges." });
+
+                user.role = dto.Role;
+                _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = $"Szerepkör sikeresen módosítva: {dto.Role}" });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Felhasználói profil adatok frissítése (név, cím)
         /// </summary>
         [HttpPatch("{id}/profile")]

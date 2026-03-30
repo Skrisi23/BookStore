@@ -22,6 +22,18 @@ namespace Backend.Application.DTOs
         // Opcionális: user adatok is
         public string? user_name { get; set; }
         public string? user_email { get; set; }
+
+        // Vásárolt tételek
+        public List<PurchaseItemDto> items { get; set; } = [];
+    }
+
+    public class PurchaseItemDto
+    {
+        public int book_id { get; set; }
+        public string? book_title { get; set; }
+        public int quantity { get; set; }
+        public decimal unit_price { get; set; }
+        public bool is_rental { get; set; }
     }
 
     // Új payment létrehozásához

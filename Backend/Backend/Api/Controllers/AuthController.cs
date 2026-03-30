@@ -433,4 +433,25 @@ public class AuthController : ControllerBase
 
         return Ok(new { success = true, message = "Sikeres kijelentkezés" });
     }
+
+    /// <summary>
+    /// Admin jelszó visszaállítás - nem kéri a régi jelszót
+    /// </summary>
+    [Authorize(Roles = "admin")]
+    [HttpPatch("{id}/admin-reset-password")]
+    public async Task<ActionResult> AdminResetPassword(int id, [FromBody] AdminResetPasswordDto dto)
+    {
+        var user = await _context.users.FindAsync(id);
+        if (user == null)
+        {
+            return NotFound(new { message = "Felhasználó nem található" });
+        }
+
+        string newPasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+        user.jelszo_hash = newPasswordHash;
+        _context.Entry(user).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Jelszó sikeresen visszaállítva" });
+    }
 }
