@@ -1,6 +1,6 @@
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { loginUser, registerUser, updateUserProfile } from '../api';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import { loginUser, registerUser, updateUserProfile, logoutUser, clearTokens } from '../api';
 
 const AuthContext = createContext();
 
@@ -15,13 +15,28 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
-  useEffect(() => {
-    
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
-    }
+  // Automatikus kijelentkezés ha a refresh token is lejárt
+  const handleForceLogout = useCallback(() => {
+    setCurrentUser(null);
+    clearTokens();
   }, []);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    const accessToken = localStorage.getItem('accessToken');
+    if (savedUser && accessToken) {
+      setCurrentUser(JSON.parse(savedUser));
+    } else if (savedUser && !accessToken) {
+      // Ha van user de nincs token, töröljük
+      localStorage.removeItem('currentUser');
+    }
+
+    // Figyelünk az auth:logout eseményre (token refresh sikertelen)
+    window.addEventListener('auth:logout', handleForceLogout);
+    return () => {
+      window.removeEventListener('auth:logout', handleForceLogout);
+    };
+  }, [handleForceLogout]);
 
   const login = async (username, password) => {
     try {
@@ -36,7 +51,9 @@ export const AuthProvider = ({ children }) => {
     } catch (e) {
       return { success: false, message: 'Bejelentkezési hiba' };
     }
-  };  const register = async (name, email, password, lastName, firstName, defaultAddress) => {
+  };
+
+  const register = async (name, email, password, lastName, firstName, defaultAddress) => {
     try {
       const result = await registerUser(name, email, password, lastName, firstName, defaultAddress);
       if (result.success) {
@@ -65,17 +82,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await logoutUser();
     setCurrentUser(null);
-    localStorage.removeItem('currentUser');
   };
 
   const isAdmin = () => {
-    const name = (currentUser?.nev || currentUser?.name || '').toLowerCase();
-    const email = (currentUser?.email || '').toLowerCase();
-    const role = (currentUser?.role || '').toLowerCase();
-    return role === 'admin' || name === 'admin' || email.includes('admin');
+    return currentUser?.role === 'admin';
   };
+
   const value = {
     currentUser,
     login,

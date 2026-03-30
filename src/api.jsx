@@ -26,6 +26,8 @@ const ENDPOINTS = {
   authVerifyEmail: `${defaultBaseUrl}/api/Auth/verify-email`,
   authResendVerification: `${defaultBaseUrl}/api/Auth/resend-verification`,
   authChangePassword: (userId) => `${defaultBaseUrl}/api/Auth/${userId}/change-password`,
+  authRefreshToken: `${defaultBaseUrl}/api/Auth/refresh-token`,
+  authLogout: `${defaultBaseUrl}/api/Auth/logout`,
   userUpdateProfile: (userId) => `${defaultBaseUrl}/api/Users/${userId}/profile`,
   // Cart endpoints
   cartMyCart: (userId) => `${defaultBaseUrl}/api/Cart/my-cart?userId=${userId}`,
@@ -37,14 +39,146 @@ const ENDPOINTS = {
   paymentsPurchases: `${defaultBaseUrl}/api/Payments/purchases`,
 };
 
-async function fetchJson(url, options = {}) {
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      'Accept': 'application/json',
-      ...(options.headers || {})
+// ==================== TOKEN KEZELÉS ====================
+
+/**
+ * Token-ek lekérése localStorage-ból
+ */
+function getAccessToken() {
+  return localStorage.getItem('accessToken');
+}
+
+function getRefreshTokenValue() {
+  return localStorage.getItem('refreshToken');
+}
+
+function saveTokens(accessToken, refreshToken) {
+  localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('refreshToken', refreshToken);
+}
+
+function clearTokens() {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('currentUser');
+}
+
+/**
+ * Access token frissítése refresh token segítségével
+ */
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+function onRefreshed(newToken) {
+  refreshSubscribers.forEach(callback => callback(newToken));
+  refreshSubscribers = [];
+}
+
+function addRefreshSubscriber(callback) {
+  refreshSubscribers.push(callback);
+}
+
+async function refreshAccessToken() {
+  const token = getAccessToken();
+  const refreshToken = getRefreshTokenValue();
+
+  if (!token || !refreshToken) {
+    clearTokens();
+    return null;
+  }
+
+  try {
+    const response = await fetch(ENDPOINTS.authRefreshToken, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        Token: token,
+        RefreshToken: refreshToken
+      })
+    });
+
+    if (!response.ok) {
+      clearTokens();
+      window.dispatchEvent(new Event('auth:logout'));
+      return null;
     }
-  });
+
+    const data = await response.json();
+    if (data.success && data.token && data.refreshToken) {
+      saveTokens(data.token, data.refreshToken);
+      if (data.user) {
+        localStorage.setItem('currentUser', JSON.stringify(data.user));
+      }
+      return data.token;
+    }
+
+    clearTokens();
+    window.dispatchEvent(new Event('auth:logout'));
+    return null;
+  } catch (e) {
+    console.error('Token refresh hiba:', e);
+    clearTokens();
+    window.dispatchEvent(new Event('auth:logout'));
+    return null;
+  }
+}
+
+/**
+ * Autentikált fetch - automatikus token csatolás és refresh
+ */
+async function authFetch(url, options = {}) {
+  let token = getAccessToken();
+
+  const headers = {
+    'Accept': 'application/json',
+    ...(options.headers || {}),
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  let response = await fetch(url, { ...options, headers });
+
+  // Ha 401-et kapunk, próbáljuk meg refresh-elni a tokent
+  if (response.status === 401 && token) {
+    if (!isRefreshing) {
+      isRefreshing = true;
+      const newToken = await refreshAccessToken();
+      isRefreshing = false;
+
+      if (newToken) {
+        onRefreshed(newToken);
+        // Újrapróbáljuk az eredeti kérést
+        headers['Authorization'] = `Bearer ${newToken}`;
+        response = await fetch(url, { ...options, headers });
+      } else {
+        // Refresh is sikertelen - kijelentkeztetjük
+        return response;
+      }
+    } else {
+      // Más kérés már refresh-el, várjuk meg
+      const newToken = await new Promise(resolve => {
+        addRefreshSubscriber(resolve);
+      });
+      if (newToken) {
+        headers['Authorization'] = `Bearer ${newToken}`;
+        response = await fetch(url, { ...options, headers });
+      }
+    }
+  }
+
+  return response;
+}
+
+/**
+ * Autentikált JSON fetch
+ */
+async function fetchJson(url, options = {}) {
+  const res = await authFetch(url, options);
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Lekérési hiba ${res.status}: ${text}`);
@@ -64,11 +198,10 @@ export async function getAuthorById(id, signal) {
  */
 export async function createAuthor(authorData, signal) {
   try {
-    const response = await fetch(ENDPOINTS.authors, {
+    const response = await authFetch(ENDPOINTS.authors, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
       body: JSON.stringify(authorData),
       signal
@@ -117,11 +250,10 @@ export async function getCopiesByBook(bookId, signal) {
  */
 export async function createCopy(copyData, signal) {
   try {
-    const response = await fetch(ENDPOINTS.copies, {
+    const response = await authFetch(ENDPOINTS.copies, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
       body: JSON.stringify(copyData),
       signal
@@ -164,11 +296,8 @@ export async function getRentalsByUser(userId, signal) {
  */
 export async function returnRental(rentalId, signal) {
   try {
-    const response = await fetch(ENDPOINTS.rentalReturn(rentalId), {
+    const response = await authFetch(ENDPOINTS.rentalReturn(rentalId), {
       method: 'PATCH',
-      headers: {
-        'Accept': 'application/json',
-      },
       signal
     });
 
@@ -200,9 +329,8 @@ export async function returnRental(rentalId, signal) {
  */
 export async function sendRentalReminder(rentalId) {
   try {
-    const response = await fetch(ENDPOINTS.rentalSendReminder(rentalId), {
+    const response = await authFetch(ENDPOINTS.rentalSendReminder(rentalId), {
       method: 'POST',
-      headers: { 'Accept': 'application/json' }
     });
     const data = await response.json();
     return {
@@ -220,11 +348,10 @@ export async function sendRentalReminder(rentalId) {
  */
 export async function sendCustomEmail(emailData) {
   try {
-    const response = await fetch(ENDPOINTS.rentalSendCustomEmail, {
+    const response = await authFetch(ENDPOINTS.rentalSendCustomEmail, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
       },
       body: JSON.stringify(emailData)
     });
@@ -244,9 +371,8 @@ export async function sendCustomEmail(emailData) {
  */
 export async function sendRentalNotifications() {
   try {
-    const response = await fetch(ENDPOINTS.sendNotifications, {
+    const response = await authFetch(ENDPOINTS.sendNotifications, {
       method: 'POST',
-      headers: { 'Accept': 'application/json' }
     });
     const data = await response.json();
     return {
@@ -265,11 +391,10 @@ export async function getUsers(signal) {
 
 export async function changeUserPassword(userId, currentPassword, newPassword, signal) {
   try {
-    const response = await fetch(ENDPOINTS.authChangePassword(userId), {
+    const response = await authFetch(ENDPOINTS.authChangePassword(userId), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
       body: JSON.stringify({
         currentPassword,
@@ -304,11 +429,8 @@ export async function changeUserPassword(userId, currentPassword, newPassword, s
 
 export async function deleteUser(userId, signal) {
   try {
-    const response = await fetch(ENDPOINTS.userById(userId), {
+    const response = await authFetch(ENDPOINTS.userById(userId), {
       method: 'DELETE',
-      headers: {
-        'Accept': 'application/json',
-      },
       signal,
     });
 
@@ -330,11 +452,10 @@ export async function deleteUser(userId, signal) {
 
 export async function updateUserProfile(userId, profileData, signal) {
   try {
-    const response = await fetch(ENDPOINTS.userUpdateProfile(userId), {
+    const response = await authFetch(ENDPOINTS.userUpdateProfile(userId), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
       body: JSON.stringify(profileData),
       signal,
@@ -423,10 +544,17 @@ export async function loginUser(emailOrUsername, password, signal) {
         success: false,
         message: data.message || 'Bejelentkezés sikertelen'
       };
-    }    // Backend LoginResponse: { Success, Message, User: { Id, Nev, Email, Letrehozva, LastName, FirstName, DefaultAddress } }
+    }
+
     if (data.success) {
+      // JWT tokenek mentése
+      if (data.token && data.refreshToken) {
+        saveTokens(data.token, data.refreshToken);
+      }
       return {
         success: true,
+        token: data.token,
+        refreshToken: data.refreshToken,
         user: {
           id: data.user.id,
           nev: data.user.nev,
@@ -434,6 +562,7 @@ export async function loginUser(emailOrUsername, password, signal) {
           first_name: data.user.firstName,
           default_address: data.user.defaultAddress,
           email: data.user.email,
+          role: data.user.role,
           letrehozva: data.user.letrehozva
         }
       };
@@ -477,8 +606,7 @@ export async function registerUser(name, email, password, lastName, firstName, d
         success: false,
         message: data.message || 'Regisztráció sikertelen'
       };
-    }    // Backend RegisterResponse: { Success, Message, User: { Id, Nev, Email, Letrehozva, LastName, FirstName, DefaultAddress } }
-    if (data.success) {
+    }    if (data.success) {
       return {
         success: true,
         user: {
@@ -488,6 +616,7 @@ export async function registerUser(name, email, password, lastName, firstName, d
           first_name: data.user.firstName,
           default_address: data.user.defaultAddress,
           email: data.user.email,
+          role: data.user.role,
           letrehozva: data.user.letrehozva
         }
       };
@@ -529,11 +658,10 @@ export async function getMyCart(userId, signal) {
  */
 export async function addToCart(userId, bookId, orderType = 'rental', quantity = 1, signal) {
   try {
-    const response = await fetch(ENDPOINTS.cartAdd(userId), {
+    const response = await authFetch(ENDPOINTS.cartAdd(userId), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
       body: JSON.stringify({
         book_id: bookId,
@@ -570,11 +698,8 @@ export async function addToCart(userId, bookId, orderType = 'rental', quantity =
  */
 export async function removeFromCart(cartItemId, userId, signal) {
   try {
-    const response = await fetch(ENDPOINTS.cartRemoveItem(cartItemId, userId), {
+    const response = await authFetch(ENDPOINTS.cartRemoveItem(cartItemId, userId), {
       method: 'DELETE',
-      headers: {
-        'Accept': 'application/json',
-      },
       signal
     });
 
@@ -605,11 +730,8 @@ export async function removeFromCart(cartItemId, userId, signal) {
  */
 export async function clearCart(userId, signal) {
   try {
-    const response = await fetch(ENDPOINTS.cartClear(userId), {
+    const response = await authFetch(ENDPOINTS.cartClear(userId), {
       method: 'DELETE',
-      headers: {
-        'Accept': 'application/json',
-      },
       signal
     });
 
@@ -650,11 +772,10 @@ export async function checkout(userId, paymentMethod, rentalDays = 14, rentalDay
       body.rental_days_per_item = rentalDaysPerItem;
     }
 
-    const response = await fetch(ENDPOINTS.cartCheckout, {
+    const response = await authFetch(ENDPOINTS.cartCheckout, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
       body: JSON.stringify(body),
       signal
@@ -707,13 +828,13 @@ export async function verifyEmail(token, signal) {
       };
     }
 
-    // Backend VerifyEmailResponse: { Success, Message }
     return {
       success: data.success,
       message: data.message || 'Email sikeresen verifikálva'
     };
   } catch (e) {
-    console.error('Email verifikációs hiba:', e);    return {
+    console.error('Email verifikációs hiba:', e);
+    return {
       success: false,
       message: e.name === 'AbortError' ? 'Kérés megszakítva' : 'Email verifikáció során hiba történt'
     };
@@ -784,11 +905,10 @@ export async function getPurchases(signal) {
  */
 export async function createBook(bookData, signal) {
   try {
-    const response = await fetch(ENDPOINTS.books, {
+    const response = await authFetch(ENDPOINTS.books, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
       body: JSON.stringify(bookData),
       signal
@@ -821,7 +941,7 @@ export async function createBook(bookData, signal) {
  */
 export async function deleteBook(bookId, signal) {
   try {
-    const response = await fetch(ENDPOINTS.bookById(bookId), {
+    const response = await authFetch(ENDPOINTS.bookById(bookId), {
       method: 'DELETE',
       signal
     });
@@ -849,7 +969,7 @@ export async function deleteBook(bookId, signal) {
  */
 export async function toggleBookAvailability(bookId, signal) {
   try {
-    const response = await fetch(ENDPOINTS.copiesToggleBookAvailability(bookId), {
+    const response = await authFetch(ENDPOINTS.copiesToggleBookAvailability(bookId), {
       method: 'PUT',
       signal
     });
@@ -882,11 +1002,10 @@ export async function toggleBookAvailability(bookId, signal) {
  */
 export async function updateBook(bookId, updateData, signal) {
   try {
-    const response = await fetch(ENDPOINTS.bookById(bookId), {
+    const response = await authFetch(ENDPOINTS.bookById(bookId), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
       body: JSON.stringify(updateData),
       signal
@@ -913,3 +1032,21 @@ export async function updateBook(bookId, updateData, signal) {
     };
   }
 }
+
+/**
+ * Kijelentkezés - refresh token törlése a szerveren
+ */
+export async function logoutUser() {
+  try {
+    await authFetch(ENDPOINTS.authLogout, {
+      method: 'POST',
+    });
+  } catch (e) {
+    console.error('Logout hiba:', e);
+  } finally {
+    clearTokens();
+  }
+}
+
+// Token segédfüggvények exportálása
+export { getAccessToken, saveTokens, clearTokens };
