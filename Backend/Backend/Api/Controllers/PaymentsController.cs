@@ -162,6 +162,11 @@ namespace Backend.Api.Controllers
 
             var payments = await _context.payments
                 .Include(p => p.user)
+                .Include(p => p.purchase_items)
+                    .ThenInclude(pi => pi.book)
+                .Include(p => p.rentals)
+                    .ThenInclude(r => r.copy)
+                        .ThenInclude(c => c.book)
                 .Where(p => p.user_id == userId)
                 .OrderByDescending(p => p.payment_date)
                 .ToListAsync();
@@ -178,6 +183,11 @@ namespace Backend.Api.Controllers
         {
             var payments = await _context.payments
                 .Include(p => p.user)
+                .Include(p => p.purchase_items)
+                    .ThenInclude(pi => pi.book)
+                .Include(p => p.rentals)
+                    .ThenInclude(r => r.copy)
+                        .ThenInclude(c => c.book)
                 .Where(p => p.status == status)
                 .OrderByDescending(p => p.payment_date)
                 .ToListAsync();

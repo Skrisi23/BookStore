@@ -4,6 +4,7 @@ using Backend.Domain.Model;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
 
@@ -28,6 +29,12 @@ public class AuthControllerTests
         // Arrange
         var context = CreateContext("LoginTest_Valid");
         var emailServiceMock = new Mock<IEmailService>();
+        var jwtServiceMock = new Mock<IJwtService>();
+        var configurationMock = new Mock<IConfiguration>();
+
+        jwtServiceMock.Setup(j => j.GenerateAccessToken(It.IsAny<users>())).Returns("fake-access-token");
+        jwtServiceMock.Setup(j => j.GenerateRefreshToken()).Returns("fake-refresh-token");
+        configurationMock.Setup(c => c["Jwt:RefreshTokenExpirationDays"]).Returns("7");
 
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword("TestPassword123");
         var user = new users
@@ -41,7 +48,7 @@ public class AuthControllerTests
         context.users.Add(user);
         await context.SaveChangesAsync();
 
-        var controller = new AuthController(context, emailServiceMock.Object);
+        var controller = new AuthController(context, emailServiceMock.Object, jwtServiceMock.Object, configurationMock.Object);
 
         // Act
         var result = await controller.Login(new LoginRequest
@@ -66,6 +73,8 @@ public class AuthControllerTests
         // Arrange
         var context = CreateContext("LoginTest_Invalid");
         var emailServiceMock = new Mock<IEmailService>();
+        var jwtServiceMock = new Mock<IJwtService>();
+        var configurationMock = new Mock<IConfiguration>();
 
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword("TestPassword123");
         var user = new users
@@ -79,7 +88,7 @@ public class AuthControllerTests
         context.users.Add(user);
         await context.SaveChangesAsync();
 
-        var controller = new AuthController(context, emailServiceMock.Object);
+        var controller = new AuthController(context, emailServiceMock.Object, jwtServiceMock.Object, configurationMock.Object);
 
         // Act
         var result = await controller.Login(new LoginRequest
