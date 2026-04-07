@@ -62,10 +62,10 @@ function Login({ onSuccess, onSwitchToRegister }) {
         </h3>
 
         {error && (
-          <div className={`alert ${error.includes('email') || error.includes('verifikál') || error.includes('erősítsd') ? 'alert-warning' : 'alert-danger'}`} role="alert">
-            <i className={`bi ${error.includes('email') || error.includes('verifikál') || error.includes('erősítsd') ? 'bi-envelope-exclamation' : 'bi-exclamation-triangle'} me-2`}></i>
+          <div className={`alert ${error.includes('verifikál') || error.includes('erősítsd') || error.includes('megerősít') ? 'alert-warning' : 'alert-danger'}`} role="alert">
+            <i className={`bi ${error.includes('verifikál') || error.includes('erősítsd') || error.includes('megerősít') ? 'bi-envelope-exclamation' : 'bi-exclamation-triangle'} me-2`}></i>
             {error}
-            {(error.includes('email') || error.includes('verifikál') || error.includes('erősítsd')) && (
+            {(error.includes('verifikál') || error.includes('erősítsd') || error.includes('megerősít')) && (
               <div className="mt-2 d-flex align-items-center gap-2 flex-wrap">
                 <small className="text-muted"><i className="bi bi-info-circle me-1"></i>Nem kaptad meg az emailt?</small>
                 <button

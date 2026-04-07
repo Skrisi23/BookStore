@@ -1,33 +1,149 @@
-# Getting Started with Create React App
+#  AlkotásokTára – Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React alapú webes felhasználói felület az AlkotásokTára alkalmazáshoz.
 
-## Available Scripts
+## Technológiák
 
-In the project directory, you can run:
+- **React 19** – UI framework
+- **React Router 7** – Kliens oldali routing
+- **Bootstrap 5** – CSS keretrendszer + ikonok
+- **Create React App** – Build toolchain
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Indítás
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 1. Függőségek telepítése
 
-### `npm test`
+```bash
+npm install
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 2. Környezeti változók beállítása
 
-### `npm run build`
+Hozz létre egy `.env` fájlt a gyökérkönyvtárban:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+REACT_APP_API_URL=http://localhost:5250
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+> Ez a backend API URL-je. Ha a backend más porton fut, módosítsd ennek megfelelően.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 3. Alkalmazás indítása
+
+```bash
+npm start
+```
+
+Az alkalmazás elérhető: [http://localhost:3000](http://localhost:3000)
+
+### 4. Build (produkciós verzió)
+
+```bash
+npm run build
+```
+
+A build kimenet a `build/` mappába kerül.
+
+### 5. Tesztek futtatása
+
+```bash
+npm test
+```
+
+---
+
+## Mappastruktúra
+
+```
+Frontend/
+├── public/                        # Statikus fájlok (index.html, favicon, stb.)
+├── build/                         # Produkciós build kimenet
+├── .env                           # Környezeti változók (API URL)
+├── package.json                   # Függőségek és scriptek
+└── src/
+    ├── App.jsx                    # Fő alkalmazás komponens (routing)
+    ├── App.css                    # Globális stílusok
+    ├── api.jsx                    # API végpontok definíciója
+    ├── index.jsx                  # Belépési pont (React DOM render)
+    ├── index.css                  # Alap CSS
+    │
+    ├── components/                # Újrafelhasználható komponensek
+    │   ├── admin/                 # Admin felület komponensei
+    │   │   ├── Dashboard.jsx      #   Admin főoldal / áttekintés
+    │   │   ├── BookManagement.jsx #   Könyvek kezelése (CRUD)
+    │   │   ├── RentalManagement.jsx # Kölcsönzések kezelése
+    │   │   ├── PurchaseManagement.jsx # Vásárlások kezelése
+    │   │   └── Statistics.jsx     #   Statisztikák megjelenítése
+    │   │
+    │   ├── auth/                  # Hitelesítés
+    │   │   ├── Login.jsx          #   Bejelentkezési űrlap
+    │   │   ├── Register.jsx       #   Regisztrációs űrlap
+    │   │   └── EmailVerification.jsx # Email cím megerősítése
+    │   │
+    │   ├── books/                 # Könyvekkel kapcsolatos komponensek
+    │   │   ├── BookList.jsx       #   Könyvek listája
+    │   │   ├── BookCard.jsx       #   Egyedi könyvkártya
+    │   │   ├── BookDetails.jsx    #   Könyv részletei
+    │   │   ├── BookDetails.css    #   Könyv részletek stílusok
+    │   │   └── CategoryFilter.jsx #   Kategória szűrő
+    │   │
+    │   ├── cart/                  # Kosár
+    │   │   ├── Cart.jsx           #   Kosár megjelenítése
+    │   │   ├── CartItem.jsx       #   Egyedi kosár tétel
+    │   │   └── Checkout.jsx       #   Fizetési folyamat
+    │   │
+    │   ├── common/                # Közös / layout komponensek
+    │   │   ├── Navbar.jsx         #   Navigációs sáv
+    │   │   ├── Footer.jsx         #   Lábléc
+    │   │   ├── SearchBar.jsx      #   Kereső mező
+    │   │   ├── LoadingSpinner.jsx #   Töltés animáció
+    │   │   ├── CookieBanner.jsx   #   Cookie értesítés sáv
+    │   │   ├── ScrollToTop.jsx    #   Görgetés tetejére gomb
+    │   │   ├── ToastContainer.jsx #   Értesítések megjelenítése
+    │   │   └── ToastContainer.css #   Értesítés stílusok
+    │   │
+    │   └── user/                  # Felhasználói profil
+    │       └── Profile.jsx        #   Profil oldal tartalma
+    │
+    ├── context/                   # React Context providerek
+    │   ├── AuthContext.jsx        #   Hitelesítés állapot (login, token, user)
+    │   ├── CartContext.jsx        #   Kosár állapot kezelése
+    │   └── ToastContext.jsx       #   Értesítések (toast) állapot
+    │
+    ├── hooks/                     # Egyedi React hookek
+    │   └── useScrollAnimation.jsx #   Scroll animáció hook
+    │
+    └── pages/                     # Oldalak (route-okhoz kötöttek)
+        ├── HomePage.jsx           #   Főoldal
+        ├── BooksPage.jsx          #   Könyvek oldal
+        ├── LoginPage.jsx          #   Bejelentkezés oldal
+        ├── CartPage.jsx           #   Kosár oldal
+        ├── AdminPage.jsx          #   Admin kezelőfelület
+        ├── ProfilePage.jsx        #   Felhasználói profil
+        ├── AboutPage.jsx          #   Rólunk oldal
+        ├── TermsPage.jsx          #   Felhasználási feltételek
+        ├── PrivacyPage.jsx        #   Adatvédelmi nyilatkozat
+        └── CookiePolicyPage.jsx   #   Cookie szabályzat
+```
+
+---
+
+## Útvonalak (Routes)
+
+| Útvonal      | Oldal                    |
+|--------------|--------------------------|
+| `/`          | Főoldal                  |
+| `/books`     | Könyvek böngészése       |
+| `/login`     | Bejelentkezés            |
+| `/cart`      | Kosár / Fizetés          |
+| `/admin`     | Admin kezelőfelület      |
+| `/profile`   | Felhasználói profil      |
+| `/verify`    | Email megerősítés        |
+| `/about`     | Rólunk                   |
+| `/terms`     | Felhasználási feltételek |
+| `/privacy`   | Adatvédelmi nyilatkozat  |
+| `/cookies`   | Cookie szabályzat        |
 
 ### `npm run eject`
 
