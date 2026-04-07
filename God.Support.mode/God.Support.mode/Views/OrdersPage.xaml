@@ -81,13 +81,48 @@
                     <DataGridTextColumn Header="Datum" Binding="{Binding PaymentDate, StringFormat=yyyy-MM-dd}" Width="110"/>
                     <DataGridTextColumn Header="Fizetes modja" Binding="{Binding PaymentMethod}" Width="120"/>
                     <DataGridTextColumn Header="Allapot" Binding="{Binding Status}" Width="100"/>
-                    <DataGridTextColumn Header="Tetelek" Binding="{Binding Items.Count}" Width="70"/>
+                    <DataGridTemplateColumn Header="Tetelek" Width="70">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="{Binding Items.Count}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Items}" Value="{x:Null}">
+                                                    <Setter Property="Text" Value="?"/>
+                                                    <Setter Property="Foreground" Value="Gray"/>
+                                                    <Setter Property="ToolTip" Value="A backend nem toltotte be a teteleket"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
                 <DataGrid.RowDetailsTemplate>
                     <DataTemplate>
                         <Border Background="#2A2A2A" Padding="24,12" Margin="0,4">
                             <StackPanel>
                                 <TextBlock Text="Tetelek reszletei" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="Nincsenek betoltott tetelek. A szerver nem kuldte el a reszleteket."
+                                           Foreground="Gray" FontStyle="Italic" Margin="0,0,0,8">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Items}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Items.Count}" Value="0">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                                 <ItemsControl ItemsSource="{Binding Items}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>

@@ -11,10 +11,10 @@ public class StatusToBrushConverter : IValueConverter
         var status = value as string;
         return status switch
         {
-            "Active" => new SolidColorBrush(Color.FromRgb(76, 175, 80)),
-            "Warning" => new SolidColorBrush(Color.FromRgb(255, 152, 0)),
-            "Overdue" => new SolidColorBrush(Color.FromRgb(244, 67, 54)),
-            "Returned" => new SolidColorBrush(Color.FromRgb(158, 158, 158)),
+            "Aktiv" => new SolidColorBrush(Color.FromRgb(76, 175, 80)),
+            "Figyelmeztetes" => new SolidColorBrush(Color.FromRgb(255, 152, 0)),
+            "Lejart" => new SolidColorBrush(Color.FromRgb(244, 67, 54)),
+            "Visszahozva" => new SolidColorBrush(Color.FromRgb(158, 158, 158)),
             _ => new SolidColorBrush(Color.FromRgb(158, 158, 158))
         };
     }

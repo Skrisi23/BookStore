@@ -15,14 +15,14 @@ public partial class RentalsViewModel : ObservableObject
 
     [ObservableProperty] private ObservableCollection<RentalViewModel> rentals = [];
     [ObservableProperty] private string searchText = string.Empty;
-    [ObservableProperty] private string selectedStatusFilter = "All";
+    [ObservableProperty] private string selectedStatusFilter = "Mind";
     [ObservableProperty] private bool isLoading;
 
     [ObservableProperty] private int totalActive;
     [ObservableProperty] private int totalOverdue;
     [ObservableProperty] private int totalReturned;
 
-    public string[] StatusFilters { get; } = ["All", "Active", "Overdue", "Returned"];
+    public string[] StatusFilters { get; } = ["Mind", "Aktiv", "Lejart", "Visszahozva"];
 
     public RentalsViewModel(IApiService apiService, INotificationService notification, SettingsService settings)
     {
@@ -44,11 +44,11 @@ public partial class RentalsViewModel : ObservableObject
             _allRentals = await _apiService.GetRentalsAsync();
             FilterRentals();
             UpdateSummary();
-            _notification.Show("Rentals loaded");
+            _notification.Show("Kolcsonzesek betoltve");
         }
         catch (Exception ex)
         {
-            _notification.ShowError($"Failed to load rentals: {ex.Message}");
+            _notification.ShowError($"Kolcsonzesek betoltese sikertelen: {ex.Message}");
         }
         finally
         {
@@ -68,7 +68,7 @@ public partial class RentalsViewModel : ObservableObject
                 (r.BookTitle?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false));
         }
 
-        if (SelectedStatusFilter != "All")
+        if (SelectedStatusFilter != "Mind")
         {
             filtered = filtered.Where(r => GetStatus(r) == SelectedStatusFilter);
         }
@@ -89,11 +89,11 @@ public partial class RentalsViewModel : ObservableObject
 
     private static string GetStatus(RentalDto r)
     {
-        if (r.VisszahozvaDatuma != null) return "Returned";
-        if (r.LejaratDatum == null) return "Active";
+        if (r.VisszahozvaDatuma != null) return "Visszahozva";
+        if (r.LejaratDatum == null) return "Aktiv";
         var daysLeft = (r.LejaratDatum.Value - DateTime.Now).TotalDays;
-        if (daysLeft < 0) return "Overdue";
-        return "Active";
+        if (daysLeft < 0) return "Lejart";
+        return "Aktiv";
     }
 
     [RelayCommand]
@@ -102,12 +102,12 @@ public partial class RentalsViewModel : ObservableObject
         try
         {
             await _apiService.MarkRentalReturnedAsync(rental.Rental.Id, _settings.AdminUserId);
-            _notification.Show("Rental marked as returned");
+            _notification.Show("Kolcsonzes visszavetelezve");
             await LoadRentalsAsync();
         }
         catch (Exception ex)
         {
-            _notification.ShowError($"Failed to mark returned: {ex.Message}");
+            _notification.ShowError($"Visszavetel sikertelen: {ex.Message}");
         }
     }
 
@@ -117,11 +117,11 @@ public partial class RentalsViewModel : ObservableObject
         try
         {
             await _apiService.SendRentalReminderAsync(rental.Rental.Id);
-            _notification.Show("Reminder sent");
+            _notification.Show("Emlekezteto elkuldve");
         }
         catch (Exception ex)
         {
-            _notification.ShowError($"Failed to send reminder: {ex.Message}");
+            _notification.ShowError($"Emlekezteto kuldese sikertelen: {ex.Message}");
         }
     }
 }
@@ -138,31 +138,31 @@ public class RentalViewModel
 
         if (rental.VisszahozvaDatuma != null)
         {
-            Status = "Returned";
+            Status = "Visszahozva";
             DaysInfo = "—";
         }
         else if (rental.LejaratDatum == null)
         {
-            Status = "Active";
-            DaysInfo = "N/A";
+            Status = "Aktiv";
+            DaysInfo = "Nincs adat";
         }
         else
         {
             var days = (rental.LejaratDatum.Value - DateTime.Now).TotalDays;
             if (days < 0)
             {
-                Status = "Overdue";
-                DaysInfo = $"{Math.Abs((int)days)} days overdue";
+                Status = "Lejart";
+                DaysInfo = $"{Math.Abs((int)days)} napja lejart";
             }
             else if (days <= 3)
             {
-                Status = "Warning";
-                DaysInfo = $"{(int)days} days left";
+                Status = "Figyelmeztetes";
+                DaysInfo = $"{(int)days} nap van hatra";
             }
             else
             {
-                Status = "Active";
-                DaysInfo = $"{(int)days} days left";
+                Status = "Aktiv";
+                DaysInfo = $"{(int)days} nap van hatra";
             }
         }
     }
