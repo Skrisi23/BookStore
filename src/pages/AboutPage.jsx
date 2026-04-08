@@ -1,9 +1,16 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 function AboutPage() {
   const navigate = useNavigate();
+
+  // Scroll-reveal refs
+  const [missionRef, missionVisible] = useScrollAnimation(0.15);
+  const [featuresRef, featuresVisible] = useScrollAnimation(0.1);
+  const [categoriesRef, categoriesVisible] = useScrollAnimation(0.15);
+  const [contactRef, contactVisible] = useScrollAnimation(0.15);
 
   const features = [
     { icon: 'bi-book', label: 'Széles választék', desc: 'Több kategóriában is találsz könyveket — fantasytől a krimiig.' },
@@ -17,7 +24,7 @@ function AboutPage() {
   const categories = ['Fantasy', 'Sci-Fi', 'Krimi', 'Romantikus', 'Történelmi', 'Thriller', 'Klasszikus', 'Disztópia'];
 
   return (
-    <div>
+    <div className="page-enter">
       {/* Hero */}
       <div style={{
         backgroundColor: '#1a1a1a',
@@ -71,7 +78,7 @@ function AboutPage() {
       <div style={{ backgroundColor: '#fff', padding: '5rem 0' }}>
         <div className="container">
           <div className="row justify-content-center">
-            <div className="col-lg-8 text-center">
+            <div ref={missionRef} className={`col-lg-8 text-center reveal${missionVisible ? ' visible' : ''}`}>
               <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.7rem', color: '#888', marginBottom: '0.8rem' }}>
                 Küldetésünk
               </p>
@@ -91,7 +98,7 @@ function AboutPage() {
       {/* Features grid */}
       <div style={{ backgroundColor: '#f5f5f5', padding: '5rem 0', borderTop: '1px solid #e8e8e8', borderBottom: '1px solid #e8e8e8' }}>
         <div className="container">
-          <div className="text-center mb-5">
+          <div ref={featuresRef} className={`text-center mb-5 reveal${featuresVisible ? ' visible' : ''}`}>
             <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.7rem', color: '#888', marginBottom: '0.8rem' }}>
               Előnyök
             </p>
@@ -101,7 +108,7 @@ function AboutPage() {
           </div>
           <div className="row g-4">
             {features.map((f, i) => (
-              <div key={i} className="col-md-4">
+              <div key={i} className={`col-md-4 reveal${featuresVisible ? ' visible' : ''} stagger-${i + 1}`}>
                 <div className="h-100 p-4" style={{ backgroundColor: '#fff', border: '1px solid #e8e8e8' }}>
                   <div style={{
                     width: '48px',
@@ -129,7 +136,7 @@ function AboutPage() {
       <div style={{ backgroundColor: '#fff', padding: '5rem 0' }}>
         <div className="container">
           <div className="row align-items-center">
-            <div className="col-lg-5 mb-4 mb-lg-0">
+            <div ref={categoriesRef} className={`col-lg-5 mb-4 mb-lg-0 reveal-left${categoriesVisible ? ' visible' : ''}`}>
               <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.7rem', color: '#888', marginBottom: '0.8rem' }}>
                 Kínálatunk
               </p>
@@ -179,7 +186,7 @@ function AboutPage() {
       <div style={{ backgroundColor: '#1a1a1a', color: '#fff', padding: '5rem 0' }}>
         <div className="container">
           <div className="row">
-            <div className="col-lg-6 mb-4 mb-lg-0">
+            <div ref={contactRef} className={`col-lg-6 mb-4 mb-lg-0 reveal-left${contactVisible ? ' visible' : ''}`}>
               <p style={{ textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.7rem', color: '#666', marginBottom: '0.8rem' }}>
                 Elérhetőség
               </p>
