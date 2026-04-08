@@ -527,6 +527,16 @@ namespace Backend.Api.Controllers
 
                     // Copy lefoglalása kölcsönzéskor
                     cartItem.copy.elerheto = false;
+
+                    // Kölcsönzési tétel mentése purchase_item-ként is (hogy az ár rögzítve legyen)
+                    var rentalPurchaseRecord = new purchase_item
+                    {
+                        payment_id = payment.id,
+                        book_id = cartItem.copy.book_id,
+                        quantity = 1,
+                        unit_price = cartItem.price
+                    };
+                    _context.purchase_items.Add(rentalPurchaseRecord);
                 }                // 6. Vásárlásoknál purchase_item rekordok létrehozása és copy-k elérhetetlenné tétele
                 foreach (var purchaseItem in purchaseItems)
                 {

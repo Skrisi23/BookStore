@@ -66,16 +66,29 @@ namespace Backend.Api.Controllers
                 }
 
                 // Kölcsönzés tételek hozzáadása az items listához (ha nincsenek a purchase_items-ben)
+                // Régi kölcsönzéseknél, ahol nem volt purchase_item, kiszámoljuk az árat
                 foreach (var rental in payment.rentals)
                 {
                     if (rental.copy?.book != null && !dto.items.Any(i => i.book_id == rental.copy.book_id))
                     {
+                        // Ár kiszámítása a könyv ára és a kölcsönzési időtartam alapján
+                        decimal rentalPrice = 0;
+                        if (rental.lejarat_datum.HasValue)
+                        {
+                            var days = rental.lejarat_datum.Value.DayNumber - rental.kolcsonzes_datuma.DayNumber;
+                            var bookPrice = rental.copy.book.ar;
+                            var baseRate = 0.05m;
+                            var extraWeeks = Math.Max(0, (days - 14) / 7);
+                            var extraRate = extraWeeks * 0.03m;
+                            rentalPrice = Math.Round(bookPrice * (baseRate + extraRate), 0);
+                        }
+
                         dto.items.Add(new PurchaseItemDto
                         {
                             book_id = rental.copy.book_id,
                             book_title = rental.copy.book.cim,
                             quantity = 1,
-                            unit_price = 0,
+                            unit_price = rentalPrice,
                             is_rental = true
                         });
                     }
@@ -128,17 +141,28 @@ namespace Backend.Api.Controllers
                 item.is_rental = payment.order_type == "rental" || rentalBookIds.Contains(item.book_id);
             }
 
-            // Kölcsönzés tételek hozzáadása
+            // Kölcsönzés tételek hozzáadása (régi kölcsönzések, ahol nincs purchase_item)
             foreach (var rental in payment.rentals)
             {
                 if (rental.copy?.book != null && !paymentDto.items.Any(i => i.book_id == rental.copy.book_id))
                 {
+                    decimal rentalPrice = 0;
+                    if (rental.lejarat_datum.HasValue)
+                    {
+                        var days = rental.lejarat_datum.Value.DayNumber - rental.kolcsonzes_datuma.DayNumber;
+                        var bookPrice = rental.copy.book.ar;
+                        var baseRate = 0.05m;
+                        var extraWeeks = Math.Max(0, (days - 14) / 7);
+                        var extraRate = extraWeeks * 0.03m;
+                        rentalPrice = Math.Round(bookPrice * (baseRate + extraRate), 0);
+                    }
+
                     paymentDto.items.Add(new PurchaseItemDto
                     {
                         book_id = rental.copy.book_id,
                         book_title = rental.copy.book.cim,
                         quantity = 1,
-                        unit_price = 0,
+                        unit_price = rentalPrice,
                         is_rental = true
                     });
                 }
