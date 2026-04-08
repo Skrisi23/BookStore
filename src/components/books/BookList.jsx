@@ -15,7 +15,6 @@ export default function BooksList({ searchTerm = '', selectedCategory = 'Minden'
     async function load() {
       try {
         setLoading(true);
-        // Lekérjük a könyveket és a szerzőket párhuzamosan
         const [booksData, authorsData] = await Promise.all([
           getBooks(ac.signal),
           getAuthors(ac.signal).catch(() => [])

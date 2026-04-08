@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-/**
- * Returns a [ref, isVisible] pair.
- * isVisible becomes true once the element enters the viewport (fires once).
- */
 export function useScrollAnimation(threshold = 0.15) {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);

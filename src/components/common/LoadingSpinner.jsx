@@ -1,4 +1,3 @@
-// src/components/common/LoadingSpinner.js
 import React from 'react';
 
 function LoadingSpinner({ size = 'md', text = 'Betöltés...', fullPage = false }) {

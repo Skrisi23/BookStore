@@ -1,4 +1,3 @@
-// src/components/auth/Register.js
 import React, { useState } from 'react';
 import { registerUser } from '../../api';
 import { useToast } from '../../context/ToastContext';

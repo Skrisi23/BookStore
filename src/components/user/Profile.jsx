@@ -13,7 +13,6 @@ function Profile() {  const { currentUser, logout, updateProfile, isAdmin } = us
   const [loading, setLoading] = useState(true);
   const [passwordLoading, setPasswordLoading] = useState(false);
   
-  // Profil szerkesztés állapotok
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);  const [profileData, setProfileData] = useState({
     last_name: currentUser?.last_name || '',
@@ -21,7 +20,6 @@ function Profile() {  const { currentUser, logout, updateProfile, isAdmin } = us
     default_address: currentUser?.default_address || ''
   });
   
-  // Jelszó csere állapotok
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',

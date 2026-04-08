@@ -1,4 +1,3 @@
-// Use relative paths by default; CRA dev server can proxy to backend
 const defaultBaseUrl = process.env.REACT_APP_API_URL || "";
 
 const ENDPOINTS = {
@@ -39,11 +38,6 @@ const ENDPOINTS = {
   paymentsPurchases: `${defaultBaseUrl}/api/Payments/purchases`,
 };
 
-// ==================== TOKEN KEZELÉS ====================
-
-/**
- * Token-ek lekérése localStorage-ból
- */
 function getAccessToken() {
   return localStorage.getItem('accessToken');
 }
@@ -193,9 +187,6 @@ export async function getAuthorById(id, signal) {
   return fetchJson(ENDPOINTS.authorById(id), { signal });
 }
 
-/**
- * Új szerző létrehozásaaaaaaaa
- */
 export async function createAuthor(authorData, signal) {
   try {
     const response = await authFetch(ENDPOINTS.authors, {

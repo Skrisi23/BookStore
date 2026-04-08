@@ -20,10 +20,8 @@ function Navbar() {
 
       if (currentScrollY > 80) {
         if (currentScrollY > lastScrollY && currentScrollY - lastScrollY > 5) {
-          // Scrolling down
           setNavbarHidden(true);
         } else if (lastScrollY > currentScrollY && lastScrollY - currentScrollY > 5) {
-          // Scrolling up
           setNavbarHidden(false);
         }
       } else {
