@@ -10,7 +10,7 @@
     <Grid>
         <DockPanel>
             <!-- Header -->
-            <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
+            <DockPanel DockPanel.Dock="Top" Margin="32,20,32,0">
                 <TextBlock Text="Attekintes" Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                            VerticalAlignment="Center"/>
                 <Button Content="{materialDesign:PackIcon Kind=Refresh}" 
@@ -20,44 +20,44 @@
             </DockPanel>
 
             <!-- Content -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24,16">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="32,20,32,24">
                 <StackPanel>
                     <!-- Summary Cards -->
-                    <WrapPanel>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
+                    <WrapPanel Margin="0,0,0,8">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="180">
                             <StackPanel>
                                 <TextBlock Text="Osszes felhasznalo" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding TotalUsers}" FontSize="32" FontWeight="Bold"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="180">
                             <StackPanel>
                                 <TextBlock Text="Aktiv kolcsonzesek" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding ActiveRentals}" FontSize="32" FontWeight="Bold"
                                            Foreground="#4CAF50"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="180">
                             <StackPanel>
                                 <TextBlock Text="Lejart kolcsonzesek" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding OverdueRentals}" FontSize="32" FontWeight="Bold"
                                            Foreground="#F44336"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="180">
                             <StackPanel>
                                 <TextBlock Text="Osszes konyv" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding TotalBooks}" FontSize="32" FontWeight="Bold"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="180">
                             <StackPanel>
                                 <TextBlock Text="Osszes bevetel" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding TotalRevenue, StringFormat='{}{0:N0} Ft'}" 
                                            FontSize="32" FontWeight="Bold" Foreground="#FF9800"/>
                             </StackPanel>
                         </materialDesign:Card>
-                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="200">
+                        <materialDesign:Card Padding="20" Margin="0,0,16,16" MinWidth="180">
                             <StackPanel>
                                 <TextBlock Text="Osszes rendeles" Opacity="0.6" FontSize="13" Margin="0,0,0,4"/>
                                 <TextBlock Text="{Binding TotalOrders}" FontSize="32" FontWeight="Bold"/>
@@ -66,7 +66,7 @@
                     </WrapPanel>
 
                     <!-- Chart -->
-                    <materialDesign:Card Padding="16" Margin="0,8,0,0">
+                    <materialDesign:Card Padding="20" Margin="0,16,0,0">
                         <StackPanel>
                             <TextBlock Text="Kolcsonzesek naponta (utolso 30 nap)" 
                                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Margin="0,0,0,8"/>

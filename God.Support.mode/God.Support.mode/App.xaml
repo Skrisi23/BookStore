@@ -12,6 +12,14 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
+            <!-- Global DataGrid style: no alternating row stripes -->
+            <Style TargetType="DataGrid" BasedOn="{StaticResource MaterialDesignDataGrid}">
+                <Setter Property="AlternationCount" Value="0"/>
+            </Style>
+            <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+                <Setter Property="Background" Value="Transparent"/>
+            </Style>
+
             <!-- Converters -->
             <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
             <converters:RoleToColorConverter x:Key="RoleToColorConverter"/>

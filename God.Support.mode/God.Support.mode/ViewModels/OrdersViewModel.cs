@@ -44,6 +44,7 @@ public partial class OrdersViewModel : ObservableObject
         try
         {
             _allPayments = await _apiService.GetPaymentsAsync();
+            await CalculateRentalPricesAsync();
             FilterPayments();
             _notification.Show("Rendelesek betoltve");
         }
@@ -79,6 +80,64 @@ public partial class OrdersViewModel : ObservableObject
                 string.Equals(p.OrderType, SelectedOrderType, StringComparison.OrdinalIgnoreCase));
 
         Payments = new ObservableCollection<PaymentDto>(filtered);
+    }
+
+    private async Task CalculateRentalPricesAsync()
+    {
+        Dictionary<int, decimal> bookPrices = [];
+        try
+        {
+            var books = await _apiService.GetBooksAsync();
+            bookPrices = books.ToDictionary(b => b.Id, b => b.Ar);
+        }
+        catch
+        {
+            return;
+        }
+
+        foreach (var payment in _allPayments)
+        {
+            if (payment.Items == null || payment.Items.Count == 0) continue;
+
+            var rentalItems = payment.Items.Where(i => i.IsRental).ToList();
+            if (rentalItems.Count == 0) continue;
+
+            var purchaseTotal = payment.Items
+                .Where(i => !i.IsRental)
+                .Sum(i => i.UnitPrice * i.Quantity);
+
+            var rentalTotal = payment.Amount - purchaseTotal;
+
+            // Konyvarakkal sulyozott aranyos elosztas
+            var weightedItems = rentalItems.Select(i => new
+            {
+                Item = i,
+                BookPrice = bookPrices.GetValueOrDefault(i.BookId, 0m)
+            }).ToList();
+
+            var totalWeight = weightedItems.Sum(w => w.BookPrice * w.Item.Quantity);
+
+            if (totalWeight > 0)
+            {
+                foreach (var w in weightedItems)
+                {
+                    var proportion = (w.BookPrice * w.Item.Quantity) / totalWeight;
+                    w.Item.UnitPrice = Math.Round((rentalTotal * proportion) / w.Item.Quantity, 0);
+                }
+            }
+            else
+            {
+                var totalQty = rentalItems.Sum(i => i.Quantity);
+                if (totalQty > 0)
+                {
+                    var perUnit = Math.Round(rentalTotal / totalQty, 0);
+                    foreach (var item in rentalItems)
+                    {
+                        item.UnitPrice = perUnit;
+                    }
+                }
+            }
+        }
     }
 
     [RelayCommand]

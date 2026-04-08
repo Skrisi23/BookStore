@@ -45,7 +45,7 @@
                       SelectedItem="{Binding SelectedUser}"
                       AutoGenerateColumns="False" IsReadOnly="True"
                       SelectionMode="Single" CanUserSortColumns="True"
-                      AlternatingRowBackground="#1E1E1E"
+                      AlternationCount="0"
                       materialDesign:DataGridAssist.CellPadding="12 8">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Azon." Binding="{Binding Id}" Width="60"/>
@@ -128,7 +128,7 @@
                                 Visibility="{Binding IsPasswordResetOpen, Converter={StaticResource InverseBoolToVis}}"/>
 
                         <!-- Jelszó reset panel -->
-                        <Border Background="#2A2A2A" CornerRadius="8" Padding="16" Margin="0,0,0,16"
+                        <Border Background="{DynamicResource MaterialDesignPaper}" CornerRadius="8" Padding="16" Margin="0,0,0,16"
                                 Visibility="{Binding IsPasswordResetOpen, Converter={StaticResource BoolToVis}}">
                             <StackPanel>
                                 <TextBlock Text="Uj jelszo beallitasa" FontWeight="Bold" Margin="0,0,0,12"/>
@@ -171,7 +171,7 @@
                         <ItemsControl ItemsSource="{Binding UserRentals}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="10" Margin="0,0,0,6">
+                                    <Border Background="{DynamicResource MaterialDesignPaper}" CornerRadius="4" Padding="10" Margin="0,0,0,6">
                                         <StackPanel>
                                             <TextBlock Text="{Binding BookTitle}" FontWeight="SemiBold"/>
                                             <TextBlock Opacity="0.6" Margin="0,4,0,0">
@@ -191,7 +191,7 @@
                         <ItemsControl ItemsSource="{Binding UserCartItems}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="10" Margin="0,0,0,6">
+                                    <Border Background="{DynamicResource MaterialDesignPaper}" CornerRadius="4" Padding="10" Margin="0,0,0,6">
                                         <DockPanel>
                                             <TextBlock Text="{Binding BookCim}" FontWeight="SemiBold"/>
                                             <TextBlock Text="{Binding Price, StringFormat='{}{0:N0} Ft'}"
@@ -209,7 +209,7 @@
                         <ItemsControl ItemsSource="{Binding UserPayments}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#2A2A2A" CornerRadius="4" Padding="10" Margin="0,0,0,6">
+                                    <Border Background="{DynamicResource MaterialDesignPaper}" CornerRadius="4" Padding="10" Margin="0,0,0,6">
                                         <StackPanel>
                                             <DockPanel>
                                                 <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} Ft'}" FontWeight="SemiBold"/>

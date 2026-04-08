@@ -3,6 +3,7 @@ using System.Windows;
 using God.Support.mode.Services;
 using God.Support.mode.ViewModels;
 using God.Support.mode.Views;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace God.Support.mode;
@@ -39,6 +40,13 @@ public partial class App : Application
         services.AddSingleton<MainViewModel>();
 
         _serviceProvider = services.BuildServiceProvider();
+
+        // Mentett tema alkalmazasa indulaskor
+        var settings = _serviceProvider.GetRequiredService<SettingsService>();
+        var paletteHelper = new PaletteHelper();
+        var theme = paletteHelper.GetTheme();
+        theme.SetBaseTheme(settings.IsDarkTheme ? BaseTheme.Dark : BaseTheme.Light);
+        paletteHelper.SetTheme(theme);
 
         // Először a login ablak jelenik meg
         var loginVm = _serviceProvider.GetRequiredService<LoginViewModel>();

@@ -23,7 +23,8 @@
             </Grid.ColumnDefinitions>
 
             <!-- Sidebar -->
-            <Border Grid.Column="0" Background="#1a1a1a">
+            <Border Grid.Column="0" Background="{DynamicResource MaterialDesign.Brush.Card.Background}"
+                    BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,1,0">
                 <DockPanel>
                     <!-- App Title -->
                     <Border DockPanel.Dock="Top" Padding="20,24,20,16">
@@ -38,7 +39,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Separator DockPanel.Dock="Top" Background="#333"/>
+                    <Separator DockPanel.Dock="Top" Background="{DynamicResource MaterialDesignDivider}"/>
 
                     <!-- Navigation -->
                     <StackPanel Margin="0,8,0,0">
@@ -50,7 +51,7 @@
                                 <Setter Property="FontSize" Value="14"/>
                                 <Setter Property="Cursor" Value="Hand"/>
                                 <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="Foreground" Value="#CCC"/>
+                                <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
                                 <Setter Property="BorderThickness" Value="0"/>
                                 <Setter Property="Margin" Value="0,2"/>
                             </Style>
@@ -105,7 +106,7 @@
 
             <!-- Content Area -->
             <Grid Grid.Column="1">
-                <ContentControl Content="{Binding CurrentViewModel}" Margin="0"/>
+                <ContentControl Content="{Binding CurrentViewModel}" Margin="8,0,0,0"/>
 
                 <!-- Snackbar -->
                 <materialDesign:Snackbar MessageQueue="{Binding MessageQueue}"

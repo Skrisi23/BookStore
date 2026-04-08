@@ -35,7 +35,7 @@ public partial class CartsViewModel : ObservableObject
     private void FilterCarts()
     {
         var filtered = ShowOnlyActive
-            ? _allCarts.Where(c => c.Status == "active" && (c.Items?.Count ?? 0) > 0).ToList()
+            ? _allCarts.Where(c => string.Equals(c.Status, "active", StringComparison.OrdinalIgnoreCase)).ToList()
             : _allCarts;
         Carts = new ObservableCollection<CartDto>(filtered);
     }

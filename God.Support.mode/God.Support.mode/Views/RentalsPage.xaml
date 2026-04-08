@@ -68,7 +68,7 @@
                       ItemsSource="{Binding Rentals}"
                       AutoGenerateColumns="False" IsReadOnly="True"
                       SelectionMode="Single" CanUserSortColumns="True"
-                      AlternatingRowBackground="#1E1E1E"
+                      AlternationCount="0"
                       materialDesign:DataGridAssist.CellPadding="12 8">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Azon." Binding="{Binding Rental.Id}" Width="60"/>

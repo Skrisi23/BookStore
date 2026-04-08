@@ -16,6 +16,12 @@ public class SettingsService
         set => UpdateSetting("AdminUserId", value.ToString());
     }
 
+    public bool IsDarkTheme
+    {
+        get => !string.Equals(ConfigurationManager.AppSettings["Theme"], "Light", StringComparison.OrdinalIgnoreCase);
+        set => UpdateSetting("Theme", value ? "Dark" : "Light");
+    }
+
     private static void UpdateSetting(string key, string value)
     {
         var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);

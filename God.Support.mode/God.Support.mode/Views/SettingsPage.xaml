@@ -5,76 +5,98 @@
              xmlns:converters="clr-namespace:God.Support.mode.Converters">
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
     </UserControl.Resources>
 
     <DockPanel>
-        <DockPanel DockPanel.Dock="Top" Margin="24,16,24,0">
+        <!-- Header -->
+        <DockPanel DockPanel.Dock="Top" Margin="24,16,24,8">
             <TextBlock Text="Beallitasok" Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
         </DockPanel>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24,16">
-            <StackPanel MaxWidth="500" HorizontalAlignment="Left">
-                <!-- API Base URL -->
-                <TextBox Text="{Binding ApiBaseUrl, UpdateSourceTrigger=PropertyChanged}"
-                         materialDesign:HintAssist.Hint="API cim"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Margin="0,0,0,20"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24,8">
+            <StackPanel MaxWidth="600" HorizontalAlignment="Left">
 
-                <!-- Admin User ID -->
-                <TextBox Text="{Binding AdminUserId, UpdateSourceTrigger=PropertyChanged}"
-                         materialDesign:HintAssist.Hint="Admin felhasznalo ID"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Margin="0,0,0,20"/>
+                <!-- Szerver beallitasok kartya -->
+                <materialDesign:Card Padding="24" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Szerver beallitasok" 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Margin="0,0,0,20"/>
 
-                <!-- Theme -->
-                <TextBlock Text="Tema" FontWeight="Bold" Margin="0,0,0,10"/>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                    <RadioButton Content="Sotet" IsChecked="{Binding IsDarkTheme}" Margin="0,0,24,0"
-                                 Style="{StaticResource MaterialDesignRadioButton}"/>
-                    <RadioButton Content="Vilagos" 
-                                 Style="{StaticResource MaterialDesignRadioButton}"/>
-                </StackPanel>
+                        <TextBox Text="{Binding ApiBaseUrl, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.Hint="API cim"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 FontSize="14"
+                                 Margin="0,0,0,20"/>
 
-                <!-- Test Connection -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                    <Button Content="Kapcsolat tesztelese" Command="{Binding TestConnectionCommand}"
-                            Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,16,0"/>
-                    <Border CornerRadius="10" Padding="10,4" VerticalAlignment="Center"
-                            Visibility="{Binding HasTestedConnection, Converter={StaticResource BoolToVis}}">
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Background" Value="#F44336"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsConnectionOk}" Value="True">
-                                        <Setter Property="Background" Value="#4CAF50"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <TextBlock Foreground="White" FontSize="12" FontWeight="SemiBold">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="Sikertelen"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsConnectionOk}" Value="True">
-                                            <Setter Property="Text" Value="Kapcsolodva"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Border>
-                </StackPanel>
+                        <TextBox Text="{Binding AdminUserId, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.Hint="Admin felhasznalo ID"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 FontSize="14"
+                                 Margin="0,0,0,16"/>
 
-                <Separator Margin="0,16"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Kapcsolat tesztelese" Command="{Binding TestConnectionCommand}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                            <Border CornerRadius="10" Padding="12,6" VerticalAlignment="Center"
+                                    Margin="16,0,0,0"
+                                    Visibility="{Binding HasTestedConnection, Converter={StaticResource BoolToVis}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#F44336"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsConnectionOk}" Value="True">
+                                                <Setter Property="Background" Value="#4CAF50"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Foreground="White" FontSize="12" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="Sikertelen"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsConnectionOk}" Value="True">
+                                                    <Setter Property="Text" Value="Kapcsolodva"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
 
-                <!-- Save -->
+                <!-- Megjelenes kartya -->
+                <materialDesign:Card Padding="24" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Megjelenes" 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Margin="0,0,0,16"/>
+                        <TextBlock Text="Tema" Opacity="0.7" Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Content="Sotet" IsChecked="{Binding IsDarkTheme}" Margin="0,0,32,0"
+                                         Style="{StaticResource MaterialDesignRadioButton}"/>
+                            <RadioButton Content="Vilagos"
+                                         IsChecked="{Binding IsDarkTheme, Converter={StaticResource InverseBoolConverter}}"
+                                         Style="{StaticResource MaterialDesignRadioButton}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Mentes gomb -->
                 <Button Content="Beallitasok mentese" Command="{Binding SaveSettingsCommand}"
                         Style="{StaticResource MaterialDesignRaisedButton}"
-                        HorizontalAlignment="Left" Margin="0,16,0,0"/>
+                        HorizontalAlignment="Stretch" Height="42"
+                        FontSize="14"
+                        Margin="0,8,0,16"/>
 
-                <!-- Version -->
-                <TextBlock Opacity="0.5" Margin="0,24,0,0" FontSize="12">
+                <!-- Verzio -->
+                <TextBlock Opacity="0.4" Margin="0,8,0,24" FontSize="12" HorizontalAlignment="Center">
                     <Run Text="Alkalmazas verzio: "/>
                     <Run Text="{Binding AppVersion, Mode=OneWay}"/>
                 </TextBlock>

@@ -2,6 +2,7 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using God.Support.mode.Services;
+using MaterialDesignThemes.Wpf;
 
 namespace God.Support.mode.ViewModels;
 
@@ -27,6 +28,17 @@ public partial class SettingsViewModel : ObservableObject
 
         ApiBaseUrl = _settings.ApiBaseUrl;
         AdminUserId = _settings.AdminUserId;
+
+        IsDarkTheme = _settings.IsDarkTheme;
+    }
+
+    partial void OnIsDarkThemeChanged(bool value)
+    {
+        var paletteHelper = new PaletteHelper();
+        var theme = paletteHelper.GetTheme();
+        theme.SetBaseTheme(value ? BaseTheme.Dark : BaseTheme.Light);
+        paletteHelper.SetTheme(theme);
+        _settings.IsDarkTheme = value;
     }
 
     [RelayCommand]
@@ -36,11 +48,11 @@ public partial class SettingsViewModel : ObservableObject
         {
             _settings.ApiBaseUrl = ApiBaseUrl;
             _settings.AdminUserId = AdminUserId;
-            _notification.Show("Settings saved");
+            _notification.Show("Beallitasok mentve");
         }
         catch (Exception ex)
         {
-            _notification.ShowError($"Failed to save settings: {ex.Message}");
+            _notification.ShowError($"Beallitasok mentese sikertelen: {ex.Message}");
         }
     }
 
@@ -53,15 +65,15 @@ public partial class SettingsViewModel : ObservableObject
             IsConnectionOk = await _apiService.TestConnectionAsync();
             HasTestedConnection = true;
             if (IsConnectionOk)
-                _notification.Show("Connection successful!");
+                _notification.Show("Kapcsolat sikeres!");
             else
-                _notification.ShowError("Connection failed");
+                _notification.ShowError("Kapcsolat sikertelen");
         }
         catch (Exception ex)
         {
             IsConnectionOk = false;
             HasTestedConnection = true;
-            _notification.ShowError($"Connection failed: {ex.Message}");
+            _notification.ShowError($"Kapcsolat sikertelen: {ex.Message}");
         }
     }
 }

@@ -14,14 +14,8 @@ public partial class LoginViewModel : ObservableObject
     [ObservableProperty] private bool isLoading;
     [ObservableProperty] private bool hasError;
 
-    /// <summary>
-    /// Sikeres admin login esetén true-ra állítjuk – a Window lezárásához
-    /// </summary>
     public bool LoginSuccess { get; private set; }
 
-    /// <summary>
-    /// Esemény, amit a Window-nak jelezünk, hogy zárja be magát
-    /// </summary>
     public event Action? RequestClose;
 
     public LoginViewModel(IAuthService authService)
