@@ -26,7 +26,8 @@ function HomePage() {
         setLoading(true);
         const data = await getBooks(ac.signal);
         const list = Array.isArray(data) ? data : [];
-        const sorted = [...list].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+        const available = list.filter(b => b.elerheto);
+        const sorted = [...available].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
         const shuffled = [...sorted].sort(() => Math.random() - 0.5);
         setFeaturedBooks(shuffled.slice(0, 4));
       } catch (e) {
