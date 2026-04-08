@@ -177,7 +177,6 @@ namespace Backend.Api.Controllers
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<PaymentDto>>> GetPaymentsByUserId(int userId)
         {
-            // Ellenőrizzük, hogy létezik-e a user
             var userExists = await _context.users.AnyAsync(u => u.id == userId);
             if (!userExists)
             {

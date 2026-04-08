@@ -186,7 +186,7 @@ public class BooksController : ControllerBase
             return BadRequest(new { message = $"Nem található szerző ezzel az ID-vel: {createBookDto.author_id}" });
         }
 
-        // Kategória keresése név alapján, ha nem létezik, létrehozzuk
+
         var cat = await _context.categories.FirstOrDefaultAsync(c => c.name == createBookDto.kategoria);
         if (cat == null)
         {
@@ -219,7 +219,6 @@ public class BooksController : ControllerBase
         _context.book_authors.Add(bookAuthor);
         await _context.SaveChangesAsync();
 
-        // Reload with author and category
         book = await _context.books
             .Include(b => b.author)
             .Include(b => b.category)
@@ -293,7 +292,6 @@ public class BooksController : ControllerBase
             }
         }
 
-        // Frissítjük a mezőket ha meg vannak adva
         if (!string.IsNullOrEmpty(updateBookDto.cim)) book.cim = updateBookDto.cim;
         if (updateBookDto.boritokep != null) book.boritokep = updateBookDto.boritokep;
         if (updateBookDto.kiadasi_datum.HasValue) book.kiadasi_datum = updateBookDto.kiadasi_datum;
@@ -313,7 +311,6 @@ public class BooksController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        // Reload with author and category
         book = await _context.books
             .Include(b => b.author)
             .Include(b => b.category)
@@ -350,7 +347,6 @@ public class BooksController : ControllerBase
             return NotFound(new { message = $"Nem található könyv ezzel az ID-vel: {id}" });
         }
 
-        // Ellenőrizzük hogy vannak-e hozzá kapcsolódó copies
         var hasCopies = await _context.copies.AnyAsync(c => c.book_id == id);
         if (hasCopies)
         {

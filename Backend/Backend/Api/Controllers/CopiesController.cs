@@ -52,7 +52,6 @@ namespace Backend.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CopiesDto dto)
         {
-            // Ellenőrizzük hogy létezik-e a könyv
             var bookExists = await _context.books.AnyAsync(b => b.id == dto.book_id);
             if (!bookExists)
             {

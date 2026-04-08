@@ -32,21 +32,18 @@ public class AuthController : ControllerBase
     [HttpPatch("{id}/change-password")]
     public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto dto)
     {
-        // JWT-ből kinyerjük a user ID-t
         var currentUserId = User.FindFirst("UserId")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(currentUserId) || currentUserId != id.ToString())
         {
             return Forbid();
         }
 
-        // 1. Keressük meg a felhasználót
         var user = await _context.users.FindAsync(id);
         if (user == null)
         {
             return NotFound(new { message = "Felhasználó nem található" });
         }
 
-        // 2. Ellenőrizzük a jelenlegi jelszót
         bool isCurrentPasswordValid = false;
         try
         {
@@ -63,10 +60,8 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Hibás jelenlegi jelszó" });
         }
 
-        // 3. Hash-eljük az új jelszót
         string newPasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
 
-        // 4. Frissítsük az adatbázisban
         user.jelszo_hash = newPasswordHash;
         _context.Entry(user).State = EntityState.Modified;
         await _context.SaveChangesAsync();

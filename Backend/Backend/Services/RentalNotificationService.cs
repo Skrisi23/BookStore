@@ -50,7 +50,6 @@ namespace Backend.Services
 
             var today = DateOnly.FromDateTime(DateTime.Now);
 
-            // Aktív kölcsönzések (nem visszahozott)
             var activeRentals = await context.rentals
                 .Include(r => r.user)
                 .Include(r => r.copy)

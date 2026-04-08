@@ -27,7 +27,6 @@ namespace Backend.Api.Controllers
         [HttpGet("my-cart")]
         public async Task<ActionResult<CartDto>> GetMyCart([FromQuery] int userId)
         {
-            // Aktív kosár keresése
             var cart = await _context.carts
                 .Include(c => c.user)
                 .Include(c => c.cart_items)
@@ -40,7 +39,6 @@ namespace Backend.Api.Controllers
                             .ThenInclude(b => b.category)
                 .FirstOrDefaultAsync(c => c.user_id == userId && c.status == "active");
 
-            // Ha nincs kosár, létrehozunk egyet
             if (cart == null)
             {
                 cart = new cart
@@ -96,7 +94,7 @@ namespace Backend.Api.Controllers
         /// </summary>
         [HttpPost("add")]
         public async Task<ActionResult<CartDto>> AddToCart([FromQuery] int userId, [FromBody] AddToCartDto addToCartDto)
-        {            // Validáció: legalább copy_id vagy book_id kötelező
+        {
             if (!addToCartDto.copy_id.HasValue && !addToCartDto.book_id.HasValue)
             {
                 return BadRequest(new { message = "A copy_id vagy book_id megadása kötelező" });
@@ -108,25 +106,21 @@ namespace Backend.Api.Controllers
                 return BadRequest(new { message = "Az order_type értéke 'rental' vagy 'purchase' lehet" });
             }
 
-            // Kölcsönzésnél max 1 db
             var quantity = addToCartDto.quantity > 0 ? addToCartDto.quantity : 1;
             if (orderType == "rental" && quantity > 1)
             {
                 quantity = 1;
             }
 
-            // Aktív kosár keresése vagy létrehozása (előre kell, hogy a copy választásnál szűrhessünk)
             var cart = await _context.carts
                 .Include(c => c.cart_items)
                     .ThenInclude(ci => ci.copy)
                 .FirstOrDefaultAsync(c => c.user_id == userId && c.status == "active");
 
-            // Kosárban lévő copy_id-k listája (a unique constraint miatt fontos)
             var copyIdsInCart = cart?.cart_items.Select(ci => ci.copy_id).ToList() ?? new List<int>();
 
             copy? copy = null;
 
-            // 1a. Ha copy_id meg van adva, azt használjuk
             if (addToCartDto.copy_id.HasValue)
             {
                 copy = await _context.copies
@@ -138,7 +132,6 @@ namespace Backend.Api.Controllers
                     return NotFound(new { message = $"Nem található könyvpéldány ezzel az ID-vel: {addToCartDto.copy_id}" });
                 }
 
-                // Ellenőrizzük, hogy ez a copy már benne van-e a kosárban (bármilyen típussal)
                 if (copyIdsInCart.Contains(copy.id))
                 {
                     var existingType = cart!.cart_items.First(ci => ci.copy_id == copy.id).order_type;
@@ -155,10 +148,8 @@ namespace Backend.Api.Controllers
                     }
                 }
             }
-            // 1b. Ha book_id van megadva, automatikusan választunk egy elérhető példányt
             else if (addToCartDto.book_id.HasValue)
             {
-                // Elérhető példányt keresünk, ami nincs még a kosárban
                 copy = await _context.copies
                     .Include(c => c.book)
                     .Where(c => c.book_id == addToCartDto.book_id.Value
@@ -168,7 +159,6 @@ namespace Backend.Api.Controllers
 
                 if (copy == null)
                 {
-                    // Ellenőrizzük miért nem találtunk: nincs példány, vagy mind foglalt, vagy mind kosárban van?
                     var anyExists = await _context.copies
                         .AnyAsync(c => c.book_id == addToCartDto.book_id.Value);
 
@@ -192,7 +182,6 @@ namespace Backend.Api.Controllers
                 }
             }
 
-            // 2. Ellenőrizzük hogy létezik-e a copy
             if (copy == null)
             {
                 return NotFound(new { message = "Könyvpéldány nem található" });
@@ -208,16 +197,13 @@ namespace Backend.Api.Controllers
                 };
                 _context.carts.Add(cart);
                 await _context.SaveChangesAsync();
-            }            // 4. Vásárlásnál ellenőrizzük a készletet
-            if (orderType == "purchase")
+            }            if (orderType == "purchase")
             {
                 var bookId = copy.book_id;
 
-                // Összes elérhető példány a könyvből
                 var availableCopiesCount = await _context.copies
                     .CountAsync(c => c.book_id == bookId && c.elerheto == true);
 
-                // Más felhasználók aktív kosaraiban lévő mennyiség (ugyanez a könyv, purchase)
                 var inOtherCartsQty = await _context.cart_items
                     .Include(ci => ci.cart)
                     .Include(ci => ci.copy)
@@ -227,7 +213,6 @@ namespace Backend.Api.Controllers
                                  && ci.order_type == "purchase")
                     .SumAsync(ci => ci.quantity);
 
-                // A jelenlegi felhasználó kosarában már benne lévő mennyiség (ugyanez a könyv, purchase)
                 var alreadyInMyCart = cart.cart_items
                     .Where(ci => ci.copy.book_id == bookId && ci.order_type == "purchase")
                     .Sum(ci => ci.quantity);
@@ -244,7 +229,6 @@ namespace Backend.Api.Controllers
                 }
             }
 
-            // 5. Ellenőrizzük, hogy már van-e ez a könyv a kosárban (ugyanazzal a típussal)
             var existingItem = cart.cart_items.FirstOrDefault(ci => ci.copy_id == copy.id && ci.order_type == orderType);
             if (existingItem != null)
             {
@@ -252,14 +236,12 @@ namespace Backend.Api.Controllers
                 {
                     return BadRequest(new { message = "Ez a könyv már a kosárban van kölcsönzésre" });
                 }
-                // Vásárlásnál növeljük a mennyiséget
                 existingItem.quantity += quantity;
                 cart.updated_at = DateTime.Now;
                 await _context.SaveChangesAsync();
             }
             else
-            {                // 6. Új cart_item létrehozása
-                var itemPrice = orderType == "rental"
+            {                var itemPrice = orderType == "rental"
                     ? Math.Round(copy.book.ar * 0.05m, 0)
                     : copy.book.ar;
 
@@ -278,7 +260,6 @@ namespace Backend.Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // 6. Frissített kosár visszaküldése
             cart = await _context.carts
                 .Include(c => c.user)
                 .Include(c => c.cart_items)
@@ -310,7 +291,6 @@ namespace Backend.Api.Controllers
                 return NotFound(new { message = $"Nem található kosár elem ezzel az ID-vel: {cartItemId}" });
             }
 
-            // Ellenőrizzük, hogy a user kosarához tartozik-e
             if (cartItem.cart.user_id != userId)
             {
                 return Forbid();
@@ -319,7 +299,6 @@ namespace Backend.Api.Controllers
             var cartId = cartItem.cart_id;
             _context.cart_items.Remove(cartItem);
             
-            // Cart updated_at frissítése
             var cart = await _context.carts.FindAsync(cartId);
             if (cart != null)
             {
@@ -328,7 +307,6 @@ namespace Backend.Api.Controllers
 
             await _context.SaveChangesAsync();
 
-            // Frissített kosár visszaküldése
             cart = await _context.carts
                 .Include(c => c.user)
                 .Include(c => c.cart_items)
@@ -364,7 +342,6 @@ namespace Backend.Api.Controllers
             cart.updated_at = DateTime.Now;
             await _context.SaveChangesAsync();
 
-            // Frissített (üres) kosár visszaküldése
             cart = await _context.carts
                 .Include(c => c.user)
                 .Include(c => c.cart_items)
@@ -406,8 +383,7 @@ namespace Backend.Api.Controllers
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
-            {                // 1. Aktív kosár keresése
-                var cart = await _context.carts
+            {                var cart = await _context.carts
                     .Include(c => c.cart_items)
                         .ThenInclude(ci => ci.copy)
                             .ThenInclude(cp => cp.book)
@@ -426,8 +402,7 @@ namespace Backend.Api.Controllers
                 if (!cart.cart_items.Any())
                 {
                     return BadRequest(new { message = "A kosár üres" });
-                }                // 2. Kölcsönzéseknél ellenőrizzük, hogy a copy elérhető-e
-                var rentalItems = cart.cart_items.Where(ci => ci.order_type == "rental").ToList();
+                }                var rentalItems = cart.cart_items.Where(ci => ci.order_type == "rental").ToList();
                 var purchaseItems = cart.cart_items.Where(ci => ci.order_type == "purchase").ToList();
 
                 var unavailableRentals = rentalItems
@@ -442,7 +417,6 @@ namespace Backend.Api.Controllers
                     });
                 }
 
-                // 2b. Vásárlásoknál ellenőrizzük a készletet
                 foreach (var purchaseItem in purchaseItems)
                 {
                     var bookId = purchaseItem.copy.book_id;
@@ -456,23 +430,19 @@ namespace Backend.Api.Controllers
                             message = $"Nincs elég készlet a(z) \"{purchaseItem.copy.book.cim}\" könyvből. Elérhető: {availableCount} db, kért: {purchaseItem.quantity} db"
                         });
                     }
-                }                // 3. Összeg számítása - kölcsönzéseknél az ár az időtartamtól függ (tételenként)
-                // Alap 14 nap = könyv ár * 5%, minden további 7 nap = +3%
-                foreach (var rentalItem in rentalItems)
+                }                foreach (var rentalItem in rentalItems)
                 {
-                    // Tételenkénti napok lekérdezése, vagy fallback az alapértelmezettre
-                    var itemDays = checkoutDto.rental_days; // alapértelmezett
+                    var itemDays = checkoutDto.rental_days;
                     if (checkoutDto.rental_days_per_item != null
                         && checkoutDto.rental_days_per_item.TryGetValue(rentalItem.id.ToString(), out var perItemDays))
                     {
-                        // Validáció: 14-90 nap között
                         itemDays = Math.Clamp(perItemDays, 14, 90);
                     }
 
                     var bookPrice = rentalItem.copy.book.ar;
-                    var baseRate = 0.05m; // 14 nap = 5%
+                    var baseRate = 0.05m;
                     var extraWeeks = Math.Max(0, (itemDays - 14) / 7);
-                    var extraRate = extraWeeks * 0.03m; // +3% per extra hét
+                    var extraRate = extraWeeks * 0.03m;
                     var rentalPrice = Math.Round(bookPrice * (baseRate + extraRate), 0);
                     rentalItem.price = rentalPrice;
                 }
@@ -480,7 +450,6 @@ namespace Backend.Api.Controllers
 
                 decimal totalAmount = cart.cart_items.Sum(ci => ci.price * ci.quantity);
 
-                // 4. Payment létrehozása
                 var hasRentals = rentalItems.Any();
                 var hasPurchases = purchaseItems.Any();
                 var paymentOrderType = hasRentals && hasPurchases ? "mixed" : hasRentals ? "rental" : "purchase";                var payment = new payment
@@ -496,13 +465,11 @@ namespace Backend.Api.Controllers
                 _context.payments.Add(payment);
                 await _context.SaveChangesAsync();
 
-                // 5. Kölcsönzések létrehozása (csak rental típusú itemekhez)
                 var rentals = new List<rental>();
                 var kolcsonzesDatum = DateOnly.FromDateTime(DateTime.Now);
                 
                 foreach (var cartItem in rentalItems)
                 {
-                    // Tételenkénti napok
                     var itemDays = checkoutDto.rental_days;
                     if (checkoutDto.rental_days_per_item != null
                         && checkoutDto.rental_days_per_item.TryGetValue(cartItem.id.ToString(), out var perItemDays))
@@ -525,10 +492,8 @@ namespace Backend.Api.Controllers
                     _context.rentals.Add(rental);
                     rentals.Add(rental);
 
-                    // Copy lefoglalása kölcsönzéskor
                     cartItem.copy.elerheto = false;
 
-                    // Kölcsönzési tétel mentése purchase_item-ként is (hogy az ár rögzítve legyen)
                     var rentalPurchaseRecord = new purchase_item
                     {
                         payment_id = payment.id,
@@ -537,12 +502,10 @@ namespace Backend.Api.Controllers
                         unit_price = cartItem.price
                     };
                     _context.purchase_items.Add(rentalPurchaseRecord);
-                }                // 6. Vásárlásoknál purchase_item rekordok létrehozása és copy-k elérhetetlenné tétele
-                foreach (var purchaseItem in purchaseItems)
+                }                foreach (var purchaseItem in purchaseItems)
                 {
                     var bookId = purchaseItem.copy.book_id;
 
-                    // Purchase item mentése a táblába
                     var purchaseRecord = new purchase_item
                     {
                         payment_id = payment.id,
@@ -563,20 +526,16 @@ namespace Backend.Api.Controllers
                     }
                 }
 
-                // 7. Kosár státuszának frissítése
                 cart.status = "checked_out";
                 cart.updated_at = DateTime.Now;
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                // 8. Válasz összeállítása
-                // Payment reload user adatokkal
                 payment = await _context.payments
                     .Include(p => p.user)
                     .FirstOrDefaultAsync(p => p.id == payment.id);
 
-                // Rentals reload teljes adatokkal
                 var rentalsList = await _context.rentals
                     .Include(r => r.user)
                     .Include(r => r.copy)

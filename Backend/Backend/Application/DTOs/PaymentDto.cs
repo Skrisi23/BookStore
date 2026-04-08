@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Application.DTOs
 {
-    // Teljes payment adat - lekérdezésekhez
     public class PaymentDto
     {
         public int id { get; set; }

@@ -152,7 +152,6 @@ namespace Backend.Api.Controllers
                 if (dto.DefaultAddress != null)
                     user.default_address = dto.DefaultAddress;
 
-                // Update nev (full name) from last_name + first_name
                 if (dto.LastName != null || dto.FirstName != null)
                 {
                     var ln = user.last_name ?? "";
