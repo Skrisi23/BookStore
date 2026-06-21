@@ -15,11 +15,23 @@ public partial class BookStoreContext : DbContext
 
     public virtual DbSet<book> books { get; set; }
 
+    public virtual DbSet<category> categories { get; set; }
+
+    public virtual DbSet<book_author> book_authors { get; set; }
+
     public virtual DbSet<copy> copies { get; set; }
 
     public virtual DbSet<rental> rentals { get; set; }
 
-    public virtual DbSet<user> users { get; set; }
+    public virtual DbSet<users> users { get; set; }
+
+    public virtual DbSet<payment> payments { get; set; }
+
+    public virtual DbSet<cart> carts { get; set; }
+
+    public virtual DbSet<cart_item> cart_items { get; set; }
+
+    public virtual DbSet<purchase_item> purchase_items { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,6 +44,11 @@ public partial class BookStoreContext : DbContext
             entity.HasKey(e => e.id).HasName("PRIMARY");
         });
 
+        modelBuilder.Entity<category>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+        });
+
         modelBuilder.Entity<book>(entity =>
         {
             entity.HasKey(e => e.id).HasName("PRIMARY");
@@ -39,6 +56,23 @@ public partial class BookStoreContext : DbContext
             entity.HasOne(d => d.author).WithMany(p => p.books)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_books_author");
+
+            entity.HasOne(d => d.category).WithMany(p => p.books)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_books_category");
+        });
+
+        modelBuilder.Entity<book_author>(entity =>
+        {
+            entity.HasKey(e => new { e.book_id, e.author_id }).HasName("PRIMARY");
+
+            entity.HasOne(d => d.book).WithMany(p => p.book_authors)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_ba_book");
+
+            entity.HasOne(d => d.author).WithMany(p => p.book_authors)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_ba_author");
         });
 
         modelBuilder.Entity<copy>(entity =>
@@ -63,13 +97,69 @@ public partial class BookStoreContext : DbContext
             entity.HasOne(d => d.user).WithMany(p => p.rentals)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_rentals_user");
+
+            entity.HasOne(d => d.payment).WithMany(p => p.rentals)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_rentals_payment");
         });
 
-        modelBuilder.Entity<user>(entity =>
+        modelBuilder.Entity<users>(entity =>
         {
             entity.HasKey(e => e.id).HasName("PRIMARY");
 
             entity.Property(e => e.letrehozva).HasDefaultValueSql("current_timestamp()");
+        });
+
+        modelBuilder.Entity<payment>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+
+            entity.HasOne(d => d.user).WithMany(p => p.payments)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_payments_user");
+        });
+
+        modelBuilder.Entity<cart>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+
+            entity.Property(e => e.created_at).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.status).HasDefaultValue("active");
+
+            entity.HasOne(d => d.user).WithMany(p => p.carts)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_carts_user");
+        });
+
+        modelBuilder.Entity<cart_item>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+
+            entity.Property(e => e.added_at).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.quantity).HasDefaultValue(1);
+
+            entity.HasOne(d => d.cart).WithMany(p => p.cart_items)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_cart_items_cart");
+
+            entity.HasOne(d => d.copy).WithMany(p => p.cart_items)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_cart_items_copy");
+        });
+
+        modelBuilder.Entity<purchase_item>(entity =>
+        {
+            entity.HasKey(e => e.id).HasName("PRIMARY");
+
+            entity.Property(e => e.quantity).HasDefaultValue(1);
+
+            entity.HasOne(d => d.payment).WithMany(p => p.purchase_items)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_purchase_items_payment");
+
+            entity.HasOne(d => d.book).WithMany(p => p.purchase_items)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_purchase_items_book");
         });
 
         OnModelCreatingPartial(modelBuilder);

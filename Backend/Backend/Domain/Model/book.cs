@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace Backend.Domain.Model;
 
 [Index("author_id", Name = "author_id")]
+[Index("category_id", Name = "category_id")]
 [MySqlCharSet("utf8mb4")]
 [MySqlCollation("utf8mb4_hungarian_ci")]
 public partial class book
@@ -15,30 +17,48 @@ public partial class book
     [Column(TypeName = "int(11)")]
     public int id { get; set; }
 
+    [Column("title")]
     [StringLength(255)]
     public string cim { get; set; } = null!;
 
     [Column(TypeName = "int(11)")]
     public int author_id { get; set; }
 
-    public DateOnly? kiadasi_datum { get; set; }
-
-    [Column(TypeName = "text")]
-    public string? tartalom { get; set; }
-
+    [Column("image")]
     [StringLength(255)]
     public string? boritokep { get; set; }
 
-    [Column(TypeName = "decimal(10,2)")]
+    [Column("release_date")]
+    public DateOnly? kiadasi_datum { get; set; }
+
+    [Column("content", TypeName = "text")]
+    public string? tartalom { get; set; }
+
+    [Column("price", TypeName = "decimal(10,2)")]
     public decimal ar { get; set; }
 
-    [StringLength(100)]
-    public string kategoria { get; set; } = "Egyéb";
+    [Column("category_id", TypeName = "int(11)")]
+    public int category_id { get; set; }
 
     [ForeignKey("author_id")]
     [InverseProperty("books")]
+    [JsonIgnore]
     public virtual author author { get; set; } = null!;
 
+    [ForeignKey("category_id")]
+    [InverseProperty("books")]
+    [JsonIgnore]
+    public virtual category category { get; set; } = null!;
+
     [InverseProperty("book")]
+    [JsonIgnore]
     public virtual ICollection<copy> copies { get; set; } = new List<copy>();
+
+    [InverseProperty("book")]
+    [JsonIgnore]
+    public virtual ICollection<purchase_item> purchase_items { get; set; } = new List<purchase_item>();
+
+    [InverseProperty("book")]
+    [JsonIgnore]
+    public virtual ICollection<book_author> book_authors { get; set; } = new List<book_author>();
 }

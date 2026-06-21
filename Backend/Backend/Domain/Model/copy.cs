@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace Backend.Domain.Model;
 
@@ -19,16 +20,24 @@ public partial class copy
     [Column(TypeName = "int(11)")]
     public int book_id { get; set; }
 
+    [Column("inventory_number")]
     [StringLength(50)]
     public string leltari_szam { get; set; } = null!;
 
+    [Column("available")]
     [Required]
     public bool? elerheto { get; set; }
 
     [ForeignKey("book_id")]
     [InverseProperty("copies")]
+    [JsonIgnore]
     public virtual book book { get; set; } = null!;
 
     [InverseProperty("copy")]
+    [JsonIgnore]
     public virtual ICollection<rental> rentals { get; set; } = new List<rental>();
+
+    [InverseProperty("copy")]
+    [JsonIgnore]
+    public virtual ICollection<cart_item> cart_items { get; set; } = new List<cart_item>();
 }
